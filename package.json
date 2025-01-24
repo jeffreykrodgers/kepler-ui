@@ -1,0 +1,20 @@
+{
+  "name": "kepler-ui",
+  "version": "1.0.0",
+  "description": "Sci-Fi inspired high-contrast ui kit",
+  "main": "dist/kepler-ui.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c",
+    "dev": "node server.js"
+  },
+  "author": "Jeffrey Rodgers",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "chokidar": "^4.0.3",
+    "rollup": "^2.79.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "ws": "^8.18.0"
+  }
+}

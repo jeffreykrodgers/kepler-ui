@@ -1,0 +1,52 @@
+/* Themes - Kepler Dark */
+:root {
+    --base-background: var(--neutral-black);
+    --base-text--: var(--neutral-1);
+    --base-text-emphasize: var(--neutral-2);
+    --base-text-light: var(--neutral-3);
+    --base-text-subtle: var(--neutral-4);
+    --base-surface: var(--neutral-9);
+    --base-hover: var(--neutral-8);
+    --base-focus: var(--neutral-7);
+    --base-border: var(--neutral-8);
+    --primary--: var(--blue--);
+    --primary-hover: var(--blue-dark-8);
+    --primary-active: var(--blue-dark-7);
+    --primary-background--: var(--blue-dark-2);
+    --primary-background-hover: var(--blue-dark-3);
+    --primary-background-active: var(--blue-dark-4);
+    --primary-background-border: var(--blue-dark-5);
+    --secondary--: var(--neutral-1);
+    --secondary-background--: var(--neutral-9);
+    --secondary-hover: var(--neutral-2);
+    --secondary-active: var(--neutral-3);
+    --secondary-background-hover: var(--neutral-8);
+    --secondary-background-active: var(--neutral-7);
+    --secondary-background-border: var(--neutral-4);
+    --error--: var(--red--);
+    --error-hover: var(--red-dark-8);
+    --error-active: var(--red-dark-7);
+    --error-background--: var(--red-dark-1);
+    --error-background-hover: var(--red-dark-2);
+    --error-background-active: var(--red-dark-3);
+    --error-background-border: var(--red-dark-4);
+    --warning--: var(--yellow--);
+    --warning-hover: var(--yellow-dark-8);
+    --warning-active: var(--yellow-dark-7);
+    --warning-background--: var(--yellow-dark-1);
+    --warning-background-hover: var(--yellow-dark-2);
+    --warning-background-active: var(--yellow-dark-3);
+    --warning-background-border: var(--yellow-dark-4);
+    --success--: var(--green--);
+    --success-hover: var(--green-dark-8);
+    --success-active: var(--green-dark-7);
+    --success-background--: var(--green-dark-1);
+    --success-background-hover: var(--green-dark-2);
+    --success-background-active: var(--green-dark-3);
+    --success-background-border: var(--green-dark-4);
+  }
+
+::slotted(h1) {
+    font-family: ProFontWindows;
+    color: var(--base-text--);
+}
