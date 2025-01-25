@@ -187,16 +187,22 @@
     --radii-large: 2px;
     --radii-full: 9999px;
     --spacing-none: 0px;
-    --spacing-x-small: 1px;
-    --spacing-small: 2px;
-    --spacing-medium: 4px;
-    --spacing-large: 8px;
+    --spacing-2x-small: 1px;
+    --spacing-x-small: 2px;
+    --spacing-small: 4px;
+    --spacing-medium: 8px;
+    --spacing-large: 10px;
     --spacing-x-large: 12px;
-    --spacing-xx-large: 16px;
+    --spacing-2x-large: 16px;
     --font-family: 'ProFontWindows', monospace;
-  }
+}
 
-  @font-face {
+@font-face {
     font-family: ProFontWindows;
     src: url("/src/assets/ProFontWindows.ttf");
+}
+
+@font-face {
+    font-family: Tomorrow;
+    src: url("/src/assets/Tomorrow-Medium.ttf");
 }

@@ -46,7 +46,6 @@
     --success-background-border: var(--green-dark-4);
   }
 
-::slotted(h1) {
-    font-family: ProFontWindows;
+::slotted(*) {
     color: var(--base-text--);
 }

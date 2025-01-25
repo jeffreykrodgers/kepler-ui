@@ -11,8 +11,11 @@
   "author": "Jeffrey Rodgers",
   "license": "ISC",
   "devDependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@rollup/plugin-terser": "^0.4.4",
     "chokidar": "^4.0.3",
+    "font-awesome": "^4.7.0",
     "rollup": "^2.79.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "ws": "^8.18.0"

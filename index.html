@@ -5,22 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kepler UI</title>
     <script type="module" src="/dist/kepler-ui.js"></script>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
-    <kepler-theme theme="kepler-dark">
-        <h1>Dark Theme</h1>
-        <kepler-button>Click me</kepler-button>
-    </kepler-theme>
     <kepler-theme theme="kepler-light">
-        <h1>Light Theme</h1>
-        <kepler-button>Click me</kepler-button>
+        <div class="test">
+            <h1>Kepler UI</h1>
+            <h2>WebComponent UI Kit</h2>
+            <section>
+                <kepler-button
+                    data-event="theme-change"
+                    data-detail-theme="kepler-light"
+                >
+                    <span slot="left-icon">
+                        <i class='far fa-sun'></i>
+                    </span>
+                    Light
+                </kepler-button>
+                <kepler-button
+                    data-event="theme-change"
+                    data-detail-theme="kepler-dark"
+                >
+                    <span slot="left-icon">
+                        <i class='far fa-moon'></i>
+                    </span>
+                    Dark
+                </kepler-button>
+                <kepler-button
+                    data-event="theme-change"
+                    data-detail-theme="amber"
+                >
+                    <span slot="left-icon">
+                        <i class='fas fa-check'></i>
+                    </span>
+                    Amber
+                </kepler-button>
+                <kepler-button
+                    data-event="theme-change"
+                    data-detail-theme="Galaxy"
+                >
+                    Galaxy
+                </kepler-button>
+            </section>
+            
+            <p>Lorem Ipsum and some such</p>
+        </div>
     </kepler-theme>
+
+    <script>
+        // Listen for theme-change events
+        const themeComponent = document.querySelector('kepler-theme');
+        themeComponent.addEventListener('theme-change', (event) => {
+          const { theme } = event.detail;
+          themeComponent.setAttribute('theme', theme);
+        });
+      </script>
     <script src="/livereload.js"></script>
 </body>
 </html>

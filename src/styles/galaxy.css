@@ -8,9 +8,9 @@
     --base-text-light: var(--blue-light-3);
     --base-text-subtle: var(--blue-light-4);
     --base-surface: var(--blue-dark-2);
-    --base-hover: var(--blue-dark-2);
-    --base-focus: var(--blue-dark-3);
-    --base-border: var(--blue-dark-4);
+    --base-hover: var(--blue-dark-3);
+    --base-focus: var(--blue-dark-4);
+    --base-border: var(--blue-dark-5);
     --primary--: var(--teal--);
     --primary-hover: var(--teal-dark-8);
     --primary-active: var(--teal-dark-7);
@@ -48,6 +48,7 @@
     --success-background-border: var(--green-light-4);
   }
 
-  h1 {
-    color: var(--primary);
-  }
+
+  ::slotted(*) {
+    color: var(--base-text--);
+}

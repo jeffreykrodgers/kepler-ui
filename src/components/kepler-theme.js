@@ -8,6 +8,14 @@ class KeplerTheme extends HTMLElement {
   
     connectedCallback() {
       this.loadTheme();
+  
+      // Listen for the theme-change event
+      this.addEventListener('theme-change', (event) => {
+        const { theme } = event.detail;
+        if (theme) {
+          this.setAttribute('theme', theme);
+        }
+      });
     }
   
     attributeChangedCallback(name, oldValue, newValue) {
@@ -26,7 +34,7 @@ class KeplerTheme extends HTMLElement {
         <style>
           @import url('${variablesCSS}');
           @import url('${themeCSS}');
-
+  
           :host {
             display: block;
             background: var(--base-background);
