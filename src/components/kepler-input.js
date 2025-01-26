@@ -75,6 +75,7 @@ class KeplerInput extends HTMLElement {
         .input-wrapper {
           box-sizing: border-box;
           display: flex;
+          flex: 1 0 auto;
           align-items: center;
           padding: var(--spacing-medium, 8px);
           padding-bottom: calc(var(--spacing-medium, 8px) - 1px);

@@ -26,9 +26,6 @@
                             <i class="far fa-sun"></i>
                         </span>
                         Light
-                        <span slot="right-icon">
-                            <i class="far fa-sun"></i>
-                        </span>
                     </kp-button>
                     <kp-button
                         data-event="theme-change"
@@ -67,6 +64,13 @@
                             placeholder="Enter a value"
                             type="password"
                         ></kp-input>
+                        <kp-select
+                            id="exampleSelect"
+                            label="Options"
+                            label-position="left"
+                            options='[{"value": "1", "label": "Option 1"}, {"value": "2", "label": "Option 2"}]'
+                        >
+                        </kp-select>
                     </div>
                 </section>
                 <p>Lorem Ipsum and some such</p>
@@ -79,6 +83,14 @@
             themeComponent.addEventListener("theme-change", (event) => {
                 const { theme } = event.detail;
                 themeComponent.setAttribute("theme", theme);
+            });
+
+            // Get reference to the kp-select element
+            const selectElement = document.getElementById("exampleSelect");
+
+            // Listen for the 'change' event
+            selectElement.addEventListener("change", (event) => {
+                console.log("Selected Value:", event.detail.value);
             });
         </script>
         <script src="/livereload.js"></script>

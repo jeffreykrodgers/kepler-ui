@@ -108,3 +108,8 @@ section > div {
     flex-direction: column;
     gap: var(--spacing-small);
 }
+
+kp-input::part(label-wrapper),
+kp-select::part(label-wrapper) {
+    width: 140px;
+}
