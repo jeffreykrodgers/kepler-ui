@@ -5,15 +5,30 @@ class KeplerSelect extends HTMLElement {
         this.render();
         this.setupRefs();
         this.addEventListeners();
+        this.selectedValues = new Set(); // To track selected values
     }
 
     static get observedAttributes() {
-        return ["label", "label-position", "options"];
+        return [
+            "label",
+            "label-position",
+            "options",
+            "multiple",
+            "selection-mode",
+        ];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            if (["label", "label-position", "options"].includes(name)) {
+            if (
+                [
+                    "label",
+                    "label-position",
+                    "options",
+                    "multiple",
+                    "selection-mode",
+                ].includes(name)
+            ) {
                 this.updateComponent();
             }
         }
@@ -154,6 +169,29 @@ class KeplerSelect extends HTMLElement {
                 .select-wrapper.open .default-icon svg {
                     transform: rotate(180deg);
                 }
+                .selected-value {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 4px;
+                    max-width: 100%;
+                    overflow: hidden;
+                    align-items: center;
+
+                .tag {
+                    display: inline-flex;
+                    align-items: center;
+                    background: var(--base-text--, #007bff);
+                    color: var(--base-surface, #fff);
+                    padding: 1px 4px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+                .tag .remove {
+                    margin-left: 8px;
+                    cursor: pointer;
+                    color: var(--primary-background--, #fff);
+                    font-size: 12px;
+                }
             </style>
             <div class="select-container" part="select-container">
                 <div class="label-wrapper" part="label-wrapper">
@@ -179,6 +217,7 @@ class KeplerSelect extends HTMLElement {
     }
 
     setupRefs() {
+        // Reference elements
         this.dropdown = this.shadowRoot.querySelector(".dropdown");
         this.selectWrapper = this.shadowRoot.querySelector(".select-wrapper");
         this.labelTextElement = this.shadowRoot.querySelector(".label-text");
@@ -195,9 +234,32 @@ class KeplerSelect extends HTMLElement {
         this.rightLabelIcon = this.shadowRoot.querySelector(
             ".label-icon.right-label-icon"
         );
-
         this.manageSlotVisibility("left-label-icon", this.leftLabelIcon);
         this.manageSlotVisibility("right-label-icon", this.rightLabelIcon);
+    }
+
+    updateSelectedDisplay(multiple, selectionMode) {
+        if (multiple) {
+            const options = JSON.parse(this.getAttribute("options") || "[]");
+            const selectedOptions = options.filter((opt) =>
+                this.selectedValues.has(opt.value)
+            );
+
+            if (selectionMode === "combined") {
+                this.selectedValueElement.textContent = `${selectedOptions.length} Items Selected`;
+            } else {
+                // Separate mode
+                this.selectedValueElement.innerHTML = selectedOptions
+                    .map(
+                        (opt) => `
+                        <span class="tag">
+                            ${opt.label} <!-- Display label instead of value -->
+                            <span class="remove" data-value="${opt.value}">✕</span>
+                        </span>`
+                    )
+                    .join("");
+            }
+        }
     }
 
     updateComponent() {
@@ -207,19 +269,35 @@ class KeplerSelect extends HTMLElement {
         this.setAttribute("label-position", labelPosition);
 
         const options = JSON.parse(this.getAttribute("options") || "[]");
+        const multiple = this.hasAttribute("multiple");
+        const selectionMode = this.getAttribute("selection-mode") || "combined";
+
+        // Populate dropdown
         this.dropdown.innerHTML = options
             .map(
-                (opt) =>
-                    `<div class="dropdown-item ${opt.selected ? "selected" : ""}" data-value="${opt.value}" role="option" aria-selected="${opt.selected ? "true" : "false"}">${opt.label}</div>`
+                (opt) => `
+                <div class="dropdown-item ${opt.selected ? "selected" : ""}" data-value="${opt.value}" role="option" aria-selected="${opt.selected ? "true" : "false"}">
+                    ${opt.label}
+                </div>`
             )
             .join("");
 
-        const selected = options.find((opt) => opt.selected);
-        this.selectedValueElement.textContent =
-            selected?.label || "Select an option";
+        // Update selected values for multiple mode
+        if (multiple) {
+            this.selectedValues = new Set(
+                options.filter((opt) => opt.selected).map((opt) => opt.value)
+            );
+        } else {
+            const selected = options.find((opt) => opt.selected);
+            this.selectedValueElement.textContent =
+                selected?.label || "Select an option";
+        }
+
+        this.updateSelectedDisplay(multiple, selectionMode);
     }
 
     manageDefaultIconVisibility() {
+        // Show or hide the default icon based on the presence of a right icon
         const hasRightIcon =
             this.rightIconSlot.assignedNodes().length > 0 ||
             this.rightIconSlot.innerHTML.trim().length > 0;
@@ -227,6 +305,7 @@ class KeplerSelect extends HTMLElement {
     }
 
     manageSlotVisibility(slotName, element) {
+        // Manage visibility of slot elements
         const slot = this.shadowRoot.querySelector(`slot[name="${slotName}"]`);
         const updateVisibility = () => {
             const hasContent = slot.assignedNodes().length > 0;
@@ -241,28 +320,46 @@ class KeplerSelect extends HTMLElement {
             const isOpen = this.dropdown.classList.toggle("open");
             this.selectWrapper.classList.toggle("open", isOpen);
             this.selectWrapper.setAttribute("aria-expanded", isOpen.toString());
-            this.manageDefaultIconVisibility();
-            this.updateLabelState(isOpen);
         });
 
         this.dropdown.addEventListener("click", (event) => {
             const item = event.target.closest(".dropdown-item");
             if (item) {
                 const value = item.getAttribute("data-value");
-                const label = item.textContent;
-                this.selectedValueElement.textContent = label;
-                this.dropdown
-                    .querySelectorAll(".dropdown-item")
-                    .forEach((el) => el.classList.remove("selected"));
-                item.classList.add("selected");
+                const multiple = this.hasAttribute("multiple");
+                const selectionMode =
+                    this.getAttribute("selection-mode") || "combined";
+
+                if (multiple) {
+                    if (this.selectedValues.has(value)) {
+                        this.selectedValues.delete(value);
+                    } else {
+                        this.selectedValues.add(value);
+                    }
+                    this.updateSelectedDisplay(multiple, selectionMode);
+                } else {
+                    this.selectedValueElement.textContent = item.textContent;
+                    this.dropdown
+                        .querySelectorAll(".dropdown-item")
+                        .forEach((el) => el.classList.remove("selected"));
+                    item.classList.add("selected");
+                }
+
                 this.dispatchEvent(
                     new CustomEvent("change", {
-                        detail: { value },
+                        detail: {
+                            value: multiple
+                                ? Array.from(this.selectedValues)
+                                : value,
+                        },
                         bubbles: true,
                         composed: true,
                     })
                 );
-                this.closeDropdown();
+
+                if (!multiple) {
+                    this.closeDropdown();
+                }
             }
         });
 
@@ -272,15 +369,21 @@ class KeplerSelect extends HTMLElement {
             }
         });
 
-        this.selectWrapper.addEventListener("focus", () =>
-            this.updateLabelState(true)
-        );
-        this.selectWrapper.addEventListener("blur", () =>
-            this.updateLabelState(false)
-        );
+        this.selectedValueElement.addEventListener("click", (event) => {
+            const removeButton = event.target.closest(".remove");
+            if (removeButton) {
+                const value = removeButton.getAttribute("data-value");
+                this.selectedValues.delete(value);
+                this.updateSelectedDisplay(
+                    true,
+                    this.getAttribute("selection-mode") || "combined"
+                );
+            }
+        });
     }
 
     closeDropdown() {
+        // Close the dropdown and reset state
         this.dropdown.classList.remove("open");
         this.selectWrapper.classList.remove("open");
         this.selectWrapper.setAttribute("aria-expanded", "false");
@@ -289,8 +392,10 @@ class KeplerSelect extends HTMLElement {
     }
 
     updateLabelState(isSelected) {
+        // Update the label state based on selection
         this.labelWrapper.classList.toggle("selected", isSelected);
     }
 }
 
+// Define the custom element
 customElements.define("kp-select", KeplerSelect);
