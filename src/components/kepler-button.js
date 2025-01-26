@@ -101,9 +101,10 @@ class KeplerButton extends HTMLElement {
           </span>
         `;
 
-        // Manage visibility of icon slots dynamically
+        // Manage visibility of icon slots and the label dynamically
         this.manageSlotVisibility("left-icon", ".left-icon");
         this.manageSlotVisibility("right-icon", ".right-icon");
+        this.manageSlotVisibility("", ".label"); // Default slot for the label
     }
 
     proxyNativeOnClick() {
@@ -116,7 +117,9 @@ class KeplerButton extends HTMLElement {
     }
 
     manageSlotVisibility(slotName, selector) {
-        const slot = this.shadowRoot.querySelector(`slot[name="${slotName}"]`);
+        const slot = slotName
+            ? this.shadowRoot.querySelector(`slot[name="${slotName}"]`)
+            : this.shadowRoot.querySelector("slot:not([name])");
         const container = this.shadowRoot.querySelector(selector);
 
         const updateVisibility = () => {
@@ -434,4 +437,4 @@ class KeplerButton extends HTMLElement {
     }
 }
 
-customElements.define("kepler-button", KeplerButton);
+customElements.define("kp-button", KeplerButton);

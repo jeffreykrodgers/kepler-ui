@@ -12,58 +12,70 @@
         />
     </head>
     <body>
-        <kepler-theme theme="kepler-light">
+        <kp-theme theme="kepler-light">
             <div class="test">
                 <h1>Kepler UI</h1>
                 <h2>WebComponent UI Kit</h2>
                 <section>
-                    <kepler-button
+                    <kp-button
                         data-event="theme-change"
                         data-detail-theme="kepler-light"
-                        color="primary"
+                        size="medium"
                     >
                         <span slot="left-icon">
                             <i class="far fa-sun"></i>
                         </span>
                         Light
-                    </kepler-button>
-                    <kepler-button
+                        <span slot="right-icon">
+                            <i class="far fa-sun"></i>
+                        </span>
+                    </kp-button>
+                    <kp-button
                         data-event="theme-change"
                         data-detail-theme="kepler-dark"
-                        color="secondary"
-                        onclick="console.log('clicked')"
+                        size="medium"
                     >
                         <span slot="left-icon">
                             <i class="far fa-moon"></i>
                         </span>
-                        Dark
-                    </kepler-button>
-                    <kepler-button
+                    </kp-button>
+                    <kp-button
                         data-event="theme-change"
                         data-detail-theme="amber"
-                        color="base"
+                        size="medium"
                     >
-                        <span slot="left-icon">
-                            <i class="fas fa-check"></i>
-                        </span>
                         Amber
-                    </kepler-button>
-                    <kepler-button
+                    </kp-button>
+                    <kp-button
                         data-event="theme-change"
-                        data-detail-theme="Galaxy"
-                        style-type="outlined"
+                        data-detail-theme="galaxy"
+                        size="medium"
                     >
                         Galaxy
-                    </kepler-button>
+                    </kp-button>
                 </section>
-
+                <section>
+                    <div>
+                        <kp-input
+                            label="User Name"
+                            label-position="left"
+                            placeholder="Enter a value"
+                        ></kp-input>
+                        <kp-input
+                            label="Password"
+                            label-position="left"
+                            placeholder="Enter a value"
+                            type="password"
+                        ></kp-input>
+                    </div>
+                </section>
                 <p>Lorem Ipsum and some such</p>
             </div>
-        </kepler-theme>
+        </kp-theme>
 
         <script>
             // Listen for theme-change events
-            const themeComponent = document.querySelector("kepler-theme");
+            const themeComponent = document.querySelector("kp-theme");
             themeComponent.addEventListener("theme-change", (event) => {
                 const { theme } = event.detail;
                 themeComponent.setAttribute("theme", theme);

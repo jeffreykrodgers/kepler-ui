@@ -92,10 +92,19 @@ small {
     background: var(--base-surface);
     padding: var(--spacing-2x-large);
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-large);
 }
 
 section {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-large);
+}
+
+section > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-small);
 }

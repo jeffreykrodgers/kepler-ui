@@ -73,4 +73,4 @@ class KeplerTheme extends HTMLElement {
     }
 }
 
-customElements.define("kepler-theme", KeplerTheme);
+customElements.define("kp-theme", KeplerTheme);
