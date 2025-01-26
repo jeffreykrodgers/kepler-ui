@@ -1,4 +1,4 @@
-@import './variables.css';
+@import "./variables.css";
 
 /* Themes - Galaxy */
 :root {
@@ -46,9 +46,8 @@
     --success-background-hover: var(--green-light-2);
     --success-background-active: var(--green-light-3);
     --success-background-border: var(--green-light-4);
-  }
+}
 
-
-  ::slotted(*) {
+::slotted(*) {
     color: var(--base-text--);
 }

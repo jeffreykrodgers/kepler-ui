@@ -1,4 +1,4 @@
-@import './variables.css';
+@import "./variables.css";
 
 /* Themes - Amber */
 :root {
@@ -46,8 +46,8 @@
     --success-background-hover: var(--green-dark-2);
     --success-background-active: var(--green-dark-3);
     --success-background-border: var(--green-dark-4);
-  }
+}
 
-  ::slotted(*) {
-      color: var(--base-text--);
-  }
+::slotted(*) {
+    color: var(--base-text--);
+}

@@ -1,14 +1,26 @@
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
 }
 
-h1, h2, h3, h4, h5, h6, label, button {
-    font-family: 'ProFontWindows', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+button {
+    font-family: "ProFontWindows", sans-serif;
 }
 
-p, a, span, small, strong {
-    font-family: 'Tomorrow', sans-serif;
+p,
+a,
+span,
+small,
+strong {
+    font-family: "Tomorrow", sans-serif;
 }
 
 .display-1 {
@@ -75,7 +87,6 @@ small {
     font-size: var(--size-small);
 }
 
-
 /* Temp Stuff */
 .test {
     background: var(--base-surface);
@@ -88,4 +99,3 @@ section {
     align-items: center;
     gap: var(--spacing-large);
 }
-

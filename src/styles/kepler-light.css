@@ -1,7 +1,7 @@
-@import './variables.css';
-  
-  /* Themes - Kepler Light */
-  :root {
+@import "./variables.css";
+
+/* Themes - Kepler Light */
+:root {
     --base-background: var(--neutral-white);
     --base-text--: var(--neutral-9);
     --base-text-emphasize: var(--neutral-8);
@@ -46,9 +46,8 @@
     --success-background-hover: var(--green-light-2);
     --success-background-active: var(--green-light-3);
     --success-background-border: var(--green-light-4);
-  }
+}
 
-  
 ::slotted(*) {
     color: var(--base-text--);
 }

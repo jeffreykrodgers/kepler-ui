@@ -1,5 +1,5 @@
-  /* Colors */
-  :root {
+/* Colors */
+:root {
     --green-light-1: rgba(237, 250, 243, 1);
     --green-dark-1: rgba(5, 5, 5, 1);
     --green-dark-2: rgba(10, 28, 19, 1);
@@ -194,7 +194,7 @@
     --spacing-large: 10px;
     --spacing-x-large: 12px;
     --spacing-2x-large: 16px;
-    --font-family: 'ProFontWindows', monospace;
+    --font-family: "ProFontWindows", monospace;
 }
 
 @font-face {

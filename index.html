@@ -1,66 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kepler UI</title>
-    <script type="module" src="/dist/kepler-ui.js"></script>
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-</head>
-<body>
-    <kepler-theme theme="kepler-light">
-        <div class="test">
-            <h1>Kepler UI</h1>
-            <h2>WebComponent UI Kit</h2>
-            <section>
-                <kepler-button
-                    data-event="theme-change"
-                    data-detail-theme="kepler-light"
-                >
-                    <span slot="left-icon">
-                        <i class='far fa-sun'></i>
-                    </span>
-                    Light
-                </kepler-button>
-                <kepler-button
-                    data-event="theme-change"
-                    data-detail-theme="kepler-dark"
-                >
-                    <span slot="left-icon">
-                        <i class='far fa-moon'></i>
-                    </span>
-                    Dark
-                </kepler-button>
-                <kepler-button
-                    data-event="theme-change"
-                    data-detail-theme="amber"
-                >
-                    <span slot="left-icon">
-                        <i class='fas fa-check'></i>
-                    </span>
-                    Amber
-                </kepler-button>
-                <kepler-button
-                    data-event="theme-change"
-                    data-detail-theme="Galaxy"
-                >
-                    Galaxy
-                </kepler-button>
-            </section>
-            
-            <p>Lorem Ipsum and some such</p>
-        </div>
-    </kepler-theme>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Kepler UI</title>
+        <script type="module" src="/dist/kepler-ui.js"></script>
+        <link rel="stylesheet" href="/styles.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        />
+    </head>
+    <body>
+        <kepler-theme theme="kepler-light">
+            <div class="test">
+                <h1>Kepler UI</h1>
+                <h2>WebComponent UI Kit</h2>
+                <section>
+                    <kepler-button
+                        data-event="theme-change"
+                        data-detail-theme="kepler-light"
+                        color="primary"
+                    >
+                        <span slot="left-icon">
+                            <i class="far fa-sun"></i>
+                        </span>
+                        Light
+                    </kepler-button>
+                    <kepler-button
+                        data-event="theme-change"
+                        data-detail-theme="kepler-dark"
+                        color="secondary"
+                        onclick="console.log('clicked')"
+                    >
+                        <span slot="left-icon">
+                            <i class="far fa-moon"></i>
+                        </span>
+                        Dark
+                    </kepler-button>
+                    <kepler-button
+                        data-event="theme-change"
+                        data-detail-theme="amber"
+                        color="base"
+                    >
+                        <span slot="left-icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        Amber
+                    </kepler-button>
+                    <kepler-button
+                        data-event="theme-change"
+                        data-detail-theme="Galaxy"
+                        style-type="outlined"
+                    >
+                        Galaxy
+                    </kepler-button>
+                </section>
 
-    <script>
-        // Listen for theme-change events
-        const themeComponent = document.querySelector('kepler-theme');
-        themeComponent.addEventListener('theme-change', (event) => {
-          const { theme } = event.detail;
-          themeComponent.setAttribute('theme', theme);
-        });
-      </script>
-    <script src="/livereload.js"></script>
-</body>
+                <p>Lorem Ipsum and some such</p>
+            </div>
+        </kepler-theme>
+
+        <script>
+            // Listen for theme-change events
+            const themeComponent = document.querySelector("kepler-theme");
+            themeComponent.addEventListener("theme-change", (event) => {
+                const { theme } = event.detail;
+                themeComponent.setAttribute("theme", theme);
+            });
+        </script>
+        <script src="/livereload.js"></script>
+    </body>
 </html>
