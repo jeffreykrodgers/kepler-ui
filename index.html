@@ -17,41 +17,6 @@
                 <h1>Kepler UI</h1>
                 <h2>WebComponent UI Kit</h2>
                 <section>
-                    <kp-button
-                        data-event="theme-change"
-                        data-detail-theme="kepler-light"
-                        size="medium"
-                    >
-                        <span slot="left-icon">
-                            <i class="far fa-sun"></i>
-                        </span>
-                        Light
-                    </kp-button>
-                    <kp-button
-                        data-event="theme-change"
-                        data-detail-theme="kepler-dark"
-                        size="medium"
-                    >
-                        <span slot="left-icon">
-                            <i class="far fa-moon"></i>
-                        </span>
-                    </kp-button>
-                    <kp-button
-                        data-event="theme-change"
-                        data-detail-theme="amber"
-                        size="medium"
-                    >
-                        Amber
-                    </kp-button>
-                    <kp-button
-                        data-event="theme-change"
-                        data-detail-theme="galaxy"
-                        size="medium"
-                    >
-                        Galaxy
-                    </kp-button>
-                </section>
-                <section>
                     <div>
                         <kp-input
                             label="User Name"
@@ -65,32 +30,42 @@
                             type="password"
                         ></kp-input>
                         <kp-select
-                            id="exampleSelect"
-                            label="Options"
+                            id="themeSelect"
+                            label="Theme"
                             label-position="left"
-                            options='[{"value": "1", "label": "Option 1"}, {"value": "2", "label": "Option 2"}]'
-                        >
-                        </kp-select>
+                        ></kp-select>
                     </div>
+                </section>
+                <section>
+                    <kp-button size="medium" color="primary">Login</kp-button>
+                    <kp-button size="medium">Cancel</kp-button>
                 </section>
                 <p>Lorem Ipsum and some such</p>
             </div>
         </kp-theme>
 
         <script>
-            // Listen for theme-change events
+            // Reference the kp-theme and kp-select elements
             const themeComponent = document.querySelector("kp-theme");
-            themeComponent.addEventListener("theme-change", (event) => {
-                const { theme } = event.detail;
-                themeComponent.setAttribute("theme", theme);
-            });
+            const themeSelect = document.getElementById("themeSelect");
 
-            // Get reference to the kp-select element
-            const selectElement = document.getElementById("exampleSelect");
+            // Define the theme options
+            const themeOptions = [
+                { value: "kepler-light", label: "Light Theme", selected: true },
+                { value: "kepler-dark", label: "Dark Theme" },
+                { value: "amber", label: "Amber Theme" },
+                { value: "galaxy", label: "Galaxy Theme" },
+            ];
 
-            // Listen for the 'change' event
-            selectElement.addEventListener("change", (event) => {
-                console.log("Selected Value:", event.detail.value);
+            // Set options for the kp-select element
+            themeSelect.setAttribute("options", JSON.stringify(themeOptions));
+
+            // Listen for the 'change' event from kp-select
+            themeSelect.addEventListener("change", (event) => {
+                const selectedTheme = event.detail.value;
+
+                // Update the theme attribute of kp-theme
+                themeComponent.setAttribute("theme", selectedTheme);
             });
         </script>
         <script src="/livereload.js"></script>
