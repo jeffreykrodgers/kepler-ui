@@ -65,6 +65,18 @@ class KeplerCheckbox extends HTMLElement {
                     flex-direction: column;
                     align-items: flex-start;
                 }
+                :host([label-position="top"]) .checkbox-container,
+                :host([label-position="bottom"]) .checkbox-container {
+                    gap: 0;
+                }
+                :host([label-position="top"]) .label-wrapper,
+                :host([label-position="bottom"]) .label-wrapper {
+                    width: 100%;
+                    justify-content: flex-start;
+                    background-color: var(--base-surface, #fff);
+                    color: var(--base-text--, #000);
+                    padding: 0;
+                }
                 .checkbox-wrapper {
                     display: flex;
                     flex: 1 0 auto;

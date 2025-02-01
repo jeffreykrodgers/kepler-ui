@@ -16,84 +16,91 @@
             <div class="test">
                 <h1>Kepler UI</h1>
                 <h2>WebComponent UI Kit</h2>
-                <!-- <kp-break></kp-break> -->
                 <form id="loginForm">
-                    <section>
-                        <div>
-                            <kp-input
-                                id="usernameInput"
-                                name="username"
-                                label="User Name"
-                                label-position="left"
-                                placeholder="Enter a value"
-                                value="TestUser"
-                            ></kp-input>
-                            <kp-input
-                                id="passwordInput"
-                                name="password"
-                                label="Password"
-                                label-position="left"
-                                placeholder="Enter a value"
-                                type="password"
-                            ></kp-input>
-                            <kp-select
-                                id="themeSelect"
-                                name="theme"
-                                label="Theme"
-                                jrod
-                                label-position="left"
-                            ></kp-select>
-                            <kp-select
-                                id="multiSelect"
-                                name="multiSelect"
-                                label="Select"
-                                combined
-                                selection-mode="single"
-                                label-position="left"
-                                multiple="true"
-                                options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
-                            ></kp-select>
-                            <kp-checkbox
-                                id="rememberMeCheckbox"
-                                name="rememberMe"
-                                label-position="left"
-                                label="Remember Me"
-                            ></kp-checkbox>
-                            <kp-radio
-                                id="exampleRadioGroup"
-                                name="exampleRadios"
-                                label-position="left"
-                                options='[
-                                    {"label": "Option 1", "value": "option1"},
-                                    {"label": "Option 2", "value": "option2"},
-                                    {"label": "Option 3", "value": "option3"}
-                                ]'
-                                selected-value="option2"
-                            ></kp-radio>
-                            <kp-slider
-                                id="exampleSlider"
-                                name="exampleSlider"
-                                label="Slider"
-                                label-position="left"
-                                min="0"
-                                max="100"
-                                step="1"
-                                value="50"
-                            ></kp-slider>
+                    <kp-card>
+                        <div slot="header">
+                            <h5>Login</h5>
                         </div>
-                    </section>
-                    <section>
-                        <kp-button
-                            id="loginButton"
-                            type="submit"
-                            size="medium"
-                            color="primary"
-                        >
-                            Login
-                        </kp-button>
-                        <kp-button size="medium">Cancel</kp-button>
-                    </section>
+                        <section>
+                            <div>
+                                <kp-input
+                                    id="usernameInput"
+                                    name="username"
+                                    label="User Name"
+                                    label-position="left"
+                                    placeholder="Enter a value"
+                                    value="TestUser"
+                                ></kp-input>
+                                <kp-input
+                                    id="passwordInput"
+                                    name="password"
+                                    label="Password"
+                                    label-position="left"
+                                    placeholder="Enter a value"
+                                    type="password"
+                                ></kp-input>
+                                <kp-select
+                                    id="themeSelect"
+                                    label-position="left"
+                                    name="theme"
+                                    label="Theme"
+                                    jrod
+                                ></kp-select>
+                                <kp-select
+                                    id="multiSelect"
+                                    name="multiSelect"
+                                    label="Select"
+                                    label-position="left"
+                                    combined
+                                    selection-mode="single"
+                                    multiple="true"
+                                    options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
+                                ></kp-select>
+                                <kp-checkbox
+                                    id="rememberMeCheckbox"
+                                    name="rememberMe"
+                                    label-position="left"
+                                    label="Remember Me"
+                                ></kp-checkbox>
+                                <kp-radio
+                                    id="exampleRadioGroup"
+                                    name="exampleRadios"
+                                    label-position="left"
+                                    options='[
+                                        {"label": "Option 1", "value": "option1"},
+                                        {"label": "Option 2", "value": "option2"},
+                                        {"label": "Option 3", "value": "option3"}
+                                    ]'
+                                    selected-value="option2"
+                                ></kp-radio>
+                                <kp-slider
+                                    id="exampleSlider"
+                                    name="exampleSlider"
+                                    label-position="left"
+                                    label="Slider"
+                                    min="0"
+                                    max="100"
+                                    step="1"
+                                    value="50"
+                                ></kp-slider>
+                            </div>
+                        </section>
+                        <div slot="footer">
+                            <kp-button
+                                id="loginButton"
+                                type="submit"
+                                size="medium"
+                                color="primary"
+                            >
+                                Login
+                            </kp-button>
+                            <kp-button size="medium">Cancel</kp-button>
+                        </div>
+                    </kp-card>
                 </form>
+
+                <kp-break></kp-break>
+
                 <p>Lorem Ipsum and some such</p>
             </div>
         </kp-theme>

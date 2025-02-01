@@ -100,6 +100,16 @@ class KeplerSelect extends HTMLElement {
                     flex-direction: column-reverse;
                     align-items: flex-start;
                 }
+                :host([label-position="top"]) .label-wrapper,
+                :host([label-position="bottom"]) .label-wrapper {
+                    background: var(--base-surface, #fff);
+                    color: var(--base-text--, #000);
+                    padding: 0;
+                }
+                :host([label-position="top"]) .select-container,
+                :host([label-position="bottom"]) .select-container {
+                    gap: 0;
+                }
                 .select-wrapper {
                     position: relative;
                     box-sizing: border-box;

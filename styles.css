@@ -116,3 +116,7 @@ kp-radio::part(label),
 kp-slider::part(label) {
     width: 140px;
 }
+
+kp-card h5 {
+    margin: 0;
+}

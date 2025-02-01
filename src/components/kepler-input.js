@@ -71,12 +71,12 @@ class KeplerInput extends HTMLElement {
 
                 :host([label-position="top"]) .input-container {
                     flex-direction: column;
-                    align-items: flex-start;
+                    align-items: stretch;
                 }
 
                 :host([label-position="bottom"]) .input-container {
                     flex-direction: column-reverse;
-                    align-items: flex-start;
+                    align-items: stretch;
                 }
 
                 .input-wrapper {

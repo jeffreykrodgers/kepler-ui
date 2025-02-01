@@ -72,6 +72,11 @@ class KeplerRadio extends HTMLElement {
                     flex-grow: 1;
                 }
 
+                :host([label-position="top"]) .radio-container,
+                :host([label-position="bottom"]) .radio-container {
+                    gap: 0;
+                }
+
                 :host([label-position="left"]) .radio-container {
                     flex-direction: row-reverse;
                 }
@@ -84,6 +89,15 @@ class KeplerRadio extends HTMLElement {
                 :host([label-position="bottom"]) .radio-container {
                     flex-direction: column;
                     align-items: flex-start;
+                }
+
+                :host([label-position="top"]) .label,
+                :host([label-position="bottom"]) .label {
+                    width: 100%;
+                    justify-content: flex-start;
+                    background-color: var(--base-surface, #fff);
+                    color: var(--base-text--, #000);
+                    padding: 0;
                 }
 
                 .radio {

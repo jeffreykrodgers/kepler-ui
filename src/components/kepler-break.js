@@ -8,25 +8,26 @@ class KeplerBreak extends HTMLElement {
     render() {
         this.shadowRoot.innerHTML = `
         <style>
-            :host {
-                display: block;
-                width: 100%;
-                height: 20px;
-                position: relative;
-                overflow: hidden;
-            }
-            svg {
-                width: 100%;
-                height: 100%;
-            }
+          :host {
+            display: block;
+            width: 100%;
+            /* Use the custom property for height with a fallback */
+            height: var(--spacing-2x-large, 40px);
+          }
+          .break {
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+              -45deg,
+              var(--base-border, #ccc) 0,
+              var(--base-border, #ccc) 2px,
+              transparent 3px,
+              transparent 10px
+            );
+          }
         </style>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none">
-            <pattern id="diagonal-lines" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(-60)">
-                <rect width="3" height="10" fill="var(--base-text--, #1D1D1D)"></rect>
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#diagonal-lines)"></rect>
-        </svg>
-    `;
+        <div class="break"></div>
+      `;
     }
 }
 

@@ -6,3 +6,5 @@ import "./components/kepler-checkbox.js";
 import "./components/kepler-radio.js";
 import "./components/kepler-break.js";
 import "./components/kepler-slider.js";
+import "./components/kepler-card.js";
+import "./components/kepler-break.js";

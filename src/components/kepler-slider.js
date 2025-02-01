@@ -109,6 +109,10 @@ class KeplerSlider extends HTMLElement {
                     flex-direction: column-reverse;
                     align-items: stretch;
                 }
+                :host([label-position="top"]) .input-container,
+                :host([label-position="bottom"]) .input-container {
+                    gap: 0;
+                }
                 .input-wrapper {
                     box-sizing: border-box;
                     display: flex;
