@@ -169,9 +169,17 @@ class KeplerButton extends HTMLElement {
             );
         });
 
-        // Custom click event
-        this.button.addEventListener("click", () => {
+        this.button.addEventListener("click", (event) => {
             this.handleClick();
+
+            // If the button type is "submit", trigger form submission
+            if (this.getAttribute("type") === "submit") {
+                const form = this.closest("form");
+                if (form) {
+                    event.preventDefault(); // Prevent default click behavior
+                    form.requestSubmit(); // Programmatically submit the form
+                }
+            }
         });
     }
 

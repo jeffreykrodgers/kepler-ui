@@ -94,7 +94,7 @@ small {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-large);
+    gap: var(--spacing-medium);
 }
 
 section {
@@ -110,6 +110,9 @@ section > div {
 }
 
 kp-input::part(label-wrapper),
-kp-select::part(label-wrapper) {
+kp-select::part(label-wrapper),
+kp-checkbox::part(label-wrapper),
+kp-radio::part(label),
+kp-slider::part(label) {
     width: 140px;
 }

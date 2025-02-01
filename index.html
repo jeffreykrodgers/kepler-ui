@@ -16,48 +16,95 @@
             <div class="test">
                 <h1>Kepler UI</h1>
                 <h2>WebComponent UI Kit</h2>
-                <section>
-                    <div>
-                        <kp-input
-                            label="User Name"
-                            label-position="left"
-                            placeholder="Enter a value"
-                        ></kp-input>
-                        <kp-input
-                            label="Password"
-                            label-position="left"
-                            placeholder="Enter a value"
-                            type="password"
-                        ></kp-input>
-                        <kp-select
-                            id="themeSelect"
-                            label="Theme"
-                            label-position="left"
-                        ></kp-select>
-                        <kp-select
-                            label="Select"
-                            combined
-                            selection-mode="single"
-                            label-position="left"
-                            multiple="true"
-                            options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
-                        ></kp-select>
-                    </div>
-                </section>
-                <section>
-                    <kp-button size="medium" color="primary">Login</kp-button>
-                    <kp-button size="medium">Cancel</kp-button>
-                </section>
+                <!-- <kp-break></kp-break> -->
+                <form id="loginForm">
+                    <section>
+                        <div>
+                            <kp-input
+                                id="usernameInput"
+                                name="username"
+                                label="User Name"
+                                label-position="left"
+                                placeholder="Enter a value"
+                                value="TestUser"
+                            ></kp-input>
+                            <kp-input
+                                id="passwordInput"
+                                name="password"
+                                label="Password"
+                                label-position="left"
+                                placeholder="Enter a value"
+                                type="password"
+                            ></kp-input>
+                            <kp-select
+                                id="themeSelect"
+                                name="theme"
+                                label="Theme"
+                                jrod
+                                label-position="left"
+                            ></kp-select>
+                            <kp-select
+                                id="multiSelect"
+                                name="multiSelect"
+                                label="Select"
+                                combined
+                                selection-mode="single"
+                                label-position="left"
+                                multiple="true"
+                                options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
+                            ></kp-select>
+                            <kp-checkbox
+                                id="rememberMeCheckbox"
+                                name="rememberMe"
+                                label-position="left"
+                                label="Remember Me"
+                            ></kp-checkbox>
+                            <kp-radio
+                                id="exampleRadioGroup"
+                                name="exampleRadios"
+                                label-position="left"
+                                options='[
+                                    {"label": "Option 1", "value": "option1"},
+                                    {"label": "Option 2", "value": "option2"},
+                                    {"label": "Option 3", "value": "option3"}
+                                ]'
+                                selected-value="option2"
+                            ></kp-radio>
+                            <kp-slider
+                                id="exampleSlider"
+                                name="exampleSlider"
+                                label="Slider"
+                                label-position="left"
+                                min="0"
+                                max="100"
+                                step="1"
+                                value="50"
+                            ></kp-slider>
+                        </div>
+                    </section>
+                    <section>
+                        <kp-button
+                            id="loginButton"
+                            type="submit"
+                            size="medium"
+                            color="primary"
+                        >
+                            Login
+                        </kp-button>
+                        <kp-button size="medium">Cancel</kp-button>
+                    </section>
+                </form>
                 <p>Lorem Ipsum and some such</p>
             </div>
         </kp-theme>
 
         <script>
-            // Reference the kp-theme and kp-select elements
             const themeComponent = document.querySelector("kp-theme");
             const themeSelect = document.getElementById("themeSelect");
+            const radioGroup = document.getElementById("exampleRadioGroup");
+            const loginForm = document.getElementById("loginForm");
 
-            // Define the theme options
+            // Set Defaults
             const themeOptions = [
                 { value: "kepler-light", label: "Light Theme", selected: true },
                 { value: "kepler-dark", label: "Dark Theme" },
@@ -65,14 +112,26 @@
                 { value: "galaxy", label: "Galaxy Theme" },
             ];
 
-            // Set options for the kp-select element
             themeSelect.setAttribute("options", JSON.stringify(themeOptions));
 
-            // Listen for the 'change' event from kp-select
+            // Event Listeners
+            function serializeForm(form) {
+                console.log("Form", form);
+                const formData = new FormData(form);
+                return Object.fromEntries(formData.entries());
+            }
+
+            loginForm.addEventListener("submit", (event) => {
+                event.preventDefault(); // Prevent navigation
+                console.log(serializeForm(loginForm));
+            });
+
+            radioGroup.addEventListener("change", (event) => {
+                console.log("Selected Radio Value:", event.detail.value);
+            });
+
             themeSelect.addEventListener("change", (event) => {
                 const selectedTheme = event.detail.value;
-
-                // Update the theme attribute of kp-theme
                 themeComponent.setAttribute("theme", selectedTheme);
             });
         </script>

@@ -37,6 +37,14 @@ class KeplerSelect extends HTMLElement {
     connectedCallback() {
         this.updateComponent();
         this.manageDefaultIconVisibility();
+
+        if (!this.hiddenInput) {
+            this.hiddenInput = document.createElement("input");
+            this.hiddenInput.type = "hidden";
+            this.hiddenInput.name = this.getAttribute("name") || "";
+            this.appendChild(this.hiddenInput);
+        }
+        this.updateHiddenInput();
     }
 
     render() {
@@ -210,8 +218,8 @@ class KeplerSelect extends HTMLElement {
                             </svg>
                         </span>
                     </span>
+                    <div class="dropdown" part="dropdown" role="listbox"></div>
                 </div>
-                <div class="dropdown" part="dropdown" role="listbox"></div>
             </div>
         `;
     }
@@ -323,6 +331,9 @@ class KeplerSelect extends HTMLElement {
         });
 
         this.dropdown.addEventListener("click", (event) => {
+            // Prevent the click event from bubbling up to the select wrapper
+            event.stopPropagation();
+
             const item = event.target.closest(".dropdown-item");
             if (item) {
                 const value = item.getAttribute("data-value");
@@ -331,19 +342,29 @@ class KeplerSelect extends HTMLElement {
                     this.getAttribute("selection-mode") || "combined";
 
                 if (multiple) {
+                    // Toggle selection for multiselect mode
                     if (this.selectedValues.has(value)) {
                         this.selectedValues.delete(value);
+                        item.classList.remove("selected");
                     } else {
                         this.selectedValues.add(value);
+                        item.classList.add("selected");
                     }
                     this.updateSelectedDisplay(multiple, selectionMode);
+                    // Do not close the dropdown in multiselect mode
                 } else {
-                    this.selectedValueElement.textContent = item.textContent;
-                    this.dropdown
+                    // In single select mode, clear any previous selection
+                    this.shadowRoot
                         .querySelectorAll(".dropdown-item")
                         .forEach((el) => el.classList.remove("selected"));
                     item.classList.add("selected");
+                    this.selectedValueElement.textContent = item.textContent;
+                    // Explicitly close the dropdown in single select mode
+                    this.closeDropdown();
                 }
+
+                // Update the hidden input based on the current selection(s)
+                this.updateHiddenInput();
 
                 this.dispatchEvent(
                     new CustomEvent("change", {
@@ -356,10 +377,6 @@ class KeplerSelect extends HTMLElement {
                         composed: true,
                     })
                 );
-
-                if (!multiple) {
-                    this.closeDropdown();
-                }
             }
         });
 
@@ -378,6 +395,8 @@ class KeplerSelect extends HTMLElement {
                     true,
                     this.getAttribute("selection-mode") || "combined"
                 );
+                // Update the hidden input after removal
+                this.updateHiddenInput();
             }
         });
     }
@@ -394,6 +413,27 @@ class KeplerSelect extends HTMLElement {
     updateLabelState(isSelected) {
         // Update the label state based on selection
         this.labelWrapper.classList.toggle("selected", isSelected);
+    }
+
+    updateHiddenInput() {
+        if (this.hiddenInput) {
+            // Update the name from the component's attribute
+            this.hiddenInput.name = this.getAttribute("name") || "";
+            if (this.hasAttribute("multiple")) {
+                // For multiple selections, join selected values with commas
+                this.hiddenInput.value = Array.from(this.selectedValues).join(
+                    ","
+                );
+            } else {
+                // For single select, find the selected dropdown item
+                const selectedItem = this.shadowRoot.querySelector(
+                    ".dropdown-item.selected"
+                );
+                this.hiddenInput.value = selectedItem
+                    ? selectedItem.getAttribute("data-value")
+                    : "";
+            }
+        }
     }
 }
 
