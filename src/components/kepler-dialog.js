@@ -65,7 +65,6 @@ class KeplerDialog extends HTMLElement {
             opacity: 1;
             pointer-events: auto;
           }
-          /* The cover fills the host */
           .cover {
             position: absolute;
             top: 0;
@@ -75,7 +74,6 @@ class KeplerDialog extends HTMLElement {
             background: rgba(0, 0, 0, 0.5);
             z-index: 1;
           }
-          /* The dialog container is centered over the cover */
           .dialog {
             position: relative;
             z-index: 2;

@@ -172,7 +172,7 @@ class KeplerSlider extends HTMLElement {
                     border: 2px solid var(--base-text--, #ccc);
                     border-radius: 0;
                     cursor: pointer;
-                    margin-top: -8px; /* Centers thumb over track */
+                    margin-top: -8px;
                 }
 
                 input[type="range"]::-moz-range-thumb {
@@ -307,7 +307,7 @@ class KeplerSlider extends HTMLElement {
             this.labelWrapper.classList.remove("selected");
         });
 
-        this.inputElement.addEventListener("input", (event) => {
+        this.inputElement.addEventListener("input", () => {
             this.updateHiddenInput();
             this.updateSliderBackground();
             this.dispatchEvent(

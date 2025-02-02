@@ -65,7 +65,7 @@ class KeplerGrid extends HTMLElement {
 
     renderHeader() {
         let headerHTML = `<tr>`;
-        this.columns.forEach((col, colIndex) => {
+        this.columns.forEach((col) => {
             const width = this.getColumnWidth(col);
             const widthStyle = width ? ` style="width: ${width};"` : "";
             const sortable = col.sortable === false ? false : true;
@@ -128,7 +128,7 @@ class KeplerGrid extends HTMLElement {
         const renderData = this.getSortedData();
         renderData.forEach((row) => {
             let rowHTML = `<tr>`;
-            this.columns.forEach((col, colIndex) => {
+            this.columns.forEach((col) => {
                 const cellValue =
                     row[col.property] !== undefined ? row[col.property] : "";
                 if (col.isRowHeader) {

@@ -2,7 +2,7 @@ class KeplerTabs extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        // Internal state: parsed tabs array and current active tab id.
+
         this.tabs = [];
         this.activeTab = null;
         this.render();

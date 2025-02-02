@@ -258,12 +258,12 @@ class KeplerButton extends HTMLElement {
                     transparent 10px
                 );
                 opacity: 0;
-                z-index: 0; /* Ensure it sits behind content */
+                z-index: 0;
                 transition: opacity 0.2s ease;
             }
     
             .button:disabled::before {
-                opacity: 1; /* Show diagonal pattern when disabled */
+                opacity: 1;
             }
     
             .button:hover:not(:disabled),
@@ -290,9 +290,9 @@ class KeplerButton extends HTMLElement {
                 align-items: center;
                 gap: var(--gap, 8px);
                 padding: var(--content-padding, 8px) var(--button-padding, 16px);
-                position: relative; /* Ensure it sits above the pattern */
+                position: relative;
                 z-index: 1;
-                background: var(--background-color); /* Match button background */
+                background: var(--background-color);
                 color: var(--text-color);
                 font-family: Tomorrow, sans-serif;
                 font-size: var(--font-size, 16px);
@@ -300,7 +300,7 @@ class KeplerButton extends HTMLElement {
                 line-height: 1.2;
                 text-transform: uppercase;
                 transition: color var(--transition-duration, 0.1s),
-                            background-color var(--transition-duration, 0.1s);
+                background-color var(--transition-duration, 0.1s);
             }
     
             .icon {

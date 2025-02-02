@@ -283,12 +283,12 @@ class KeplerSelect extends HTMLElement {
     updateComponent() {
         const label = this.getAttribute("label") || "";
         const labelPosition = this.getAttribute("label-position") || "top";
-        this.labelTextElement.textContent = label;
-        this.setAttribute("label-position", labelPosition);
-
         const options = JSON.parse(this.getAttribute("options") || "[]");
         const multiple = this.hasAttribute("multiple");
         const selectionMode = this.getAttribute("selection-mode") || "combined";
+
+        this.labelTextElement.textContent = label;
+        this.setAttribute("label-position", labelPosition);
 
         // Populate dropdown
         this.dropdown.innerHTML = options
@@ -455,5 +455,4 @@ class KeplerSelect extends HTMLElement {
     }
 }
 
-// Define the custom element
 customElements.define("kp-select", KeplerSelect);

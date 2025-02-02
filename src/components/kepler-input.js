@@ -251,7 +251,7 @@ class KeplerInput extends HTMLElement {
             this.labelWrapper.classList.remove("selected");
         });
 
-        this.inputElement.addEventListener("input", (event) => {
+        this.inputElement.addEventListener("input", () => {
             this.hiddenInput.value = this.inputElement.value; // Update hidden input value
             this.dispatchEvent(
                 new CustomEvent("input", {
