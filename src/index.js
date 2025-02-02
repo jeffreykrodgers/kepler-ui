@@ -8,3 +8,7 @@ import "./components/kepler-break.js";
 import "./components/kepler-slider.js";
 import "./components/kepler-card.js";
 import "./components/kepler-break.js";
+import "./components/kepler-grid.js";
+import "./components/kepler-avatar.js";
+import "./components/kepler-dialog.js";
+import "./components/kepler-tabs.js";

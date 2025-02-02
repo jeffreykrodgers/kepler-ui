@@ -334,6 +334,14 @@ class KeplerSelect extends HTMLElement {
     }
 
     addEventListeners() {
+        // When the select wrapper receives focus, highlight the label
+        this.selectWrapper.addEventListener("focus", () => {
+            this.labelWrapper.classList.add("selected");
+        });
+        this.selectWrapper.addEventListener("blur", () => {
+            this.labelWrapper.classList.remove("selected");
+        });
+
         this.selectWrapper.addEventListener("click", () => {
             const isOpen = this.dropdown.classList.toggle("open");
             this.selectWrapper.classList.toggle("open", isOpen);

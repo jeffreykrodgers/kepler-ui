@@ -165,14 +165,16 @@ class KeplerSlider extends HTMLElement {
                 /* Slider Thumb (Square Grabber) */
                 input[type="range"]::-webkit-slider-thumb {
                     -webkit-appearance: none;
+                    appearance: none;
                     width: var(--spacing-medium);
-                    height: 26px
+                    height: 26px; /* Added semicolon here */
                     background: var(--base-text--);
                     border: 2px solid var(--base-text--, #ccc);
                     border-radius: 0;
                     cursor: pointer;
                     margin-top: -8px; /* Centers thumb over track */
                 }
+
                 input[type="range"]::-moz-range-thumb {
                     width: var(--spacing-medium);
                     height: 26px;

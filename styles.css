@@ -97,16 +97,24 @@ small {
     gap: var(--spacing-medium);
 }
 
+.card-wrapper {
+    display: flex;
+    gap: var(--spacing-medium);
+    flex-wrap: wrap;
+}
+
 section {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-large);
+    width: 100%;
 }
 
 section > div {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-small);
+    width: 100%;
 }
 
 kp-input::part(label-wrapper),
@@ -119,4 +127,12 @@ kp-slider::part(label) {
 
 kp-card h5 {
     margin: 0;
+}
+
+kp-card {
+    flex: 1;
+}
+
+kp-tabs {
+    width: 100%;
 }

@@ -9,8 +9,9 @@ class KeplerCard extends HTMLElement {
         this.shadowRoot.innerHTML = `
           <style>
             :host {
-              display: block;
-              border: var(--border-medium, 2px) solid var(--base-hover, #ccc);
+              display: flex;
+              flex-direction: column;
+              border: var(--border-medium, 2px) solid var(--base-border, #ccc);
               overflow: hidden;
             }
             .header,
@@ -28,6 +29,7 @@ class KeplerCard extends HTMLElement {
               position: relative;
               /* Increase top and bottom padding to account for the 10px high pattern */
               padding: 26px 16px 26px 16px;
+              flex: 1;
             }
             /* Diagonal pattern at the top of the content */
             .content::before {
