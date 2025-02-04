@@ -15,12 +15,16 @@ class KeplerSelect extends HTMLElement {
             "options",
             "multiple",
             "selection-mode",
+            "value",
         ];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            if (
+            if (name === "value") {
+                // When the value attribute changes, update the property via the setter
+                this.value = newValue;
+            } else if (
                 [
                     "label",
                     "label-position",
@@ -137,13 +141,11 @@ class KeplerSelect extends HTMLElement {
                 .dropdown {
                     display: none;
                     position: absolute;
-                    top: calc(100% + var(--spacing-small, 8px));
+                    top: calc(100% + var(--spacing-x-small, 4px));
                     left: 0;
                     width: 100%;
                     box-sizing: border-box;
-                    border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
-                    border-radius: calc(var(--border-small, 5px) / 2);
-                    background: var(--base-surface);
+                    background: var(--base-text--);
                     z-index: 10;
                     max-height: 200px;
                     overflow-y: auto;
@@ -156,13 +158,13 @@ class KeplerSelect extends HTMLElement {
                     padding: var(--spacing-medium, 8px);
                     font-size: var(--font-size, 16px);
                     font-family: Tomorrow, sans-serif;
-                    color: var(--base-text);
-                    background: var(--base-surface);
+                    color: var(--base-background, #000);
+                    background: var(--base-text--);
                     cursor: pointer;
                     transition: background-color 0.2s ease, color 0.2s ease;
                 }
                 .dropdown-item:hover {
-                    background: var(--base-hover);
+                    background: var(--base-text-emphasize);
                 }
                 .dropdown-item.selected {
                     background: var(--primary--);
@@ -283,14 +285,29 @@ class KeplerSelect extends HTMLElement {
     updateComponent() {
         const label = this.getAttribute("label") || "";
         const labelPosition = this.getAttribute("label-position") || "top";
-        const options = JSON.parse(this.getAttribute("options") || "[]");
+        let options = JSON.parse(this.getAttribute("options") || "[]");
         const multiple = this.hasAttribute("multiple");
         const selectionMode = this.getAttribute("selection-mode") || "combined";
+
+        // If a default value is provided via the value attribute, update options.
+        if (this.hasAttribute("value")) {
+            const valueAttr = this.getAttribute("value");
+            const selectedValues = multiple
+                ? valueAttr.split(",").map((val) => val.trim())
+                : [valueAttr.trim()];
+            options = options.map((opt) => ({
+                ...opt,
+                selected: selectedValues.includes(opt.value),
+            }));
+            if (multiple) {
+                this.selectedValues = new Set(selectedValues);
+            }
+        }
 
         this.labelTextElement.textContent = label;
         this.setAttribute("label-position", labelPosition);
 
-        // Populate dropdown
+        // Populate dropdown with updated options.
         this.dropdown.innerHTML = options
             .map(
                 (opt) => `
@@ -300,11 +317,14 @@ class KeplerSelect extends HTMLElement {
             )
             .join("");
 
-        // Update selected values for multiple mode
         if (multiple) {
-            this.selectedValues = new Set(
-                options.filter((opt) => opt.selected).map((opt) => opt.value)
-            );
+            if (!this.selectedValues.size) {
+                this.selectedValues = new Set(
+                    options
+                        .filter((opt) => opt.selected)
+                        .map((opt) => opt.value)
+                );
+            }
         } else {
             const selected = options.find((opt) => opt.selected);
             this.selectedValueElement.textContent =
@@ -452,6 +472,40 @@ class KeplerSelect extends HTMLElement {
                     : "";
             }
         }
+    }
+
+    get value() {
+        // For multiple selection, return a comma-delimited string; otherwise, a single value.
+        if (this.hasAttribute("multiple")) {
+            return Array.from(this.selectedValues).join(",");
+        } else {
+            const selectedItem = this.shadowRoot.querySelector(
+                ".dropdown-item.selected"
+            );
+            return selectedItem ? selectedItem.getAttribute("data-value") : "";
+        }
+    }
+
+    set value(newVal) {
+        const multiple = this.hasAttribute("multiple");
+        if (typeof newVal === "string") {
+            if (multiple) {
+                // Split comma-delimited string into an array of trimmed values
+                const values = newVal.split(",").map((val) => val.trim());
+                this.selectedValues = new Set(values);
+            } else {
+                this.selectedValues = new Set([newVal.trim()]);
+            }
+        } else if (Array.isArray(newVal)) {
+            this.selectedValues = new Set(newVal);
+        }
+        // Update the component to reflect the new selection.
+        this.updateComponent();
+        this.updateSelectedDisplay(
+            multiple,
+            this.getAttribute("selection-mode") || "combined"
+        );
+        this.updateHiddenInput();
     }
 }
 

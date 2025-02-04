@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Kepler UI</title>
         <script type="module" src="/dist/kepler-ui.js"></script>
+        <link rel="stylesheet" href="/dist/styles/main.css" />
         <link rel="stylesheet" href="/styles.css" />
         <link
             rel="stylesheet"
@@ -12,7 +13,7 @@
         />
     </head>
     <body>
-        <kp-theme theme="kepler-light">
+        <kp-theme theme="kepler-dark">
             <div class="test">
                 <div>
                     <h1>Kepler UI</h1>
@@ -21,141 +22,195 @@
                 <kp-break></kp-break>
                 <div class="card-wrapper">
                     <kp-tabs
+                        active-tab="tab2"
                         tabs='[
-                        {"name": "Tab One", "tab": "tab1"},
-                        {"name": "Tab Two", "tab": "tab2"},
-                        {"name": "Tab Three", "tab": "tab3", "disabled": true}
+                        {"name": "Example Form", "tab": "tab1"},
+                        {"name": "Example Grid", "tab": "tab2"},
+                        {"name": "Disabled Tab", "tab": "tab3", "disabled": true}
                     ]'
                     >
                         <div slot="tab1">
-                            <p>This is the content for Tab One.</p>
+                            <form id="loginForm">
+                                <kp-card>
+                                    <div slot="header">
+                                        <h5>Login</h5>
+                                    </div>
+                                    <section>
+                                        <div>
+                                            <kp-input
+                                                id="usernameInput"
+                                                name="username"
+                                                label="User Name"
+                                                label-position="left"
+                                                placeholder="Enter a value"
+                                                value="TestUser"
+                                            ></kp-input>
+                                            <kp-input
+                                                id="passwordInput"
+                                                name="password"
+                                                label="Password"
+                                                label-position="left"
+                                                placeholder="Enter a value"
+                                                type="password"
+                                            ></kp-input>
+                                            <kp-select
+                                                id="themeSelect"
+                                                label-position="left"
+                                                name="theme"
+                                                label="Theme"
+                                                value="kepler-dark"
+                                            ></kp-select>
+                                            <kp-select
+                                                id="multiSelect"
+                                                name="multiSelect"
+                                                value="1,2"
+                                                label="Select"
+                                                label-position="left"
+                                                selection-mode="combined"
+                                                multiple="true"
+                                                options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
+                                            ></kp-select>
+                                            <kp-checkbox
+                                                id="rememberMeCheckbox"
+                                                name="rememberMe"
+                                                label-position="left"
+                                                label="Remember Me"
+                                            ></kp-checkbox>
+                                            <kp-radio
+                                                id="exampleRadioGroup"
+                                                name="exampleRadios"
+                                                label-position="left"
+                                                options='[
+                                                    {"label": "Option 1", "value": "option1"},
+                                                    {"label": "Option 2", "value": "option2"},
+                                                    {"label": "Option 3", "value": "option3"}
+                                                ]'
+                                                selected-value="option2"
+                                            ></kp-radio>
+                                            <kp-slider
+                                                id="exampleSlider"
+                                                name="exampleSlider"
+                                                label-position="left"
+                                                label="Slider"
+                                                min="0"
+                                                max="100"
+                                                step="1"
+                                                value="50"
+                                            ></kp-slider>
+                                        </div>
+                                    </section>
+                                    <div slot="footer">
+                                        <kp-button
+                                            id="loginButton"
+                                            type="submit"
+                                            size="medium"
+                                            color="primary"
+                                        >
+                                            Login
+                                        </kp-button>
+                                        <kp-button size="medium"
+                                            >Cancel</kp-button
+                                        >
+                                        <kp-button
+                                            size="medium"
+                                            onclick="dialog.visible = true"
+                                        >
+                                            Show Dialog
+                                        </kp-button>
+                                        <kp-button id="menuButton"
+                                            ><i
+                                                slot="left-icon"
+                                                class="fas fa-plus"
+                                            ></i
+                                        ></kp-button>
+                                        <kp-menu
+                                            anchor="#menuButton"
+                                            position="bottom"
+                                            track-selection="false"
+                                            align="start"
+                                            items='[
+                                            {"label": "Option One", "value": "1", "href": "/"},
+                                            {"label": "Option Two", "value": "2"},
+                                            {"label": "Option Three", "value": "3"}
+                                        ]'
+                                        ></kp-menu>
+                                    </div>
+                                </kp-card>
+                            </form>
                         </div>
-                        <div slot="tab2">
-                            <p>This is the content for Tab Two.</p>
+                        <div slot="tab2" class="example-grid-tab">
+                            <kp-panelbar>
+                                <kp-panel>
+                                    <i slot="icon" class="fas fa-user"></i>
+                                    <label slot="label">Parent 1</label>
+                                    <kp-panelbar slot="children">
+                                        <kp-panel selected
+                                            ><label slot="label"
+                                                >Child 1</label
+                                            ></kp-panel
+                                        >
+                                        <kp-panel
+                                            ><label slot="label"
+                                                >Child 2</label
+                                            ></kp-panel
+                                        >
+                                    </kp-panelbar>
+                                </kp-panel>
+                                <kp-panel expanded>
+                                    <i slot="icon" class="fas fa-user"></i>
+                                    <label slot="label">Parent 2</label>
+                                    <kp-panelbar slot="children">
+                                        <kp-panel href="/"
+                                            ><label slot="label"
+                                                >Child 1</label
+                                            ></kp-panel
+                                        >
+                                        <kp-panel
+                                            ><label slot="label"
+                                                >Child 1</label
+                                            ></kp-panel
+                                        >
+                                    </kp-panelbar>
+                                </kp-panel>
+                                <kp-panel>
+                                    <i slot="icon" class="fas fa-user"></i>
+                                    <label slot="label">Parent 3</label>
+                                </kp-panel>
+                            </kp-panelbar>
+                            <kp-card>
+                                <div slot="header">
+                                    <h5>Users</h5>
+                                </div>
+                                <kp-grid
+                                    data='[
+                                    {"name": "Alice", "age": 30, "city": "New York"},
+                                    {"name": "Bob", "age": 25, "city": "San Francisco"},
+                                    {"name": "Charlie", "age": 35, "city": "Chicago"}
+                                ]'
+                                    columns='[
+                                    {"property": "name", "header": "Name", "isRowHeader": true, "width": "150px"},
+                                    {"property": "age", "header": "Age"},
+                                    {"property": "city", "header": "City"}
+                                ]'
+                                ></kp-grid>
+                                <kp-break
+                                    style="padding: var(--spacing-medium) 0"
+                                ></kp-break>
+                                <kp-avatar
+                                    src="https://www.w3schools.com/howto/img_avatar.png"
+                                    alt="Avatar"
+                                    size="large"
+                                    shape="circle"
+                                ></kp-avatar>
+                                <kp-avatar
+                                    src="https://www.w3schools.com/howto/img_avatar.png"
+                                    alt="Avatar"
+                                    size="large"
+                                    shape="square"
+                                ></kp-avatar>
+                            </kp-card>
                         </div>
                     </kp-tabs>
-
-                    <kp-card>
-                        <div slot="header">
-                            <h5>Users</h5>
-                        </div>
-                        <kp-grid
-                            data='[
-                            {"name": "Alice", "age": 30, "city": "New York"},
-                            {"name": "Bob", "age": 25, "city": "San Francisco"},
-                            {"name": "Charlie", "age": 35, "city": "Chicago"}
-                        ]'
-                            columns='[
-                            {"property": "name", "header": "Name", "isRowHeader": true, "width": "150px"},
-                            {"property": "age", "header": "Age"},
-                            {"property": "city", "header": "City"}
-                        ]'
-                        ></kp-grid>
-                        <kp-break
-                            style="padding: var(--spacing-medium) 0"
-                        ></kp-break>
-                        <kp-avatar
-                            src="https://www.w3schools.com/howto/img_avatar.png"
-                            alt="Avatar"
-                            size="large"
-                            shape="circle"
-                        ></kp-avatar>
-                        <kp-avatar
-                            src="https://www.w3schools.com/howto/img_avatar.png"
-                            alt="Avatar"
-                            size="large"
-                            shape="square"
-                        ></kp-avatar>
-                    </kp-card>
-
-                    <form id="loginForm">
-                        <kp-card>
-                            <div slot="header">
-                                <h5>Login</h5>
-                            </div>
-                            <section>
-                                <div>
-                                    <kp-input
-                                        id="usernameInput"
-                                        name="username"
-                                        label="User Name"
-                                        label-position="left"
-                                        placeholder="Enter a value"
-                                        value="TestUser"
-                                    ></kp-input>
-                                    <kp-input
-                                        id="passwordInput"
-                                        name="password"
-                                        label="Password"
-                                        label-position="left"
-                                        placeholder="Enter a value"
-                                        type="password"
-                                    ></kp-input>
-                                    <kp-select
-                                        id="themeSelect"
-                                        label-position="left"
-                                        name="theme"
-                                        label="Theme"
-                                        jrod
-                                    ></kp-select>
-                                    <kp-select
-                                        id="multiSelect"
-                                        name="multiSelect"
-                                        label="Select"
-                                        label-position="left"
-                                        combined
-                                        selection-mode="single"
-                                        multiple="true"
-                                        options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
-                                    ></kp-select>
-                                    <kp-checkbox
-                                        id="rememberMeCheckbox"
-                                        name="rememberMe"
-                                        label-position="left"
-                                        label="Remember Me"
-                                    ></kp-checkbox>
-                                    <kp-radio
-                                        id="exampleRadioGroup"
-                                        name="exampleRadios"
-                                        label-position="left"
-                                        options='[
-                                            {"label": "Option 1", "value": "option1"},
-                                            {"label": "Option 2", "value": "option2"},
-                                            {"label": "Option 3", "value": "option3"}
-                                        ]'
-                                        selected-value="option2"
-                                    ></kp-radio>
-                                    <kp-slider
-                                        id="exampleSlider"
-                                        name="exampleSlider"
-                                        label-position="left"
-                                        label="Slider"
-                                        min="0"
-                                        max="100"
-                                        step="1"
-                                        value="50"
-                                    ></kp-slider>
-                                </div>
-                            </section>
-                            <div slot="footer">
-                                <kp-button
-                                    id="loginButton"
-                                    type="submit"
-                                    size="medium"
-                                    color="primary"
-                                >
-                                    Login
-                                </kp-button>
-                                <kp-button size="medium">Cancel</kp-button>
-                                <kp-button
-                                    size="medium"
-                                    onclick="dialog.visible = true"
-                                >
-                                    Show Dialog
-                                </kp-button>
-                            </div>
-                        </kp-card>
-                    </form>
                 </div>
 
                 <kp-break></kp-break>
@@ -174,8 +229,6 @@
                         >
                     </div>
                 </kp-dialog>
-
-                <p>Lorem Ipsum and some such</p>
             </div>
         </kp-theme>
 

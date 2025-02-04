@@ -12,3 +12,6 @@ import "./components/kepler-grid.js";
 import "./components/kepler-avatar.js";
 import "./components/kepler-dialog.js";
 import "./components/kepler-tabs.js";
+import "./components/kepler-menu.js";
+import "./components/kepler-panelbar.js";
+import "./components/kepler-panel.js";

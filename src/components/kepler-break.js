@@ -26,7 +26,7 @@ class KeplerBreak extends HTMLElement {
             );
           }
         </style>
-        <div class="break"></div>
+        <div class="break" part="break"></div>
       `;
     }
 }

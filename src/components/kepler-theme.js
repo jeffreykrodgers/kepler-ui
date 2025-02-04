@@ -26,19 +26,23 @@ class KeplerTheme extends HTMLElement {
 
     loadTheme() {
         const theme = this.getAttribute("theme") || "kepler-light";
-        const variablesCSS = "/src/styles/variables.css";
-        const themeCSS = `/src/styles/${theme}.css`;
+        const variablesCSS = new URL("../styles/variables.css", import.meta.url)
+            .href;
+        const themeCSS = new URL(`../styles/${theme}.css`, import.meta.url)
+            .href;
+        const mainCSS = new URL("../styles/main.css", import.meta.url).href;
 
         // Inject styles into the shadow DOM
         this.shadowRoot.innerHTML = `
         <style>
-          @import url('${variablesCSS}');
-          @import url('${themeCSS}');
+            @import url('${variablesCSS}');
+            @import url('${themeCSS}');
+            @import url('${mainCSS}');
   
-          :host {
-            display: block;
-            background: var(--base-background);
-          }
+            :host {
+                display: block;
+                background: var(--base-background);
+            }
         </style>
         <slot></slot>
       `;

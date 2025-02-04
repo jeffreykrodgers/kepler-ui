@@ -1,28 +1,37 @@
 {
-  "name": "kepler-ui",
-  "version": "1.0.0",
-  "description": "Sci-Fi inspired high-contrast ui kit",
-  "main": "dist/kepler-ui.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c",
-    "dev": "node server.js"
-  },
-  "author": "Jeffrey Rodgers",
-  "license": "ISC",
-  "devDependencies": {
-    "@eslint/js": "^9.19.0",
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@rollup/plugin-terser": "^0.4.4",
-    "chokidar": "^4.0.3",
-    "eslint": "^9.19.0",
-    "eslint-config-prettier": "^10.0.1",
-    "font-awesome": "^4.7.0",
-    "globals": "^15.14.0",
-    "prettier": "3.4.2",
-    "rollup": "^2.79.2",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "ws": "^8.18.0"
-  }
+    "name": "kepler-ui",
+    "version": "0.0.1",
+    "description": "Sci-Fi inspired web component ui kit",
+    "files": [
+        "styles",
+        "assets",
+        "kepler-ui.js",
+        "package.json"
+    ],
+    "main": "kepler-ui.js",
+    "module": "kepler-ui.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rollup -c",
+        "dev": "node server.js",
+        "prepublishOnly": "node prepare-publish.js && rollup -c"
+    },
+    "author": "Jeffrey Rodgers",
+    "license": "MIT",
+    "devDependencies": {
+        "@eslint/js": "^9.19.0",
+        "@fortawesome/fontawesome-svg-core": "^6.7.2",
+        "@fortawesome/free-solid-svg-icons": "^6.7.2",
+        "@rollup/plugin-terser": "^0.4.4",
+        "chokidar": "^4.0.3",
+        "eslint": "^9.19.0",
+        "eslint-config-prettier": "^10.0.1",
+        "font-awesome": "^4.7.0",
+        "globals": "^15.14.0",
+        "prettier": "3.4.2",
+        "rollup": "^2.79.2",
+        "rollup-plugin-copy": "^3.5.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "ws": "^8.18.0"
+    }
 }

@@ -38,7 +38,6 @@ class KeplerGrid extends HTMLElement {
     // Allow setting grid data/columns via properties.
     set gridData(value) {
         this.data = value;
-        console.log("Setting");
         this.render();
     }
     get gridData() {
@@ -147,7 +146,7 @@ class KeplerGrid extends HTMLElement {
         const headerHTML = this.renderHeader();
         const bodyHTML = this.renderBody();
         const tableHTML = `
-        <table>
+        <table part="table">
           <thead>${headerHTML}</thead>
           <tbody>${bodyHTML}</tbody>
         </table>

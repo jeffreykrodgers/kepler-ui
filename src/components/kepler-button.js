@@ -25,6 +25,19 @@ class KeplerButton extends HTMLElement {
         this.addEventListeners();
     }
 
+    connectedCallback() {
+        // If no size attribute is provided, set it to "medium" by default.
+        if (!this.hasAttribute("size")) {
+            this.setAttribute("size", "medium");
+        }
+        this.applyStyles();
+        this.render();
+        // Proxy native onclick function to the button.
+        this.proxyNativeOnClick();
+        // Add event listeners for custom interactions.
+        this.addEventListeners();
+    }
+
     static get observedAttributes() {
         return [
             "left-icon",
@@ -94,10 +107,10 @@ class KeplerButton extends HTMLElement {
         }
 
         this.button.innerHTML = `
-          <span class="button-content">
-            <span class="icon left-icon"><slot name="left-icon"></slot></span>
-            <span class="label"><slot></slot></span>
-            <span class="icon right-icon"><slot name="right-icon"></slot></span>
+          <span class="button-content" part="button-content">
+            <span class="icon left-icon" part="left-icon"><slot name="left-icon"></slot></span>
+            <span class="label" part="label"><slot></slot></span>
+            <span class="icon right-icon" part="right-icon"><slot name="right-icon"></slot></span>
           </span>
         `;
 
@@ -108,12 +121,18 @@ class KeplerButton extends HTMLElement {
     }
 
     proxyNativeOnClick() {
-        Object.defineProperty(this, "onclick", {
-            get: () => this.button.onclick,
-            set: (value) => {
-                this.button.onclick = value;
-            },
-        });
+        try {
+            Object.defineProperty(this, "onclick", {
+                get: () => this.button.onclick,
+                set: (value) => {
+                    this.button.onclick = value;
+                },
+                configurable: true,
+                enumerable: true,
+            });
+        } catch (e) {
+            console.warn("Could not redefine onclick:", e);
+        }
     }
 
     manageSlotVisibility(slotName, selector) {
@@ -213,10 +232,14 @@ class KeplerButton extends HTMLElement {
     applyStyles() {
         const style = document.createElement("style");
         style.textContent = `
+            :host {
+                display: inline-block;
+            }
             .button {
                 box-sizing: border-box;
                 display: inline-flex;
                 min-height: var(--button-min-height, 40px);
+                min-width: var(--button-min-width, 40px);
                 padding: var(--button-padding, 16px);
                 justify-content: center;
                 align-items: center;
@@ -305,6 +328,8 @@ class KeplerButton extends HTMLElement {
     
             .icon {
                 display: flex;
+                min-width: 16px;
+                justify-content: center;
             }
     
             .label, .icon {
@@ -435,13 +460,58 @@ class KeplerButton extends HTMLElement {
             "--content-padding",
             `var(${contentPadding}, 8px)`
         );
-
         this.button.style.setProperty(
             "--button-padding",
             `var(${buttonPadding}, 16px)`
         );
-
         this.button.style.setProperty("--gap", `var(${buttonPadding}, 16px)`); // Use button padding for gap
+
+        // Set dynamic min-height and min-width based on size.
+        const minSizeMapping = {
+            small: "32px",
+            medium: "40px",
+            large: "52px",
+        };
+        this.button.style.setProperty(
+            "--button-min-height",
+            minSizeMapping[size] || "40px"
+        );
+        this.button.style.setProperty(
+            "--button-min-width",
+            minSizeMapping[size] || "40px"
+        );
+    }
+
+    // Getter for the "value" property.
+    get value() {
+        if (this.hasAttribute("multiple")) {
+            return Array.from(this.selectedValues).join(",");
+        } else {
+            return this.selectedValues.size
+                ? Array.from(this.selectedValues)[0]
+                : "";
+        }
+    }
+
+    // Setter for the "value" property.
+    set value(newVal) {
+        if (this.hasAttribute("multiple")) {
+            if (typeof newVal === "string") {
+                this.selectedValues = new Set(
+                    newVal.split(",").map((s) => s.trim())
+                );
+            } else if (Array.isArray(newVal)) {
+                this.selectedValues = new Set(newVal);
+            }
+        } else {
+            if (typeof newVal === "string") {
+                this.selectedValues = new Set([newVal.trim()]);
+            } else {
+                this.selectedValues = new Set();
+            }
+        }
+        // Reflect the new value in the rendered menu.
+        this.updateComponent();
     }
 }
 

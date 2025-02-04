@@ -9,28 +9,36 @@ class KeplerTabs extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["tabs"];
+        return ["tabs", "active-tab"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "tabs" && oldValue !== newValue) {
-            try {
-                this.tabs = JSON.parse(newValue);
-            } catch (e) {
-                console.error("Invalid JSON for tabs:", newValue);
-                this.tabs = [];
+        if (oldValue !== newValue) {
+            if (name === "tabs") {
+                try {
+                    this.tabs = JSON.parse(newValue);
+                } catch (e) {
+                    console.error("Invalid JSON for tabs:", newValue);
+                    this.tabs = [];
+                }
+                // If no active tab is set via the active-tab attribute,
+                // then default to the first enabled tab.
+                if (!this.hasAttribute("active-tab") && this.tabs.length) {
+                    const firstEnabled = this.tabs.find((tab) => !tab.disabled);
+                    this.activeTab = firstEnabled ? firstEnabled.tab : null;
+                }
+                this.render();
+            } else if (name === "active-tab") {
+                // Use the value of active-tab attribute as the default active tab.
+                this.activeTab = newValue;
+                this.render();
             }
-            // Set a default active tab if none exists.
-            if (!this.activeTab && this.tabs.length) {
-                const firstEnabled = this.tabs.find((tab) => !tab.disabled);
-                this.activeTab = firstEnabled ? firstEnabled.tab : null;
-            }
-            this.render();
         }
     }
 
     connectedCallback() {
-        // If no active tab is set, default to first enabled tab.
+        // If no active tab is set (and no active-tab attribute is provided),
+        // default to the first enabled tab.
         if (!this.activeTab && this.tabs.length) {
             const firstEnabled = this.tabs.find((tab) => !tab.disabled);
             this.activeTab = firstEnabled ? firstEnabled.tab : null;
@@ -180,7 +188,8 @@ class KeplerTabs extends HTMLElement {
                 if (header.classList.contains("disabled")) return;
                 const tabId = header.getAttribute("data-tab");
                 this.activeTab = tabId;
-                this.render(); // re-render to update active state in header and body.
+                this.setAttribute("active-tab", tabId);
+                this.render();
                 this.dispatchEvent(
                     new CustomEvent("change", {
                         detail: { activeTab: tabId },

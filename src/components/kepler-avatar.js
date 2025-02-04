@@ -53,7 +53,7 @@ class KeplerAvatar extends HTMLElement {
             border-radius: ${borderRadius};
           }
         </style>
-        <img src="${src}" alt="${alt}">
+        <img src="${src}" alt="${alt}" part="avatar" />
       `;
     }
 }

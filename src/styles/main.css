@@ -1,0 +1,93 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    color: var(--base-text--, #333);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+button {
+    font-family: "ProFontWindows", sans-serif;
+}
+
+p,
+a,
+span,
+small,
+strong {
+    font-family: "Tomorrow", sans-serif;
+}
+
+.display-1 {
+    color: var(--base-text--);
+    font-size: var(--size-display1);
+}
+
+.display-2 {
+    color: var(--primary--);
+    font-size: var(--size-display2);
+    text-transform: uppercase;
+}
+
+.display-3 {
+    color: var(--base-text-light);
+    font-size: var(--size-display3);
+}
+
+.display-4 {
+    color: var(--base-text-subtle);
+    font-size: var(--size-display4);
+    text-transform: uppercase;
+}
+
+h1 {
+    color: var(--base-text--);
+    font-size: var(--size-h1);
+}
+
+h1:first-child {
+    margin-top: 0;
+}
+
+h2 {
+    color: var(--primary--);
+    font-size: var(--size-h2);
+    text-transform: uppercase;
+}
+
+h3 {
+    color: var(--base-text-light);
+    font-size: var(--size-h3);
+}
+
+h4 {
+    color: var(--base-text-subtle);
+    font-size: var(--size-h4);
+    text-transform: uppercase;
+}
+
+h5 {
+    color: var(--base-text--);
+    font-size: var(--size-h5);
+}
+
+h6 {
+    color: var(--primary--);
+    font-size: var(--size-h6);
+}
+
+p {
+    color: var(--base-text--);
+    font-size: var(--size-p);
+}
+
+small {
+    color: var(--base-text-emphasize);
+    font-size: var(--size-small);
+}
