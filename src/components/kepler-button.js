@@ -255,8 +255,8 @@ class KeplerButton extends HTMLElement {
                 text-transform: uppercase;
                 line-height: 1.2;
                 transition: background-color var(--transition-duration, 0.1s),
-                            color var(--transition-duration, 0.1s),
-                            border-color var(--transition-duration, 0.1s);
+                color var(--transition-duration, 0.1s),
+                border-color var(--transition-duration, 0.1s);
                 cursor: pointer; /* Ensure the button looks interactive */
             }
     
