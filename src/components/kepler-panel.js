@@ -78,6 +78,7 @@ class KeplerPanel extends HTMLElement {
             background: var(--base-surface);
             color: var(--base-text--);
             z-index: 10;
+            border-left: var(--border-medium) solid var(--base-surface);
           }
           :host(.expanded) {
             background: var(--base-text--);

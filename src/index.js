@@ -15,3 +15,4 @@ import "./components/kepler-tabs.js";
 import "./components/kepler-menu.js";
 import "./components/kepler-panelbar.js";
 import "./components/kepler-panel.js";
+import "./components/kepler-router.js";

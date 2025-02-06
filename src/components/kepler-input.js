@@ -27,6 +27,8 @@ class KeplerInput extends HTMLElement {
                     border-radius: var(--border-small, 4px);
                     gap: var(--spacing-small, 8px);
                     transition: background-color 0.2s ease, color 0.2s ease;
+                    min-height: 40px;
+                    min-width: 40px;
                 }
 
                 :host([label-position="top"]) .label-wrapper,

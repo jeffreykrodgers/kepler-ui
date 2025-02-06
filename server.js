@@ -1,96 +1,34 @@
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
-const chokidar = require("chokidar");
-const WebSocket = require("ws");
-const { exec } = require("child_process");
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import livereload from "livereload";
+import connectLivereload from "connect-livereload";
 
-// Configuration
-const PORT = 8080;
-const ROOT_FILES = ["index.html", "styles.css"];
-const WATCH_DIRS = [path.join(__dirname, "src"), ...ROOT_FILES];
+// __dirname is not defined in ES modules; compute it from import.meta.url
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Create HTTP server to serve static files
-const server = http.createServer((req, res) => {
-    const filePath =
-        req.url === "/"
-            ? path.join(__dirname, "index.html")
-            : path.join(__dirname, req.url);
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-    if (req.url === "/livereload.js") {
-        // Serve WebSocket client script
-        res.writeHead(200, { "Content-Type": "application/javascript" });
-        res.end(`
-      const socket = new WebSocket('ws://localhost:${PORT}');
-      socket.onmessage = (event) => {
-        if (event.data === 'reload') {
-          window.location.reload();
-        }
-      };
-    `);
-        return;
-    }
+// Create a livereload server that watches the pub folder
+const liveReloadServer = livereload.createServer();
+liveReloadServer.watch(path.join(__dirname, "pub"));
 
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            res.writeHead(404);
-            res.end("404: File Not Found");
-        } else {
-            res.writeHead(200, { "Content-Type": getContentType(filePath) });
-            res.end(data);
-        }
-    });
+// Inject the livereload script into your served HTML pages
+app.use(connectLivereload());
+
+// Serve static files from the "pub" folder
+app.use(express.static(path.join(__dirname, "pub")));
+
+app.use("/dist", express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, "pub")));
+
+// For SPA routing, redirect all unmatched routes to index.html
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "pub", "index.html"));
 });
 
-function getContentType(filePath) {
-    const ext = path.extname(filePath).toLowerCase();
-    switch (ext) {
-        case ".html":
-            return "text/html";
-        case ".js":
-            return "application/javascript";
-        case ".css":
-            return "text/css";
-        default:
-            return "text/plain";
-    }
-}
-
-// Set up WebSocket server for live reload
-const wss = new WebSocket.Server({ server });
-wss.on("connection", (ws) => {
-    console.log("Browser connected");
-});
-
-chokidar.watch(WATCH_DIRS).on("change", (file) => {
-    console.log(`${file} changed. Rebuilding...`);
-    runBuild();
-});
-
-function runBuild() {
-    exec("npm run build", (err, stdout, stderr) => {
-        if (err) {
-            console.error(`Build failed: ${stderr}`);
-            return;
-        }
-        clearConsole();
-        console.log(`Build successful:\n${stdout}`);
-        reloadBrowser();
-    });
-}
-
-function reloadBrowser() {
-    wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send("reload");
-        }
-    });
-}
-
-function clearConsole() {
-    process.stdout.write("\x1Bc");
-}
-
-server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`Dev server is running at http://localhost:${PORT}`);
 });

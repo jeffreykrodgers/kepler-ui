@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Kepler UI Test Site</title>
+        <!-- Reference the built styles -->
+        <link rel="stylesheet" href="/styles.css" />
+        <link rel="stylesheet" href="/dist/styles/main.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        />
+        <!-- Reference the UI kit that was built into dist -->
+    </head>
+    <body>
+        <!-- Your test site content -->
+        <kp-theme theme="kepler-dark">
+            <kp-router>
+                <div slot="routeSlot1">
+                    <h1>Home Page</h1>
+                    <p>Welcome to the Kepler UI test site!</p>
+                </div>
+            </kp-router>
+            <kp-button>Test</kp-button>
+        </kp-theme>
+        <!-- Your test site's script bundle -->
+        <script type="module" src="/script.js"></script>
+    </body>
+</html>

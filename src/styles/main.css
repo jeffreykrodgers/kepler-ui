@@ -51,10 +51,6 @@ h1 {
     font-size: var(--size-h1);
 }
 
-h1:first-child {
-    margin-top: 0;
-}
-
 h2 {
     color: var(--primary--);
     font-size: var(--size-h2);
