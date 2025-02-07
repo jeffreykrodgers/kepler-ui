@@ -336,4 +336,6 @@ class KeplerSlider extends HTMLElement {
     }
 }
 
-customElements.define("kp-slider", KeplerSlider);
+if (!customElements.get("kp-slider")) {
+    customElements.define("kp-slider", KeplerSlider);
+}

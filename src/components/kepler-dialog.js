@@ -171,4 +171,6 @@ class KeplerDialog extends HTMLElement {
     }
 }
 
-customElements.define("kp-dialog", KeplerDialog);
+if (!customElements.get("kp-dialog")) {
+    customElements.define("kp-dialog", KeplerDialog);
+}

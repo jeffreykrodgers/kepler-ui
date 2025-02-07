@@ -515,4 +515,6 @@ class KeplerButton extends HTMLElement {
     }
 }
 
-customElements.define("kp-button", KeplerButton);
+if (!customElements.get("kp-button")) {
+    customElements.define("kp-button", KeplerButton);
+}

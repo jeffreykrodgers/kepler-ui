@@ -351,4 +351,6 @@ class KeplerMenu extends HTMLElement {
     }
 }
 
-customElements.define("kp-menu", KeplerMenu);
+if (!customElements.get("kp-menu")) {
+    customElements.define("kp-menu", KeplerMenu);
+}

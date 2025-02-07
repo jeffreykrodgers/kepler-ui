@@ -31,4 +31,6 @@ class KeplerBreak extends HTMLElement {
     }
 }
 
-customElements.define("kp-break", KeplerBreak);
+if (!customElements.get("kp-break")) {
+    customElements.define("kp-break", KeplerBreak);
+}

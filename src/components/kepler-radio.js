@@ -222,4 +222,6 @@ class KeplerRadio extends HTMLElement {
     }
 }
 
-customElements.define("kp-radio", KeplerRadio);
+if (!customElements.get("kp-radio")) {
+    customElements.define("kp-radio", KeplerRadio);
+}

@@ -282,4 +282,6 @@ class KeplerInput extends HTMLElement {
 }
 
 // Define the custom element
-customElements.define("kp-input", KeplerInput);
+if (!customElements.get("kp-input")) {
+    customElements.define("kp-input", KeplerInput);
+}

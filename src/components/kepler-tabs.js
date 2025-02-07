@@ -202,4 +202,6 @@ class KeplerTabs extends HTMLElement {
     }
 }
 
-customElements.define("kp-tabs", KeplerTabs);
+if (!customElements.get("kp-tabs")) {
+    customElements.define("kp-tabs", KeplerTabs);
+}

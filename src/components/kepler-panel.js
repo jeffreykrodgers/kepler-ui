@@ -263,4 +263,6 @@ class KeplerPanel extends HTMLElement {
     }
 }
 
-customElements.define("kp-panel", KeplerPanel);
+if (!customElements.get("kp-panel")) {
+    customElements.define("kp-panel", KeplerPanel);
+}

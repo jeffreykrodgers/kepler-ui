@@ -6,7 +6,6 @@
         <title>Kepler UI Test Site</title>
         <!-- Reference the built styles -->
         <link rel="stylesheet" href="/styles.css" />
-        <link rel="stylesheet" href="/dist/styles/main.css" />
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -15,11 +14,18 @@
     </head>
     <body>
         <!-- Your test site content -->
-        <kp-theme theme="kepler-dark">
+        <kp-theme theme-path="/styles/kepler-dark.css">
             <kp-router>
                 <div slot="routeSlot1">
                     <h1>Home Page</h1>
                     <p>Welcome to the Kepler UI test site!</p>
+                    <kp-select
+                        id="themeSelect"
+                        label-position="left"
+                        name="theme"
+                        label="Theme"
+                        value="kepler-dark"
+                    ></kp-select>
                 </div>
             </kp-router>
             <kp-button>Test</kp-button>

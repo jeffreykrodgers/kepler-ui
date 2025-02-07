@@ -199,4 +199,6 @@ class KeplerCheckbox extends HTMLElement {
     }
 }
 
-customElements.define("kp-checkbox", KeplerCheckbox);
+if (!customElements.get("kp-checkbox")) {
+    customElements.define("kp-checkbox", KeplerCheckbox);
+}

@@ -119,4 +119,6 @@ class KeplerCard extends HTMLElement {
     }
 }
 
-customElements.define("kp-card", KeplerCard);
+if (!customElements.get("kp-card")) {
+    customElements.define("kp-card", KeplerCard);
+}

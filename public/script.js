@@ -15,11 +15,15 @@ router.setRoutes([
 
 // Set Defaults
 const themeOptions = [
-    { value: "kepler-light", label: "Light Theme", selected: true },
-    { value: "kepler-dark", label: "Dark Theme" },
-    { value: "amber", label: "Amber Theme" },
-    { value: "matrix", label: "Matrix Theme" },
-    { value: "galaxy", label: "Galaxy Theme" },
+    {
+        value: "./styles/kepler-light.css",
+        label: "Light Theme",
+        selected: true,
+    },
+    { value: "./styles/kepler-dark.css", label: "Dark Theme" },
+    { value: "./styles/amber.css", label: "Amber Theme" },
+    { value: "./styles/matrix.css", label: "Matrix Theme" },
+    { value: "./styles/galaxy.css", label: "Galaxy Theme" },
 ];
 
 themeSelect?.setAttribute("options", JSON.stringify(themeOptions));
@@ -42,7 +46,7 @@ radioGroup?.addEventListener("change", (event) => {
 
 themeSelect?.addEventListener("change", (event) => {
     const selectedTheme = event.detail.value;
-    themeComponent.setAttribute("theme", selectedTheme);
+    themeComponent.setAttribute("theme-path", selectedTheme);
 });
 
 // Get a reference to the grid component

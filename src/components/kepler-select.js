@@ -509,4 +509,6 @@ class KeplerSelect extends HTMLElement {
     }
 }
 
-customElements.define("kp-select", KeplerSelect);
+if (!customElements.get("kp-select")) {
+    customElements.define("kp-select", KeplerSelect);
+}

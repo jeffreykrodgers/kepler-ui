@@ -2,12 +2,10 @@ class KeplerRouter extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-
         this.routes = [];
         this.render = this.render.bind(this);
     }
 
-    // Observe the "routes" attribute
     static get observedAttributes() {
         return ["routes"];
     }
@@ -59,7 +57,6 @@ class KeplerRouter extends HTMLElement {
         }
     }
 
-    // Helper to match current path against routes
     findMatchedRoute(currentPath) {
         for (const route of this.routes) {
             const params = this.matchRoute(currentPath, route.route);
@@ -88,56 +85,91 @@ class KeplerRouter extends HTMLElement {
         return null;
     }
 
-    // Render external HTML content into the shadow DOM
+    // Render external HTML content into the shadow DOM.
     renderExternalContent(route) {
         fetch(route.src)
             .then((response) => response.text())
-            .then((html) => {
-                const container = document.createElement("div");
-                container.innerHTML = html;
+            .then((htmlText) => {
+                // Parse the fetched HTML using DOMParser.
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, "text/html");
+                let content;
+                // If a <template> exists, use its content; otherwise, use the full document body.
+                const template = doc.querySelector("template");
+                if (template) {
+                    content = template.content.cloneNode(true);
+                } else {
+                    content = doc.body.cloneNode(true);
+                }
+
+                // Create a document fragment.
                 const fragment = document.createDocumentFragment();
 
+                // If propagateStyles is enabled, clone global style elements from document.head.
                 if (route.propagateStyles) {
-                    if (
-                        document.adoptedStyleSheets &&
-                        document.adoptedStyleSheets.length > 0
-                    ) {
-                        this.shadowRoot.adoptedStyleSheets =
-                            document.adoptedStyleSheets;
-                    } else {
-                        const headStyles = document.querySelectorAll(
-                            'link[rel="stylesheet"], style'
-                        );
-                        headStyles.forEach((el) => {
-                            fragment.appendChild(el.cloneNode(true));
-                        });
-                    }
+                    const headStyles = document.head.querySelectorAll(
+                        'link[rel="stylesheet"], style'
+                    );
+                    headStyles.forEach((el) => {
+                        fragment.appendChild(el.cloneNode(true));
+                    });
                 }
 
-                // Append all remaining content
-                while (container.firstChild) {
-                    fragment.appendChild(container.firstChild);
-                }
+                // Append the content.
+                fragment.appendChild(content);
+
+                // Clear the shadow root and append the fragment.
+                this.shadowRoot.innerHTML = "";
                 this.shadowRoot.appendChild(fragment);
+
+                // Process any inline <script> elements in the shadow DOM.
+                const scripts = this.shadowRoot.querySelectorAll("script");
+                scripts.forEach((oldScript) => {
+                    const newScript = document.createElement("script");
+                    // Copy the type attribute if it exists (e.g., type="module")
+                    if (oldScript.hasAttribute("type")) {
+                        newScript.setAttribute(
+                            "type",
+                            oldScript.getAttribute("type")
+                        );
+                    }
+                    // Copy any other attributes you might need (like async or defer)
+                    if (oldScript.hasAttribute("async")) {
+                        newScript.setAttribute(
+                            "async",
+                            oldScript.getAttribute("async")
+                        );
+                    }
+                    if (oldScript.hasAttribute("defer")) {
+                        newScript.setAttribute(
+                            "defer",
+                            oldScript.getAttribute("defer")
+                        );
+                    }
+                    // If there's a src, assign it; otherwise, copy inline code.
+                    if (oldScript.src) {
+                        newScript.src = oldScript.src;
+                    } else {
+                        newScript.textContent = oldScript.textContent;
+                    }
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
             })
             .catch((err) => {
                 this.shadowRoot.innerHTML = `<div>Error loading route content</div>`;
             });
     }
 
-    // Render slot content based on a route
     renderSlotContent(route) {
         const slot = document.createElement("slot");
         slot.name = route.slot;
         this.shadowRoot.appendChild(slot);
     }
 
-    // Clear the shadow root (helper method)
     clearShadowRoot() {
         this.shadowRoot.innerHTML = "";
     }
 
-    // Main render method
     render() {
         const currentPath = window.location.pathname;
         const matchedRoute = this.findMatchedRoute(currentPath);
@@ -154,11 +186,12 @@ class KeplerRouter extends HTMLElement {
         }
     }
 
-    // Allow setting routes dynamically via a method
     setRoutes(routes) {
         this.routes = routes;
         this.render();
     }
 }
 
-customElements.define("kp-router", KeplerRouter);
+if (!customElements.get("kp-router")) {
+    customElements.define("kp-router", KeplerRouter);
+}

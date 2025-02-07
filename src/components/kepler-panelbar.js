@@ -15,4 +15,7 @@ class KeplerPanelBar extends HTMLElement {
       `;
     }
 }
-customElements.define("kp-panelbar", KeplerPanelBar);
+
+if (!customElements.get("kp-panelbar")) {
+    customElements.define("kp-panelbar", KeplerPanelBar);
+}

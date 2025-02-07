@@ -58,4 +58,6 @@ class KeplerAvatar extends HTMLElement {
     }
 }
 
-customElements.define("kp-avatar", KeplerAvatar);
+if (!customElements.get("kp-avatar")) {
+    customElements.define("kp-avatar", KeplerAvatar);
+}

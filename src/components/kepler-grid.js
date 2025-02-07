@@ -218,4 +218,6 @@ class KeplerGrid extends HTMLElement {
     }
 }
 
-customElements.define("kp-grid", KeplerGrid);
+if (!customElements.get("kp-grid")) {
+    customElements.define("kp-grid", KeplerGrid);
+}
