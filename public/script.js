@@ -10,6 +10,7 @@ const grid = document.querySelector("kp-grid");
 
 router.setRoutes([
     { route: "/", slot: "routeSlot1" },
+    { route: "/two", slot: "routeSlot2" },
     { route: "/test", src: "/test.html", propagateStyles: true }, // load content from an external file
 ]);
 

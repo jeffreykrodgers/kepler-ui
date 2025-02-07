@@ -19,12 +19,43 @@
                 <div slot="routeSlot1">
                     <h1>Home Page</h1>
                     <p>Welcome to the Kepler UI test site!</p>
+                    <kp-tabs
+                        tabs='[{ "name": "Home", "tab": "home" }, { "name": "About", "tab": "about" }]'
+                    >
+                        <div slot="home">
+                            <h2>Home</h2>
+                            <p>This is the home page.</p>
+                            <!-- prettier-ignore-->
+                            <kp-code>
+    // This is a test block of js 
+    function test() {
+        console.log("test"); 
+    }
+                            </kp-code>
+                        </div>
+                        <div slot="about">
+                            <h2>About</h2>
+                            <p>This is the about page.</p>
+                        </div>
+                    </kp-tabs>
                     <kp-select
-                        id="themeSelect"
+                        id="selecttwo"
                         label-position="left"
-                        name="theme"
+                        name="selecttwo"
                         label="Theme"
-                        value="kepler-dark"
+                        multiple
+                        value="2, 3"
+                        options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
+                    ></kp-select>
+                </div>
+                <div slot="routeSlot2">
+                    <kp-select
+                        id="selectthree"
+                        label-position="left"
+                        name="selectthree"
+                        label="Theme"
+                        value="1"
+                        options='[{"value":"1","label":"Option 1"},{"value":"2","label":"Option 2"},{"value":"3","label":"Option 3"}]'
                     ></kp-select>
                 </div>
             </kp-router>

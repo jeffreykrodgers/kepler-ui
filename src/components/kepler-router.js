@@ -23,7 +23,6 @@ class KeplerRouter extends HTMLElement {
 
     connectedCallback() {
         window.addEventListener("popstate", this.render);
-
         if (!KeplerRouter._globalClickAttached) {
             document.addEventListener("click", KeplerRouter.handleGlobalClick);
             KeplerRouter._globalClickAttached = true;
@@ -87,14 +86,15 @@ class KeplerRouter extends HTMLElement {
 
     // Render external HTML content into the shadow DOM.
     renderExternalContent(route) {
-        fetch(route.src)
+        // Append a cache-busting query parameter to force a fresh fetch.
+        const urlWithCacheBuster = route.src + "?t=" + Date.now();
+        fetch(urlWithCacheBuster)
             .then((response) => response.text())
             .then((htmlText) => {
                 // Parse the fetched HTML using DOMParser.
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, "text/html");
                 let content;
-                // If a <template> exists, use its content; otherwise, use the full document body.
                 const template = doc.querySelector("template");
                 if (template) {
                     content = template.content.cloneNode(true);
@@ -115,44 +115,65 @@ class KeplerRouter extends HTMLElement {
                     });
                 }
 
-                // Append the content.
+                // Append the parsed content.
                 fragment.appendChild(content);
 
-                // Clear the shadow root and append the fragment.
-                this.shadowRoot.innerHTML = "";
+                // Clear the shadow root completely.
+                this.clearShadowRoot();
+
+                // Append the new content.
                 this.shadowRoot.appendChild(fragment);
 
-                // Process any inline <script> elements in the shadow DOM.
+                // Process inline <script> elements in the new content.
                 const scripts = this.shadowRoot.querySelectorAll("script");
                 scripts.forEach((oldScript) => {
-                    const newScript = document.createElement("script");
-                    // Copy the type attribute if it exists (e.g., type="module")
-                    if (oldScript.hasAttribute("type")) {
-                        newScript.setAttribute(
-                            "type",
-                            oldScript.getAttribute("type")
+                    // If the script is a module with a src, use dynamic import.
+                    if (
+                        oldScript.getAttribute("type") === "module" &&
+                        oldScript.src
+                    ) {
+                        // Append a cache-busting query parameter.
+                        const moduleUrl =
+                            oldScript.src +
+                            (oldScript.src.includes("?") ? "&" : "?") +
+                            "t=" +
+                            Date.now();
+                        import(moduleUrl).catch((err) =>
+                            console.error(
+                                "Error dynamically importing module script:",
+                                err
+                            )
                         );
-                    }
-                    // Copy any other attributes you might need (like async or defer)
-                    if (oldScript.hasAttribute("async")) {
-                        newScript.setAttribute(
-                            "async",
-                            oldScript.getAttribute("async")
-                        );
-                    }
-                    if (oldScript.hasAttribute("defer")) {
-                        newScript.setAttribute(
-                            "defer",
-                            oldScript.getAttribute("defer")
-                        );
-                    }
-                    // If there's a src, assign it; otherwise, copy inline code.
-                    if (oldScript.src) {
-                        newScript.src = oldScript.src;
+                        // Remove the original script.
+                        oldScript.remove();
                     } else {
-                        newScript.textContent = oldScript.textContent;
+                        // For non-module or inline scripts, recreate and replace.
+                        const newScript = document.createElement("script");
+                        if (oldScript.hasAttribute("type")) {
+                            newScript.setAttribute(
+                                "type",
+                                oldScript.getAttribute("type")
+                            );
+                        }
+                        if (oldScript.hasAttribute("async")) {
+                            newScript.setAttribute(
+                                "async",
+                                oldScript.getAttribute("async")
+                            );
+                        }
+                        if (oldScript.hasAttribute("defer")) {
+                            newScript.setAttribute(
+                                "defer",
+                                oldScript.getAttribute("defer")
+                            );
+                        }
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
                     }
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
                 });
             })
             .catch((err) => {
@@ -167,7 +188,9 @@ class KeplerRouter extends HTMLElement {
     }
 
     clearShadowRoot() {
-        this.shadowRoot.innerHTML = "";
+        while (this.shadowRoot.firstChild) {
+            this.shadowRoot.removeChild(this.shadowRoot.firstChild);
+        }
     }
 
     render() {
@@ -184,6 +207,8 @@ class KeplerRouter extends HTMLElement {
         } else {
             this.shadowRoot.innerHTML = `<div>Not Found</div>`;
         }
+
+        window.__routerShadowRoot = this.shadowRoot;
     }
 
     setRoutes(routes) {

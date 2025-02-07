@@ -53,191 +53,190 @@ class KeplerSelect extends HTMLElement {
 
     render() {
         this.shadowRoot.innerHTML = `
-            <style>
-                :host {
-                    display: inline-block;
-                    width: 100%;
-                    position: relative;
-                }
-                .label-wrapper {
-                    display: flex;
-                    flex: 1 0 auto;
-                    box-sizing: border-box;
-                    align-items: center;
-                    font-family: ProFontWindows, sans-serif;
-                    font-size: 21px;
-                    line-height: 24px;
-                    font-weight: 500;
-                    color: var(--base-surface, #fff);
-                    background: var(--base-text--, #000);
-                    padding: var(--spacing-medium, 8px);
-                    border-radius: var(--border-small, 4px);
-                    gap: var(--spacing-small, 8px);
-                    transition: background-color 0.2s ease, color 0.2s ease;
-                }
-                .label-wrapper.selected {
-                    background-color: var(--primary--);
-                    color: var(--primary-background--, #fff);
-                }
-                .label-icon {
-                    display: flex;
-                    align-items: center;
-                }
-                .select-container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: var(--spacing-small, 8px);
-                }
-                :host([label-position="left"]) .select-container {
-                    flex-direction: row;
-                    align-items: center;
-                }
-                :host([label-position="right"]) .select-container {
-                    flex-direction: row-reverse;
-                    align-items: center;
-                }
-                :host([label-position="top"]) .select-container {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-                :host([label-position="bottom"]) .select-container {
-                    flex-direction: column-reverse;
-                    align-items: flex-start;
-                }
-                :host([label-position="top"]) .label-wrapper,
-                :host([label-position="bottom"]) .label-wrapper {
-                    background: var(--base-surface, #fff);
-                    color: var(--base-text--, #000);
-                    padding: 0;
-                }
-                :host([label-position="top"]) .select-container,
-                :host([label-position="bottom"]) .select-container {
-                    gap: 0;
-                }
-                .select-wrapper {
-                    position: relative;
-                    box-sizing: border-box;
-                    display: flex;
-                    align-items: center;
-                    padding: var(--spacing-medium, 8px);
-                    border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
-                    border-radius: var(--border-small, 5px);
-                    background: var(--base-surface);
-                    color: var(--base-text);
-                    font-family: Tomorrow, sans-serif;
-                    font-size: var(--font-size, 16px);
-                    transition: border-color 0.2s ease, background-color 0.2s ease;
-                    width: 100%;
-                }
-                .icon.right-icon {
-                    margin-left: auto;
-                    display: flex;
-                    align-items: center;
-                }
-                .select-wrapper:focus-within {
-                    border-color: var(--primary--);
-                    background: var(--base-hover);
-                }
-                .dropdown {
-                    display: none;
-                    position: absolute;
-                    top: calc(100% + var(--spacing-x-small, 4px));
-                    left: 0;
-                    width: 100%;
-                    box-sizing: border-box;
-                    background: var(--base-text--);
-                    z-index: 10;
-                    max-height: 200px;
-                    overflow-y: auto;
-                    box-shadow: var(--shadow-medium, 0 4px 8px rgba(0, 0, 0, 0.2));
-                }
-                .dropdown.open {
-                    display: block;
-                }
-                .dropdown-item {
-                    padding: var(--spacing-medium, 8px);
-                    font-size: var(--font-size, 16px);
-                    font-family: Tomorrow, sans-serif;
-                    color: var(--base-background, #000);
-                    background: var(--base-text--);
-                    cursor: pointer;
-                    transition: background-color 0.2s ease, color 0.2s ease;
-                }
-                .dropdown-item:hover {
-                    background: var(--base-text-emphasize);
-                }
-                .dropdown-item.selected {
-                    background: var(--primary--);
-                    color: var(--primary-background--);
-                }
-                .hidden {
-                    display: none;
-                }
-                .default-icon {
-                    margin-left: auto;
-                    display: inline-block;
-                    width: 20px;
-                    height: 20px;
-                }
-                .default-icon svg {
-                    width: 100%;
-                    height: 100%;
-                    stroke: var(--base-text--, #ccc);
-                    fill: none;
-                    transition: transform 0.2s ease;
-                }
-                .select-wrapper.open .default-icon svg {
-                    transform: rotate(180deg);
-                }
-                .selected-value {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 4px;
-                    max-width: 100%;
-                    overflow: hidden;
-                    align-items: center;
-
-                .tag {
-                    display: inline-flex;
-                    align-items: center;
-                    background: var(--base-text--, #007bff);
-                    color: var(--base-surface, #fff);
-                    padding: 1px 4px;
-                    border-radius: 4px;
-                    font-size: 14px;
-                }
-                .tag .remove {
-                    margin-left: 8px;
-                    cursor: pointer;
-                    color: var(--primary-background--, #fff);
-                    font-size: 12px;
-                }
-            </style>
-            <div class="select-container" part="select-container">
-                <div class="label-wrapper" part="label-wrapper">
-                    <span class="label-icon left-label-icon"><slot name="left-label-icon"></slot></span>
-                    <span class="label-text"></span>
-                    <span class="label-icon right-label-icon"><slot name="right-label-icon"></slot></span>
-                </div>
-                <div class="select-wrapper" part="select-wrapper" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false">
-                    <span class="icon left-icon"><slot name="left-icon"></slot></span>
-                    <span class="selected-value" aria-live="polite"></span>
-                    <span class="icon right-icon">
-                        <slot name="right-icon"></slot>
-                        <span class="default-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
-                                <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
-                            </svg>
-                        </span>
-                    </span>
-                    <div class="dropdown" part="dropdown" role="listbox"></div>
-                </div>
-            </div>
-        `;
+        <style>
+          :host {
+            display: inline-block;
+            width: 100%;
+            position: relative;
+          }
+          .label-wrapper {
+            display: flex;
+            flex: 1 0 auto;
+            box-sizing: border-box;
+            align-items: center;
+            font-family: ProFontWindows, sans-serif;
+            font-size: 21px;
+            line-height: 24px;
+            font-weight: 500;
+            color: var(--base-surface, #fff);
+            background: var(--base-text--, #000);
+            padding: var(--spacing-medium, 8px);
+            border-radius: var(--border-small, 4px);
+            gap: var(--spacing-small, 8px);
+            transition: background-color 0.2s ease, color 0.2s ease;
+          }
+          .label-wrapper.selected {
+            background-color: var(--primary--);
+            color: var(--primary-background--, #fff);
+          }
+          .label-icon {
+            display: flex;
+            align-items: center;
+          }
+          .select-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-small, 8px);
+          }
+          :host([label-position="left"]) .select-container {
+            flex-direction: row;
+            align-items: center;
+          }
+          :host([label-position="right"]) .select-container {
+            flex-direction: row-reverse;
+            align-items: center;
+          }
+          :host([label-position="top"]) .select-container {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          :host([label-position="bottom"]) .select-container {
+            flex-direction: column-reverse;
+            align-items: flex-start;
+          }
+          :host([label-position="top"]) .label-wrapper,
+          :host([label-position="bottom"]) .label-wrapper {
+            background: var(--base-surface, #fff);
+            color: var(--base-text--, #000);
+            padding: 0;
+          }
+          :host([label-position="top"]) .select-container,
+          :host([label-position="bottom"]) .select-container {
+            gap: 0;
+          }
+          .select-wrapper {
+            position: relative;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-medium, 8px);
+            border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
+            border-radius: var(--border-small, 5px);
+            background: var(--base-surface);
+            color: var(--base-text);
+            font-family: Tomorrow, sans-serif;
+            font-size: var(--font-size, 16px);
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+            width: 100%;
+          }
+          .icon.right-icon {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+          }
+          .select-wrapper:focus-within {
+            border-color: var(--primary--);
+            background: var(--base-hover);
+          }
+          .dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + var(--spacing-x-small, 4px));
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--base-text--);
+            z-index: 10;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: var(--shadow-medium, 0 4px 8px rgba(0, 0, 0, 0.2));
+          }
+          .dropdown.open {
+            display: block;
+          }
+          .dropdown-item {
+            padding: var(--spacing-medium, 8px);
+            font-size: var(--font-size, 16px);
+            font-family: Tomorrow, sans-serif;
+            color: var(--base-background, #000);
+            background: var(--base-text--);
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+          }
+          .dropdown-item:hover {
+            background: var(--base-text-emphasize);
+          }
+          .dropdown-item.selected {
+            background: var(--primary--);
+            color: var(--primary-background--);
+          }
+          .hidden {
+            display: none;
+          }
+          .default-icon {
+            margin-left: auto;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+          }
+          .default-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--base-text--, #ccc);
+            fill: none;
+            transition: transform 0.2s ease;
+          }
+          .select-wrapper.open .default-icon svg {
+            transform: rotate(180deg);
+          }
+          .selected-value {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 100%;
+            overflow: hidden;
+            align-items: center;
+          }
+          .tag {
+            display: inline-flex;
+            align-items: center;
+            background: var(--base-text--, #007bff);
+            color: var(--base-surface, #fff);
+            padding: 1px 4px;
+            border-radius: 4px;
+            font-size: 14px;
+          }
+          .tag .remove {
+            margin-left: 8px;
+            cursor: pointer;
+            color: var(--primary-background--, #fff);
+            font-size: 12px;
+          }
+        </style>
+        <div class="select-container" part="select-container">
+          <div class="label-wrapper" part="label-wrapper">
+            <span class="label-icon left-label-icon"><slot name="left-label-icon"></slot></span>
+            <span class="label-text"></span>
+            <span class="label-icon right-label-icon"><slot name="right-label-icon"></slot></span>
+          </div>
+          <div class="select-wrapper" part="select-wrapper" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false">
+            <span class="icon left-icon"><slot name="left-icon"></slot></span>
+            <span class="selected-value" aria-live="polite"></span>
+            <span class="icon right-icon">
+              <slot name="right-icon"></slot>
+              <span class="default-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
+                  <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+                </svg>
+              </span>
+            </span>
+            <div class="dropdown" part="dropdown" role="listbox"></div>
+          </div>
+        </div>
+      `;
     }
 
     setupRefs() {
-        // Reference elements
         this.dropdown = this.shadowRoot.querySelector(".dropdown");
         this.selectWrapper = this.shadowRoot.querySelector(".select-wrapper");
         this.labelTextElement = this.shadowRoot.querySelector(".label-text");
@@ -268,14 +267,13 @@ class KeplerSelect extends HTMLElement {
             if (selectionMode === "combined") {
                 this.selectedValueElement.textContent = `${selectedOptions.length} Items Selected`;
             } else {
-                // Separate mode
                 this.selectedValueElement.innerHTML = selectedOptions
                     .map(
                         (opt) => `
-                        <span class="tag">
-                            ${opt.label} <!-- Display label instead of value -->
-                            <span class="remove" data-value="${opt.value}">✕</span>
-                        </span>`
+                <span class="tag">
+                    ${opt.label}
+                    <span class="remove" data-value="${opt.value}">✕</span>
+                </span>`
                     )
                     .join("");
             }
@@ -289,7 +287,6 @@ class KeplerSelect extends HTMLElement {
         const multiple = this.hasAttribute("multiple");
         const selectionMode = this.getAttribute("selection-mode") || "combined";
 
-        // If a default value is provided via the value attribute, update options.
         if (this.hasAttribute("value")) {
             const valueAttr = this.getAttribute("value");
             const selectedValues = multiple
@@ -307,13 +304,12 @@ class KeplerSelect extends HTMLElement {
         this.labelTextElement.textContent = label;
         this.setAttribute("label-position", labelPosition);
 
-        // Populate dropdown with updated options.
         this.dropdown.innerHTML = options
             .map(
                 (opt) => `
-                <div class="dropdown-item ${opt.selected ? "selected" : ""}" data-value="${opt.value}" role="option" aria-selected="${opt.selected ? "true" : "false"}">
-                    ${opt.label}
-                </div>`
+            <div class="dropdown-item ${opt.selected ? "selected" : ""}" data-value="${opt.value}" role="option" aria-selected="${opt.selected ? "true" : "false"}">
+                ${opt.label}
+            </div>`
             )
             .join("");
 
@@ -335,7 +331,6 @@ class KeplerSelect extends HTMLElement {
     }
 
     manageDefaultIconVisibility() {
-        // Show or hide the default icon based on the presence of a right icon
         const hasRightIcon =
             this.rightIconSlot.assignedNodes().length > 0 ||
             this.rightIconSlot.innerHTML.trim().length > 0;
@@ -343,7 +338,6 @@ class KeplerSelect extends HTMLElement {
     }
 
     manageSlotVisibility(slotName, element) {
-        // Manage visibility of slot elements
         const slot = this.shadowRoot.querySelector(`slot[name="${slotName}"]`);
         const updateVisibility = () => {
             const hasContent = slot.assignedNodes().length > 0;
@@ -354,7 +348,6 @@ class KeplerSelect extends HTMLElement {
     }
 
     addEventListeners() {
-        // When the select wrapper receives focus, highlight the label
         this.selectWrapper.addEventListener("focus", () => {
             this.labelWrapper.classList.add("selected");
         });
@@ -369,7 +362,6 @@ class KeplerSelect extends HTMLElement {
         });
 
         this.dropdown.addEventListener("click", (event) => {
-            // Prevent the click event from bubbling up to the select wrapper
             event.stopPropagation();
 
             const item = event.target.closest(".dropdown-item");
@@ -380,7 +372,6 @@ class KeplerSelect extends HTMLElement {
                     this.getAttribute("selection-mode") || "combined";
 
                 if (multiple) {
-                    // Toggle selection for multiselect mode
                     if (this.selectedValues.has(value)) {
                         this.selectedValues.delete(value);
                         item.classList.remove("selected");
@@ -389,19 +380,15 @@ class KeplerSelect extends HTMLElement {
                         item.classList.add("selected");
                     }
                     this.updateSelectedDisplay(multiple, selectionMode);
-                    // Do not close the dropdown in multiselect mode
                 } else {
-                    // In single select mode, clear any previous selection
                     this.shadowRoot
                         .querySelectorAll(".dropdown-item")
                         .forEach((el) => el.classList.remove("selected"));
                     item.classList.add("selected");
                     this.selectedValueElement.textContent = item.textContent;
-                    // Explicitly close the dropdown in single select mode
                     this.closeDropdown();
                 }
 
-                // Update the hidden input based on the current selection(s)
                 this.updateHiddenInput();
 
                 this.dispatchEvent(
@@ -419,7 +406,8 @@ class KeplerSelect extends HTMLElement {
         });
 
         document.addEventListener("click", (event) => {
-            if (!this.contains(event.target)) {
+            const path = event.composedPath();
+            if (!path.includes(this)) {
                 this.closeDropdown();
             }
         });
@@ -433,14 +421,12 @@ class KeplerSelect extends HTMLElement {
                     true,
                     this.getAttribute("selection-mode") || "combined"
                 );
-                // Update the hidden input after removal
                 this.updateHiddenInput();
             }
         });
     }
 
     closeDropdown() {
-        // Close the dropdown and reset state
         this.dropdown.classList.remove("open");
         this.selectWrapper.classList.remove("open");
         this.selectWrapper.setAttribute("aria-expanded", "false");
@@ -449,21 +435,17 @@ class KeplerSelect extends HTMLElement {
     }
 
     updateLabelState(isSelected) {
-        // Update the label state based on selection
         this.labelWrapper.classList.toggle("selected", isSelected);
     }
 
     updateHiddenInput() {
         if (this.hiddenInput) {
-            // Update the name from the component's attribute
             this.hiddenInput.name = this.getAttribute("name") || "";
             if (this.hasAttribute("multiple")) {
-                // For multiple selections, join selected values with commas
                 this.hiddenInput.value = Array.from(this.selectedValues).join(
                     ","
                 );
             } else {
-                // For single select, find the selected dropdown item
                 const selectedItem = this.shadowRoot.querySelector(
                     ".dropdown-item.selected"
                 );
@@ -475,7 +457,6 @@ class KeplerSelect extends HTMLElement {
     }
 
     get value() {
-        // For multiple selection, return a comma-delimited string; otherwise, a single value.
         if (this.hasAttribute("multiple")) {
             return Array.from(this.selectedValues).join(",");
         } else {
@@ -490,7 +471,6 @@ class KeplerSelect extends HTMLElement {
         const multiple = this.hasAttribute("multiple");
         if (typeof newVal === "string") {
             if (multiple) {
-                // Split comma-delimited string into an array of trimmed values
                 const values = newVal.split(",").map((val) => val.trim());
                 this.selectedValues = new Set(values);
             } else {
@@ -499,13 +479,20 @@ class KeplerSelect extends HTMLElement {
         } else if (Array.isArray(newVal)) {
             this.selectedValues = new Set(newVal);
         }
-        // Update the component to reflect the new selection.
         this.updateComponent();
         this.updateSelectedDisplay(
             multiple,
             this.getAttribute("selection-mode") || "combined"
         );
         this.updateHiddenInput();
+    }
+
+    setOptions(options) {
+        this.setAttribute("options", JSON.stringify(options));
+    }
+
+    setValue(val) {
+        this.setAttribute("value", val);
     }
 }
 
