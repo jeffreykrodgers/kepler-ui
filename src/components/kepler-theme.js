@@ -206,7 +206,7 @@ class KeplerTheme extends HTMLElement {
                 --size-h5: 21px;
                 --size-h2: 42px;
                 --size-h4: 28px;
-                --size-p: 14px;
+                --size-p: 1em;
                 --border-none: 0px;
                 --border-small: 1px;
                 --border-medium: 2px;

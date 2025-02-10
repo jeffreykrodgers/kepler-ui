@@ -1,17 +1,19 @@
 class KeplerGrid extends HTMLElement {
+    // Native callbacks / static methods
+    static get observedAttributes() {
+        return ["data", "columns"];
+    }
+
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        // Internal properties for grid data, columns, and sorting.
         this.data = [];
         this.columns = [];
-        // sortState: null or an object { property: string, direction: "asc" | "desc" }
         this.sortState = null;
-        this.render();
     }
 
-    static get observedAttributes() {
-        return ["data", "columns"];
+    connectedCallback() {
+        this.render();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -35,20 +37,34 @@ class KeplerGrid extends HTMLElement {
         }
     }
 
-    // Allow setting grid data/columns via properties.
-    set gridData(value) {
-        this.data = value;
-        this.render();
-    }
-    get gridData() {
-        return this.data;
+    // Accessors
+    get gridColumns() {
+        return this.columns;
     }
     set gridColumns(value) {
         this.columns = value;
         this.render();
     }
-    get gridColumns() {
-        return this.columns;
+
+    get gridData() {
+        return this.data;
+    }
+    set gridData(value) {
+        this.data = value;
+        this.render();
+    }
+
+    // Other methods
+    attachSortListeners() {
+        const headerCells = this.shadowRoot.querySelectorAll(
+            'th[data-sortable="true"]'
+        );
+        headerCells.forEach((cell) => {
+            cell.addEventListener("click", () => {
+                const property = cell.getAttribute("data-property");
+                this.handleSort(property);
+            });
+        });
     }
 
     getColumnWidth(col) {
@@ -62,50 +78,8 @@ class KeplerGrid extends HTMLElement {
         return "";
     }
 
-    renderHeader() {
-        let headerHTML = `<tr>`;
-        this.columns.forEach((col) => {
-            const width = this.getColumnWidth(col);
-            const widthStyle = width ? ` style="width: ${width};"` : "";
-            const sortable = col.sortable === false ? false : true;
-            const headerText = col.header || col.property;
-            let sortIconContent = "";
-            if (
-                sortable &&
-                this.sortState &&
-                this.sortState.property === col.property
-            ) {
-                if (this.sortState.direction === "asc") {
-                    sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16">
-                <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
-              </svg>`;
-                } else if (this.sortState.direction === "desc") {
-                    sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16">
-                <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
-              </svg>`;
-                }
-            }
-            // Always include a sort-icon container with fixed width (16px) so that the header's layout remains stable.
-            const sortIconHTML = `<span class="sort-icon" style="margin-left:4px; display:inline-flex; align-items:center; width:16px; ${
-                sortable &&
-                this.sortState &&
-                this.sortState.property === col.property &&
-                this.sortState.direction === "asc"
-                    ? "transform: rotate(180deg);"
-                    : ""
-            }">${sortIconContent}</span>`;
-
-            const content = sortable
-                ? `<span class="header-text" style="display:inline-flex; align-items:center; cursor:pointer;">${headerText}${sortIconHTML}</span>`
-                : headerText;
-            headerHTML += `<th data-property="${col.property}" ${sortable ? 'data-sortable="true"' : ""}${widthStyle}>${content}</th>`;
-        });
-        headerHTML += `</tr>`;
-        return headerHTML;
-    }
-
     getSortedData() {
-        let sortedData = [...this.data];
+        const sortedData = [...this.data];
         if (this.sortState && this.sortState.property) {
             const { property, direction } = this.sortState;
             sortedData.sort((a, b) => {
@@ -122,24 +96,15 @@ class KeplerGrid extends HTMLElement {
         return sortedData;
     }
 
-    renderBody() {
-        let bodyHTML = "";
-        const renderData = this.getSortedData();
-        renderData.forEach((row) => {
-            let rowHTML = `<tr>`;
-            this.columns.forEach((col) => {
-                const cellValue =
-                    row[col.property] !== undefined ? row[col.property] : "";
-                if (col.isRowHeader) {
-                    rowHTML += `<th>${cellValue}</th>`;
-                } else {
-                    rowHTML += `<td>${cellValue}</td>`;
-                }
-            });
-            rowHTML += `</tr>`;
-            bodyHTML += rowHTML;
-        });
-        return bodyHTML;
+    handleSort(property) {
+        if (!this.sortState || this.sortState.property !== property) {
+            this.sortState = { property, direction: "asc" };
+        } else if (this.sortState.direction === "asc") {
+            this.sortState.direction = "desc";
+        } else if (this.sortState.direction === "desc") {
+            this.sortState = null;
+        }
+        this.render();
     }
 
     render() {
@@ -157,64 +122,165 @@ class KeplerGrid extends HTMLElement {
             width: 100%;
             border-collapse: separate;
             border-spacing: var(--spacing-small, 4px);
-        }
-        thead th {
+          }
+          thead th {
             font-family: ProFontWindows, sans-serif;
             font-size: 20px;
             font-weight: 500;
             border-bottom: var(--border-medium, 2px) solid var(--base-text--, #ccc);
             padding: var(--spacing-medium, 8px) 0;
-        }
-        tbody td {
+          }
+          tbody td {
             font-family: Tomorrow, sans-serif;
             border-bottom: var(--border-small, 1px) solid var(--base-text--, #ccc);
             padding: var(--spacing-medium, 8px) 0;
-        }
-        tbody th {
+          }
+          tbody th {
             font-family: ProFontWindows, sans-serif;
             background: var(--base-text--, #ccc);
             font-size: 20px;
             font-weight: 500;
             color: var(--base-surface, #fff);
             padding: var(--spacing-medium, 8px);
-        }
-        th, td {
+          }
+          th, td {
             text-align: left;
-        }
-        .sort-icon {
+          }
+          .sort-icon {
             width: 16px;
             display: inline-flex;
             align-items: center;
-        }
-
+          }
         </style>
         ${tableHTML}
       `;
         this.attachSortListeners();
     }
 
-    attachSortListeners() {
-        const headerCells = this.shadowRoot.querySelectorAll(
-            'th[data-sortable="true"]'
-        );
-        headerCells.forEach((cell) => {
-            cell.addEventListener("click", () => {
-                const property = cell.getAttribute("data-property");
-                this.handleSort(property);
+    renderBody() {
+        let bodyHTML = "";
+        const sortedData = this.getSortedData();
+        sortedData.forEach((row) => {
+            let rowHTML = `<tr>`;
+            this.columns.forEach((col) => {
+                const cellValue =
+                    row[col.property] !== undefined ? row[col.property] : "";
+                // Determine the tag: use <th> if this is a row header; otherwise, <td>
+                const cellTag = col.isRowHeader ? "th" : "td";
+
+                if (col.template) {
+                    const templateHTML = this._renderTemplate(
+                        col.template,
+                        row
+                    );
+                    rowHTML += `<${cellTag}>${templateHTML !== null ? templateHTML : cellValue}</${cellTag}>`;
+                } else {
+                    rowHTML += `<${cellTag}>${cellValue}</${cellTag}>`;
+                }
             });
+            rowHTML += `</tr>`;
+            bodyHTML += rowHTML;
         });
+        return bodyHTML;
     }
 
-    handleSort(property) {
-        // Cycle sort states: unsorted → asc → desc → unsorted.
-        if (!this.sortState || this.sortState.property !== property) {
-            this.sortState = { property, direction: "asc" };
-        } else if (this.sortState.direction === "asc") {
-            this.sortState.direction = "desc";
-        } else if (this.sortState.direction === "desc") {
-            this.sortState = null;
+    renderHeader() {
+        let headerHTML = `<tr>`;
+        this.columns.forEach((col) => {
+            const width = this.getColumnWidth(col);
+            const widthStyle = width ? ` style="width: ${width};"` : "";
+            const sortable = col.sortable !== false;
+            let cellContent = "";
+
+            if (col.headerTemplate) {
+                const templateHTML = this._renderHeaderTemplate(col);
+                cellContent =
+                    templateHTML !== null
+                        ? templateHTML
+                        : col.header || col.property;
+            } else {
+                let sortIconContent = "";
+                if (
+                    sortable &&
+                    this.sortState &&
+                    this.sortState.property === col.property
+                ) {
+                    if (this.sortState.direction === "asc") {
+                        // Ascending: rotate arrow 180 degrees
+                        sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" style="transform: rotate(180deg);">
+                <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+              </svg>`;
+                    } else if (this.sortState.direction === "desc") {
+                        // Descending: default arrow orientation
+                        sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16">
+                <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+              </svg>`;
+                    }
+                }
+                const sortIconHTML = `<span class="sort-icon" style="margin-left:4px; display:inline-flex; align-items:center; width:16px;">${sortIconContent}</span>`;
+                cellContent = sortable
+                    ? `<span class="header-text" style="cursor:pointer; display:inline-flex; align-items:center;">${col.header || col.property}${sortIconHTML}</span>`
+                    : col.header || col.property;
+            }
+
+            headerHTML += `<th data-property="${col.property}" ${sortable ? 'data-sortable="true"' : ""}${widthStyle}>${cellContent}</th>`;
+        });
+        headerHTML += `</tr>`;
+        return headerHTML;
+    }
+
+    // Private helper methods
+    _cloneTemplate(slotName) {
+        const templateElement = this.querySelector(`[slot="${slotName}"]`);
+        if (templateElement && templateElement.content) {
+            return document.importNode(templateElement.content, true);
         }
-        this.render();
+        return null;
+    }
+
+    _renderHeaderTemplate(col) {
+        const clone = this._cloneTemplate(col.headerTemplate);
+        if (!clone) return null;
+        const textPlaceholder = clone.querySelector("[data-header-text]");
+        if (textPlaceholder) {
+            textPlaceholder.textContent = col.header || col.property;
+        }
+        const sortIconPlaceholder = clone.querySelector("[data-sort-icon]");
+        if (
+            col.sortable !== false &&
+            sortIconPlaceholder &&
+            this.sortState &&
+            this.sortState.property === col.property
+        ) {
+            let sortIconHTML = "";
+            if (this.sortState.direction === "asc") {
+                sortIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16">
+            <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+          </svg>`;
+            } else if (this.sortState.direction === "desc") {
+                sortIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" style="transform: rotate(180deg);">
+            <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+          </svg>`;
+            }
+            sortIconPlaceholder.innerHTML = sortIconHTML;
+        }
+        const tempDiv = document.createElement("div");
+        tempDiv.appendChild(clone);
+        return tempDiv.innerHTML;
+    }
+
+    _renderTemplate(slotName, rowData) {
+        const clone = this._cloneTemplate(slotName);
+        if (!clone) return null;
+        Object.keys(rowData).forEach((key) => {
+            const placeholder = clone.querySelector(`[data-cell-${key}]`);
+            if (placeholder) {
+                placeholder.textContent = rowData[key];
+            }
+        });
+        const tempDiv = document.createElement("div");
+        tempDiv.appendChild(clone);
+        return tempDiv.innerHTML;
     }
 }
 

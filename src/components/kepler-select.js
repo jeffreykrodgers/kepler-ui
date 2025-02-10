@@ -351,11 +351,18 @@ class KeplerSelect extends HTMLElement {
         this.selectWrapper.addEventListener("focus", () => {
             this.labelWrapper.classList.add("selected");
         });
+
         this.selectWrapper.addEventListener("blur", () => {
             this.labelWrapper.classList.remove("selected");
         });
 
-        this.selectWrapper.addEventListener("click", () => {
+        this.selectWrapper.addEventListener("click", (event) => {
+            // Prevent opening the dropdown if the click is on a remove button
+            if (event.target.closest(".remove")) {
+                event.stopPropagation();
+                return;
+            }
+
             const isOpen = this.dropdown.classList.toggle("open");
             this.selectWrapper.classList.toggle("open", isOpen);
             this.selectWrapper.setAttribute("aria-expanded", isOpen.toString());
@@ -415,13 +422,39 @@ class KeplerSelect extends HTMLElement {
         this.selectedValueElement.addEventListener("click", (event) => {
             const removeButton = event.target.closest(".remove");
             if (removeButton) {
+                event.stopPropagation(); // ✅ Prevents opening dropdown
                 const value = removeButton.getAttribute("data-value");
+
+                // Remove the value from the selectedValues set
                 this.selectedValues.delete(value);
+
+                // Find the corresponding dropdown item and remove the "selected" class
+                const item = this.shadowRoot.querySelector(
+                    `.dropdown-item[data-value="${value}"]`
+                );
+                if (item) {
+                    item.classList.remove("selected");
+                }
+
+                // Update the displayed selected values
                 this.updateSelectedDisplay(
                     true,
                     this.getAttribute("selection-mode") || "combined"
                 );
+
+                // Update the hidden input field
                 this.updateHiddenInput();
+
+                // Dispatch the change event
+                this.dispatchEvent(
+                    new CustomEvent("change", {
+                        detail: {
+                            value: Array.from(this.selectedValues),
+                        },
+                        bubbles: true,
+                        composed: true,
+                    })
+                );
             }
         });
     }

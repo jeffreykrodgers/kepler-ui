@@ -12,7 +12,6 @@ class KeplerCard extends HTMLElement {
               display: flex;
               flex-direction: column;
               border: var(--border-medium, 2px) solid var(--base-border, #ccc);
-              overflow: hidden;
             }
             .header,
             .footer {

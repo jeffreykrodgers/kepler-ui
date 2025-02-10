@@ -87,8 +87,10 @@ class KeplerPanel extends HTMLElement {
           }
           :host(.selected) {
             color: var(--primary--);
+            background: var(--primary-background-hover);
             border-left: var(--border-medium) solid var(--primary--);
             margin-left: calc(var(--border-medium) * -1);
+            padding-left: var(--border-medium);
             z-index: 11;
           }
             :host(.expanded) .header {
@@ -97,6 +99,10 @@ class KeplerPanel extends HTMLElement {
         :host(.expanded) .header:hover {
             background: var(--bast-text-emphasize);
         }
+        :host(.selected) .header:hover {
+            background: var(--primary-background-active);
+        }
+
           .header {
             display: flex;
             align-items: center;

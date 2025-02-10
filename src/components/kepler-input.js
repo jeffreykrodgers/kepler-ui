@@ -218,8 +218,11 @@ class KeplerInput extends HTMLElement {
     updateLabel() {
         const label = this.getAttribute("label") || "";
         const labelPosition = this.getAttribute("label-position") || "top";
+
         this.labelTextElement.textContent = label;
         this.setAttribute("label-position", labelPosition);
+
+        this.labelWrapper.style.display = label ? "flex" : "none";
     }
 
     manageSlotVisibility(slotName, selector) {

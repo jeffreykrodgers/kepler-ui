@@ -1,40 +1,27 @@
 class KeplerButton extends HTMLElement {
     constructor() {
         super();
-
-        // Attach a shadow DOM to encapsulate styles and content.
         this.attachShadow({ mode: "open" });
-
-        // Create the button element.
+        // Create the inner button element.
         this.button = document.createElement("button");
         this.button.classList.add("button");
-        this.button.setAttribute("role", "button"); // Accessibility role
-        this.button.setAttribute("tabindex", "0"); // Ensure keyboard navigation
-
-        // Append the button to the shadow DOM.
+        this.button.setAttribute("role", "button");
+        this.button.setAttribute("tabindex", "0");
         this.shadowRoot.appendChild(this.button);
 
-        // Apply styles and render content.
         this.applyStyles();
         this.render();
-
-        // Proxy native onclick function to the button.
         this.proxyNativeOnClick();
-
-        // Add event listeners for custom interactions.
         this.addEventListeners();
     }
 
     connectedCallback() {
-        // If no size attribute is provided, set it to "medium" by default.
         if (!this.hasAttribute("size")) {
             this.setAttribute("size", "medium");
         }
         this.applyStyles();
         this.render();
-        // Proxy native onclick function to the button.
         this.proxyNativeOnClick();
-        // Add event listeners for custom interactions.
         this.addEventListeners();
     }
 
@@ -64,25 +51,24 @@ class KeplerButton extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            if (
-                [
-                    "type",
-                    "style-type",
-                    "name",
-                    "value",
-                    "disabled",
-                    "autofocus",
-                    "form",
-                    "formaction",
-                    "formenctype",
-                    "formmethod",
-                    "formnovalidate",
-                    "formtarget",
-                    "aria-label",
-                    "aria-pressed",
-                    "aria-hidden",
-                ].includes(name)
-            ) {
+            const buttonAttributes = [
+                "type",
+                "style-type",
+                "name",
+                "value",
+                "disabled",
+                "autofocus",
+                "form",
+                "formaction",
+                "formenctype",
+                "formmethod",
+                "formnovalidate",
+                "formtarget",
+                "aria-label",
+                "aria-pressed",
+                "aria-hidden",
+            ];
+            if (buttonAttributes.includes(name)) {
                 if (newValue === null) {
                     this.button.removeAttribute(name);
                 } else {
@@ -96,8 +82,35 @@ class KeplerButton extends HTMLElement {
         }
     }
 
+    updateButtonAttributes() {
+        const buttonAttributes = [
+            "type",
+            "name",
+            "value",
+            "disabled",
+            "autofocus",
+            "form",
+            "formaction",
+            "formenctype",
+            "formmethod",
+            "formnovalidate",
+            "formtarget",
+            "aria-label",
+            "aria-pressed",
+            "aria-hidden",
+        ];
+        buttonAttributes.forEach((attr) => {
+            if (this.hasAttribute(attr)) {
+                this.button.setAttribute(attr, this.getAttribute(attr));
+            } else {
+                this.button.removeAttribute(attr);
+            }
+        });
+    }
+
     render() {
-        // Propagate the `disabled` attribute to the inner button
+        this.updateButtonAttributes();
+
         if (this.hasAttribute("disabled")) {
             this.button.setAttribute("disabled", "");
             this.button.setAttribute("aria-disabled", "true");
@@ -107,17 +120,16 @@ class KeplerButton extends HTMLElement {
         }
 
         this.button.innerHTML = `
-          <span class="button-content" part="button-content">
-            <span class="icon left-icon" part="left-icon"><slot name="left-icon"></slot></span>
-            <span class="label" part="label"><slot></slot></span>
-            <span class="icon right-icon" part="right-icon"><slot name="right-icon"></slot></span>
-          </span>
-        `;
+        <span class="button-content" part="button-content">
+          <span class="icon left-icon" part="left-icon"><slot name="left-icon"></slot></span>
+          <span class="label" part="label"><slot></slot></span>
+          <span class="icon right-icon" part="right-icon"><slot name="right-icon"></slot></span>
+        </span>
+      `;
 
-        // Manage visibility of icon slots and the label dynamically
         this.manageSlotVisibility("left-icon", ".left-icon");
         this.manageSlotVisibility("right-icon", ".right-icon");
-        this.manageSlotVisibility("", ".label"); // Default slot for the label
+        this.manageSlotVisibility("", ".label");
     }
 
     proxyNativeOnClick() {
@@ -146,15 +158,12 @@ class KeplerButton extends HTMLElement {
             container.style.display = hasContent ? "inline-flex" : "none";
         };
 
-        // Initial check
         updateVisibility();
-
-        // Listen for changes to the slot content
         slot.addEventListener("slotchange", updateVisibility);
     }
 
     addEventListeners() {
-        // Focus and blur events
+        // Focus and blur events.
         this.button.addEventListener("focus", () => {
             this.dispatchEvent(
                 new CustomEvent("focus", { bubbles: true, composed: true })
@@ -167,7 +176,7 @@ class KeplerButton extends HTMLElement {
             );
         });
 
-        // Keyboard events
+        // Keyboard events.
         this.button.addEventListener("keydown", (event) => {
             this.dispatchEvent(
                 new CustomEvent("keydown", {
@@ -188,29 +197,27 @@ class KeplerButton extends HTMLElement {
             );
         });
 
+        // Click event.
         this.button.addEventListener("click", (event) => {
             this.handleClick();
 
-            // If the button type is "submit", trigger form submission
+            // If button type is "submit", trigger form submission.
             if (this.getAttribute("type") === "submit") {
                 const form = this.closest("form");
                 if (form) {
-                    event.preventDefault(); // Prevent default click behavior
-                    form.requestSubmit(); // Programmatically submit the form
+                    event.preventDefault();
+                    form.requestSubmit();
                 }
             }
         });
     }
 
     handleClick() {
-        if (this.hasAttribute("disabled")) {
-            return; // Prevent interactions if disabled
-        }
+        if (this.hasAttribute("disabled")) return;
 
         const eventType = this.getAttribute("data-event");
         if (!eventType) return;
 
-        // Build the event detail object from `data-detail-*` attributes
         const detail = {};
         Array.from(this.attributes)
             .filter((attr) => attr.name.startsWith("data-detail-"))
@@ -219,12 +226,11 @@ class KeplerButton extends HTMLElement {
                 detail[key] = attr.value;
             });
 
-        // Dispatch the custom event
         this.dispatchEvent(
             new CustomEvent(eventType, {
                 detail,
-                bubbles: true, // Allow the event to bubble up
-                composed: true, // Allow the event to cross Shadow DOM boundaries
+                bubbles: true,
+                composed: true,
             })
         );
     }
@@ -232,110 +238,97 @@ class KeplerButton extends HTMLElement {
     applyStyles() {
         const style = document.createElement("style");
         style.textContent = `
-            :host {
-                display: inline-block;
-            }
-            .button {
-                box-sizing: border-box;
-                display: inline-flex;
-                min-height: var(--button-min-height, 40px);
-                min-width: var(--button-min-width, 40px);
-                padding: var(--button-padding, 16px);
-                justify-content: center;
-                align-items: center;
-                position: relative;
-                overflow: hidden; /* Clip the diagonal pattern */
-                border-radius: var(--border-small, 1px);
-                border: var(--border-medium, 2px) solid var(--border-color, #1D1D1D);
-                background: var(--background-color, #F1F6FA);
-                color: var(--text-color, #1D1D1D);
-                font-family: Tomorrow, sans-serif; /* Default font-family */
-                font-size: var(--font-size, 16px);
-                font-weight: 500;
-                text-transform: uppercase;
-                line-height: 1.2;
-                transition: background-color var(--transition-duration, 0.1s),
-                color var(--transition-duration, 0.1s),
-                border-color var(--transition-duration, 0.1s);
-                cursor: pointer; /* Ensure the button looks interactive */
-            }
-    
-            .button:disabled {
-                pointer-events: none; /* Prevent interactions */
-                opacity: 0.6; /* Visual indication of disabled */
-            }
-    
-            /* Diagonal line pattern */
-            .button::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 200%;
-                height: 200%;
-                background: repeating-linear-gradient(
-                    -45deg,
-                    var(--text-color, #1D1D1D) 0,
-                    var(--text-color, #1D1D1D) 2px,
-                    transparent 3px,
-                    transparent 10px
-                );
-                opacity: 0;
-                z-index: 0;
-                transition: opacity 0.2s ease;
-            }
-    
-            .button:disabled::before {
-                opacity: 1;
-            }
-    
-            .button:hover:not(:disabled),
-            .button:hover:not(:disabled) .button-content {
-                background: var(--hover-background-color);
-                color: var(--hover-text-color);
-            }
-    
-            .button:focus:not(:disabled),
-            .button:focus:not(:disabled) .button-content {
-                background: var(--focus-background-color);
-                color: var(--focus-text-color);
-            }
-    
-            .button:active:not(:disabled),
-            .button:active:not(:disabled) .button-content {
-                background: var(--active-background-color);
-                color: var(--active-text-color);
-            }
-    
-            .button-content {
-                display: inline-flex;
-                flex-direction: row;
-                align-items: center;
-                gap: var(--gap, 8px);
-                padding: var(--content-padding, 8px) var(--button-padding, 16px);
-                position: relative;
-                z-index: 1;
-                background: var(--background-color);
-                color: var(--text-color);
-                font-family: Tomorrow, sans-serif;
-                font-size: var(--font-size, 16px);
-                font-weight: 500;
-                line-height: 1.2;
-                text-transform: uppercase;
-                transition: color var(--transition-duration, 0.1s),
-                background-color var(--transition-duration, 0.1s);
-            }
-    
-            .icon {
-                display: flex;
-                min-width: 16px;
-                justify-content: center;
-            }
-    
-            .label, .icon {
-                padding-bottom: var(--spacing-x-small, 4px);
-            }
-        `;
+        :host {
+          display: inline-block;
+        }
+        .button {
+          box-sizing: border-box;
+          display: inline-flex;
+          min-height: var(--button-min-height, 40px);
+          min-width: var(--button-min-width, 40px);
+          padding: var(--button-padding, 16px);
+          justify-content: center;
+          align-items: center;
+          position: relative;
+          overflow: hidden;
+          border-radius: var(--border-small, 1px);
+          border: var(--border-medium, 2px) solid var(--border-color, #1D1D1D);
+          background: var(--background-color, #F1F6FA);
+          color: var(--text-color, #1D1D1D);
+          font-family: Tomorrow, sans-serif;
+          font-size: var(--font-size, 16px);
+          font-weight: 500;
+          text-transform: uppercase;
+          line-height: 1.2;
+          transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+          cursor: pointer;
+        }
+        .button:disabled {
+          pointer-events: none;
+          opacity: 0.6;
+        }
+        .button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 200%;
+          height: 200%;
+          background: repeating-linear-gradient(
+            -45deg,
+            var(--text-color, #1D1D1D) 0,
+            var(--text-color, #1D1D1D) 2px,
+            transparent 3px,
+            transparent 10px
+          );
+          opacity: 0;
+          z-index: 0;
+          transition: opacity 0.2s ease;
+        }
+        .button:disabled::before {
+          opacity: 1;
+        }
+        .button:hover:not(:disabled),
+        .button:hover:not(:disabled) .button-content {
+          background: var(--hover-background-color);
+          color: var(--hover-text-color);
+        }
+        .button:focus:not(:disabled),
+        .button:focus:not(:disabled) .button-content {
+          background: var(--focus-background-color);
+          color: var(--focus-text-color);
+        }
+        .button:active:not(:disabled),
+        .button:active:not(:disabled) .button-content {
+          background: var(--active-background-color);
+          color: var(--active-text-color);
+        }
+        .button-content {
+          display: inline-flex;
+          flex-direction: row;
+          align-items: center;
+          gap: var(--gap, 8px);
+          padding: var(--content-padding, 8px) var(--button-padding, 16px);
+          position: relative;
+          z-index: 1;
+          background: var(--background-color);
+          color: var(--text-color);
+          font-family: Tomorrow, sans-serif;
+          font-size: var(--font-size, 16px);
+          font-weight: 500;
+          line-height: 1.2;
+          text-transform: uppercase;
+          transition: color 0.1s, background-color 0.1s;
+        }
+        .icon {
+          display: flex;
+          min-width: 16px;
+          justify-content: center;
+        }
+        .label, .icon {
+          padding-bottom: var(--spacing-x-small, 4px);
+        }
+      `;
         this.shadowRoot.appendChild(style);
     }
 
@@ -421,12 +414,10 @@ class KeplerButton extends HTMLElement {
 
         const currentStyle = styleVars[styleType] || styleVars.outlined;
 
-        // Apply dynamic styles using CSS variables
         Object.entries(currentStyle).forEach(([key, value]) => {
             this.button.style.setProperty(key, value);
         });
 
-        // Set hover, focus, and active colors
         this.button.style.setProperty(
             "--hover-background-color",
             `var(${colorVars[color][4] || "--base-hover"})`
@@ -452,7 +443,6 @@ class KeplerButton extends HTMLElement {
             `var(${colorVars[color][3] || "--base-surface"})`
         );
 
-        // Apply size adjustments
         const [contentPadding, buttonPadding] =
             sizeVars[size] || sizeVars.medium;
 
@@ -464,9 +454,8 @@ class KeplerButton extends HTMLElement {
             "--button-padding",
             `var(${buttonPadding}, 16px)`
         );
-        this.button.style.setProperty("--gap", `var(${buttonPadding}, 16px)`); // Use button padding for gap
+        this.button.style.setProperty("--gap", `var(${buttonPadding}, 16px)`);
 
-        // Set dynamic min-height and min-width based on size.
         const minSizeMapping = {
             small: "32px",
             medium: "40px",
@@ -482,7 +471,6 @@ class KeplerButton extends HTMLElement {
         );
     }
 
-    // Getter for the "value" property.
     get value() {
         if (this.hasAttribute("multiple")) {
             return Array.from(this.selectedValues).join(",");
@@ -493,7 +481,6 @@ class KeplerButton extends HTMLElement {
         }
     }
 
-    // Setter for the "value" property.
     set value(newVal) {
         if (this.hasAttribute("multiple")) {
             if (typeof newVal === "string") {
@@ -510,8 +497,15 @@ class KeplerButton extends HTMLElement {
                 this.selectedValues = new Set();
             }
         }
-        // Reflect the new value in the rendered menu.
         this.updateComponent();
+    }
+
+    setOptions(options) {
+        this.setAttribute("options", JSON.stringify(options));
+    }
+
+    setValue(val) {
+        this.setAttribute("value", val);
     }
 }
 

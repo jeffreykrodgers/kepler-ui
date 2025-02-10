@@ -45,7 +45,6 @@ class KeplerRadio extends HTMLElement {
             <style>
                 :host {
                     display: inline-block;
-                    width: 100%;
                     position: relative;
                 }
 

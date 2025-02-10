@@ -1,5 +1,3 @@
-@import "./variables.css";
-
 /* Themes - Kepler Light */
 :root {
     --base-background: var(--neutral-white);

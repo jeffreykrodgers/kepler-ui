@@ -1,32 +1,4 @@
 /* Temp Stuff */
-.test {
-    background: var(--base-surface);
-    padding: var(--spacing-2x-large);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-medium);
-}
-
-.card-wrapper {
-    display: flex;
-    gap: var(--spacing-medium);
-    flex-wrap: wrap;
-}
-
-section {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-large);
-    width: 100%;
-}
-
-section > div {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-small);
-    width: 100%;
-}
 
 kp-input::part(label-wrapper),
 kp-select::part(label-wrapper),
@@ -36,24 +8,19 @@ kp-slider::part(label) {
     width: 140px;
 }
 
-kp-card h5 {
+html,
+body {
     margin: 0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
 }
 
-kp-card {
-    flex: 1;
-}
-
-kp-tabs {
-    width: 100%;
-}
-
-.example-grid-tab {
+kp-theme {
+    background: var(--base-surface);
     display: flex;
-    flex-direction: row;
-    gap: var(--spacing-medium);
-}
-
-.example-grid-tab > kp-panelbar {
-    min-width: 300px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }

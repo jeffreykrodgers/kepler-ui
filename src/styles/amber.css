@@ -1,5 +1,3 @@
-@import "./variables.css";
-
 /* Themes - Amber */
 :root {
     --base-background: var(--neutral-black);

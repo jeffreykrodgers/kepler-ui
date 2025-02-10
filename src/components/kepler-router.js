@@ -47,7 +47,8 @@ class KeplerRouter extends HTMLElement {
             const url = new URL(anchor.href);
             if (url.origin === location.origin) {
                 e.preventDefault();
-                history.pushState(null, "", url.pathname);
+                // Push both pathname and hash to update the URL
+                history.pushState(null, "", url.pathname + url.hash);
                 const router = document.querySelector("kp-router");
                 if (router) {
                     router.render();
@@ -68,7 +69,12 @@ class KeplerRouter extends HTMLElement {
 
     matchRoute(path, routePattern) {
         const paramNames = [];
-        const regexPattern = routePattern.replace(/:([^\/]+)/g, (_, key) => {
+        // Escape regex special characters in routePattern before replacing parameters.
+        const escapedPattern = routePattern.replace(
+            /[-[\]{}()*+?.,\\^$|#\s]/g,
+            "\\$&"
+        );
+        const regexPattern = escapedPattern.replace(/:([^\/]+)/g, (_, key) => {
             paramNames.push(key);
             return "([^\\/]+)";
         });
@@ -86,9 +92,7 @@ class KeplerRouter extends HTMLElement {
 
     // Render external HTML content into the shadow DOM.
     renderExternalContent(route) {
-        // Append a cache-busting query parameter to force a fresh fetch.
-        const urlWithCacheBuster = route.src + "?t=" + Date.now();
-        fetch(urlWithCacheBuster)
+        fetch(route.src)
             .then((response) => response.text())
             .then((htmlText) => {
                 // Parse the fetched HTML using DOMParser.
