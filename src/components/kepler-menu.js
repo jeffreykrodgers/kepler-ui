@@ -18,6 +18,13 @@ class KeplerMenu extends HTMLElement {
         ];
     }
 
+    getContainer(selector, multiple) {
+        const method = multiple ? "querySelectorAll" : "querySelector";
+        return window.__routerShadowRoot
+            ? window.__routerShadowRoot[method](selector)
+            : document[method](selector);
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
             if (name === "value") {
@@ -35,7 +42,7 @@ class KeplerMenu extends HTMLElement {
         // Observe the anchor for changes (e.g., when re-rendered dynamically)
         const anchorSelector = this.getAttribute("anchor");
         if (anchorSelector) {
-            const anchor = document.querySelector(anchorSelector);
+            const anchor = this.getContainer(anchorSelector);
             if (anchor) {
                 this.anchorObserver = new MutationObserver(() => {
                     this.positionMenu(anchor);
@@ -128,9 +135,7 @@ class KeplerMenu extends HTMLElement {
     addEventListeners() {
         const anchorSelector = this.getAttribute("anchor");
         if (anchorSelector) {
-            const anchor = window.__routerShadowRoot
-                ? window.__routerShadowRoot.querySelector(anchorSelector)
-                : document.querySelector(anchorSelector);
+            const anchor = this.getContainer(anchorSelector);
 
             if (anchor) {
                 anchor.addEventListener("click", (e) => {
@@ -219,28 +224,24 @@ class KeplerMenu extends HTMLElement {
     }
 
     showMenu() {
+        // Close all other open menus
+        this.getContainer("kp-menu", true).forEach((menu) => {
+            if (menu !== this) {
+                menu.hideMenu();
+            }
+        });
+
         this.style.display = "block";
 
         const anchorSelector = this.getAttribute("anchor");
-
-        // ✅ Check both global document and router shadow root for the anchor
-        const anchor = window.__routerShadowRoot
-            ? window.__routerShadowRoot.querySelector(anchorSelector)
-            : document.querySelector(anchorSelector);
+        const anchor = this.getContainer(anchorSelector);
 
         if (anchor) {
             this.positionMenu(anchor);
-
-            // ✅ Reposition the menu when scrolling or resizing
             this.scrollHandler = () =>
                 requestAnimationFrame(() => this.positionMenu(anchor));
             window.addEventListener("scroll", this.scrollHandler, true);
             window.addEventListener("resize", this.scrollHandler);
-        } else {
-            console.warn(
-                "KeplerMenu: Anchor element not found:",
-                anchorSelector
-            );
         }
     }
 
