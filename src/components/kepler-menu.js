@@ -69,7 +69,7 @@ class KeplerMenu extends HTMLElement {
                 display: none;
                 position: absolute;
                 box-sizing: border-box;
-                background: var(--base-text--);
+                background: var(--base-text--, rgba(29,29,29,1));
                 z-index: 10;
                 max-height: 200px;
                 overflow-y: auto;
@@ -79,17 +79,17 @@ class KeplerMenu extends HTMLElement {
                 padding: var(--spacing-medium, 8px);
                 font-size: var(--font-size, 16px);
                 font-family: Tomorrow, sans-serif;
-                color: var(--base-background, #000);
-                background: var(--base-text--);
+                color: var(--base-surface, rgba(241,246,250,1));
+                background: var(--base-text--, rgba(29,29,29,1));
                 cursor: pointer;
                 transition: background-color 0.2s ease, color 0.2s ease;
             }
             .menu-item:hover {
-                background: var(--base-text-emphasize);
+                background: var(--base-text-emphasize, rgba(56,56,57,1));
             }
             .menu-item.selected {
-                background: var(--primary--);
-                color: var(--primary-background--);
+                background: var(--primary--, rgba(4,134,209,1));
+                color: var(--primary-background--, rgba(245,250,250,1));
             }
         </style>
         <div id="menuContainer" part="menuContainer"></div>
@@ -136,7 +136,6 @@ class KeplerMenu extends HTMLElement {
         const anchorSelector = this.getAttribute("anchor");
         if (anchorSelector) {
             const anchor = this.getContainer(anchorSelector);
-
             if (anchor) {
                 anchor.addEventListener("click", (e) => {
                     e.stopPropagation();
@@ -192,7 +191,6 @@ class KeplerMenu extends HTMLElement {
                     this.setAttribute("value", this.value);
                     this.updateComponent();
 
-                    // Fire the select event when an item is selected
                     this.dispatchEvent(
                         new CustomEvent("select", {
                             detail: {
@@ -224,7 +222,6 @@ class KeplerMenu extends HTMLElement {
     }
 
     showMenu() {
-        // Close all other open menus
         this.getContainer("kp-menu", true).forEach((menu) => {
             if (menu !== this) {
                 menu.hideMenu();
@@ -235,7 +232,6 @@ class KeplerMenu extends HTMLElement {
 
         const anchorSelector = this.getAttribute("anchor");
         const anchor = this.getContainer(anchorSelector);
-
         if (anchor) {
             this.positionMenu(anchor);
             this.scrollHandler = () =>
@@ -247,8 +243,6 @@ class KeplerMenu extends HTMLElement {
 
     hideMenu() {
         this.style.display = "none";
-
-        // ✅ Remove event listeners when menu is hidden
         if (this.scrollHandler) {
             window.removeEventListener("scroll", this.scrollHandler, true);
             window.removeEventListener("resize", this.scrollHandler);
@@ -278,7 +272,6 @@ class KeplerMenu extends HTMLElement {
             left = anchorRect.left + (anchorRect.width - menuRect.width) / 2;
         }
 
-        // Prevent menu from going out of viewport bounds
         if (left + menuRect.width > viewportWidth) {
             left = viewportWidth - menuRect.width - 10;
         }
@@ -288,11 +281,10 @@ class KeplerMenu extends HTMLElement {
         if (left < 10) left = 10;
         if (top < 10) top = 10;
 
-        this.style.position = "fixed"; // ✅ Keeps menu independent of parent styles
+        this.style.position = "fixed";
         this.style.top = `${top}px`;
         this.style.left = `${left}px`;
 
-        // ✅ Adjust width based on child elements if not explicitly set
         if (!this.style.width) {
             let maxWidth = 0;
             this.shadowRoot.querySelectorAll(".menu-item").forEach((item) => {

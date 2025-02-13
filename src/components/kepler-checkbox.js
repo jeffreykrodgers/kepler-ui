@@ -15,6 +15,8 @@ class KeplerCheckbox extends HTMLElement {
             "disabled",
             "name",
             "value",
+            "required",
+            "invalid",
         ];
     }
 
@@ -25,19 +27,26 @@ class KeplerCheckbox extends HTMLElement {
     }
 
     connectedCallback() {
+        if (
+            this.hasAttribute("invalid") &&
+            !this.hasAttribute("data-manual-invalid")
+        ) {
+            this.setAttribute("data-manual-invalid", "true");
+        }
         this.updateComponent();
 
-        // Create a hidden checkbox input (instead of a hidden input) so that it
-        // accepts default checkbox properties.
+        // Create a hidden checkbox input so that it accepts default checkbox properties.
         if (!this.inputElement) {
             this.inputElement = document.createElement("input");
             this.inputElement.type = "checkbox";
             // Hide the native checkbox.
-            this.inputElement.style.position = "absolute";
-            this.inputElement.style.opacity = "0";
-            this.inputElement.style.pointerEvents = "none";
-            this.inputElement.style.width = "0";
-            this.inputElement.style.height = "0";
+            Object.assign(this.inputElement.style, {
+                position: "absolute",
+                opacity: "0",
+                pointerEvents: "none",
+                width: "0",
+                height: "0",
+            });
             // Set initial properties.
             this.inputElement.name = this.getAttribute("name") || "";
             this.inputElement.value = this.getAttribute("value") || "on";
@@ -58,7 +67,7 @@ class KeplerCheckbox extends HTMLElement {
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: var(--spacing-small, 8px);
+            gap: var(--spacing-small, 4px);
           }
           :host([label-position="left"]) .checkbox-container {
             flex-direction: row-reverse;
@@ -75,8 +84,8 @@ class KeplerCheckbox extends HTMLElement {
           :host([label-position="bottom"]) .label-wrapper {
             width: 100%;
             justify-content: flex-start;
-            background-color: var(--base-surface, #fff);
-            color: var(--base-text--, #000);
+            background-color: var(--base-surface, var(--neutral-1, rgba(241,246,250,1)));
+            color: var(--base-text--, var(--neutral-9, rgba(29,29,29,1)));
             padding: 0;
           }
           .checkbox-wrapper {
@@ -84,8 +93,8 @@ class KeplerCheckbox extends HTMLElement {
             flex: 1 0 auto;
             padding: var(--spacing-medium, 8px);
           }
-        :host([label-position="top"]) .checkbox-wrapper,
-        :host([label-position="bottom"]) .checkbox-wrapper {
+          :host([label-position="top"]) .checkbox-wrapper,
+          :host([label-position="bottom"]) .checkbox-wrapper {
             padding-left: 0;
             padding-right: 0;
           }
@@ -93,22 +102,23 @@ class KeplerCheckbox extends HTMLElement {
             width: 20px;
             height: 20px;
             display: inline-block;
-            border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
-            border-radius: var(--border-small, 4px);
-            background: var(--base-surface);
+            border: var(--border-medium, 2px) solid var(--base-text--, var(--neutral-9, rgba(29,29,29,1)));
+            border-radius: var(--border-small, 1px);
+            background: var(--base-surface, var(--neutral-1, rgba(241,246,250,1)));
             position: relative;
             cursor: pointer;
             flex-shrink: 0;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
           }
           .checkbox.checked {
-            background: var(--primary--);
-            border-color: var(--primary--);
+            background: var(--primary--, var(--blue--, rgba(4,134,209,1)));
+            border-color: var(--primary--, var(--blue--, rgba(4,134,209,1)));
           }
           .checkbox.checked::after {
             content: "";
             width: 6px;
             height: 12px;
-            border: solid var(--primary-background--, #fff);
+            border: solid var(--primary-background--, var(--blue-light-1, rgba(245,250,250,1)));
             border-radius: 2px;
             border-width: 0 2px 2px 0;
             position: absolute;
@@ -128,14 +138,34 @@ class KeplerCheckbox extends HTMLElement {
             line-height: 24px;
             font-weight: 500;
             padding: var(--spacing-medium, 8px);
-            color: var(--base-surface, #fff);
-            background: var(--base-text--, #ccc);
-            transition: color 0.2s ease;
+            color: var(--base-surface, var(--neutral-1, rgba(241,246,250,1)));
+            background: var(--base-text--, var(--neutral-9, rgba(29,29,29,1)));
+            transition: color 0.2s ease, background-color 0.2s ease;
             cursor: pointer;
           }
           .label-wrapper.disabled {
             cursor: not-allowed;
             opacity: 0.5;
+          }
+          /* Invalid state styles with fallback values */
+          :host([invalid]) .checkbox {
+              border-color: var(--error--, var(--red--, rgba(217,4,40,1)));
+              background: var(--error-background--, var(--red-light-1, rgba(250,245,246,1)));
+          }
+          :host([invalid]) .checkbox:hover {
+              background: var(--error-background-hover, var(--red-light-2, rgba(246,215,220,1)));
+          }
+          :host([invalid]) .checkbox:active,
+          :host([invalid]) .checkbox:focus {
+              background: var(--error-background-active, var(--red-light-3, rgba(242,185,195,1)));
+          }
+          :host([invalid][label-position="top"]) .label-wrapper,
+          :host([invalid][label-position="bottom"]) .label-wrapper {
+              color: var(--error--, var(--red--, rgba(217,4,40,1)));
+          }
+          :host([invalid][label-position="left"]) .label-wrapper,
+          :host([invalid][label-position="right"]) .label-wrapper {
+              background-color: var(--error--, var(--red--, rgba(217,4,40,1)));
           }
         </style>
         <div class="checkbox-container" part="checkbox-container">
@@ -161,15 +191,23 @@ class KeplerCheckbox extends HTMLElement {
 
         this.setAttribute("label-position", labelPosition);
         this.labelWrapperElement.textContent = label;
+        this.labelWrapperElement.style.display = label ? "block" : "none";
 
         this.checkboxElement.classList.toggle("checked", checked);
         this.labelWrapperElement.classList.toggle("checked", checked);
-
         this.checkboxElement.classList.toggle("disabled", disabled);
         this.labelWrapperElement.classList.toggle("disabled", disabled);
 
         // Update the hidden checkbox input.
         this.updateHiddenInput();
+
+        if (!this.hasAttribute("data-manual-invalid")) {
+            if (this.hasAttribute("required") && !checked) {
+                this.setAttribute("invalid", "");
+            } else {
+                this.removeAttribute("invalid");
+            }
+        }
     }
 
     updateHiddenInput() {
@@ -190,6 +228,7 @@ class KeplerCheckbox extends HTMLElement {
                 this.setAttribute("checked", "");
             }
             this.updateHiddenInput();
+            this.updateComponent();
             this.dispatchEvent(
                 new CustomEvent("change", {
                     detail: { checked: !isChecked },
@@ -198,6 +237,20 @@ class KeplerCheckbox extends HTMLElement {
                 })
             );
         });
+    }
+
+    get invalid() {
+        return this.hasAttribute("invalid");
+    }
+
+    set invalid(val) {
+        if (val) {
+            this.setAttribute("data-manual-invalid", "true");
+            this.setAttribute("invalid", "");
+        } else {
+            this.removeAttribute("data-manual-invalid");
+            this.removeAttribute("invalid");
+        }
     }
 }
 

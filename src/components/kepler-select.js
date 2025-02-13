@@ -16,13 +16,16 @@ class KeplerSelect extends HTMLElement {
             "multiple",
             "selection-mode",
             "value",
+            "required",
+            "invalid",
+            "placeholder",
         ];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
             if (name === "value") {
-                // When the value attribute changes, update the property via the setter
+                // When the value attribute changes, update via the setter.
                 this.value = newValue;
             } else if (
                 [
@@ -34,11 +37,19 @@ class KeplerSelect extends HTMLElement {
                 ].includes(name)
             ) {
                 this.updateComponent();
+            } else if (["required", "invalid", "placeholder"].includes(name)) {
+                this.updateComponent();
             }
         }
     }
 
     connectedCallback() {
+        if (
+            this.hasAttribute("invalid") &&
+            !this.hasAttribute("data-manual-invalid")
+        ) {
+            this.setAttribute("data-manual-invalid", "true");
+        }
         this.updateComponent();
         this.manageDefaultIconVisibility();
 
@@ -68,16 +79,16 @@ class KeplerSelect extends HTMLElement {
             font-size: 21px;
             line-height: 24px;
             font-weight: 500;
-            color: var(--base-surface, #fff);
-            background: var(--base-text--, #000);
+            color: var(--base-surface, rgba(241,246,250,1));
+            background: var(--base-text--, rgba(29,29,29,1));
             padding: var(--spacing-medium, 8px);
-            border-radius: var(--border-small, 4px);
+            border-radius: var(--border-small, 1px);
             gap: var(--spacing-small, 8px);
             transition: background-color 0.2s ease, color 0.2s ease;
           }
           .label-wrapper.selected {
-            background-color: var(--primary--);
-            color: var(--primary-background--, #fff);
+            background-color: var(--primary--, rgba(4,134,209,1));
+            color: var(--primary-background--, rgba(245,250,250,1));
           }
           .label-icon {
             display: flex;
@@ -106,8 +117,8 @@ class KeplerSelect extends HTMLElement {
           }
           :host([label-position="top"]) .label-wrapper,
           :host([label-position="bottom"]) .label-wrapper {
-            background: var(--base-surface, #fff);
-            color: var(--base-text--, #000);
+            background: var(--base-surface, rgba(241,246,250,1));
+            color: var(--base-text--, rgba(29,29,29,1));
             padding: 0;
           }
           :host([label-position="top"]) .select-container,
@@ -120,10 +131,10 @@ class KeplerSelect extends HTMLElement {
             display: flex;
             align-items: center;
             padding: var(--spacing-medium, 8px);
-            border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
-            border-radius: var(--border-small, 5px);
-            background: var(--base-surface);
-            color: var(--base-text);
+            border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
+            border-radius: var(--border-small, 1px);
+            background: var(--base-surface, rgba(241,246,250,1));
+            color: var(--base-text--, rgba(29,29,29,1));
             font-family: Tomorrow, sans-serif;
             font-size: var(--font-size, 16px);
             transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -135,8 +146,28 @@ class KeplerSelect extends HTMLElement {
             align-items: center;
           }
           .select-wrapper:focus-within {
-            border-color: var(--primary--);
-            background: var(--base-hover);
+            border-color: var(--primary--, rgba(4,134,209,1));
+            background: var(--base-hover, rgba(215,219,222,1));
+          }
+          /* Invalid state styles */
+          :host([invalid]) .select-wrapper {
+              border-color: var(--error--, rgba(217,4,40,1));
+              background: var(--error-background--, #ffe6e6);
+          }
+          :host([invalid]) .select-wrapper:hover {
+              background: var(--error-background-hover, #ffdcdc);
+          }
+          :host([invalid]) .select-wrapper:active,
+          :host([invalid]) .select-wrapper:focus-within {
+              background: var(--error-background-active, #ffc0c0);
+          }
+          :host([invalid][label-position="top"]) .label-wrapper,
+          :host([invalid][label-position="bottom"]) .label-wrapper {
+              color: var(--error--, rgba(217,4,40,1));
+          }
+          :host([invalid][label-position="left"]) .label-wrapper,
+          :host([invalid][label-position="right"]) .label-wrapper {
+              background-color: var(--error--, rgba(217,4,40,1));
           }
           .dropdown {
             display: none;
@@ -145,11 +176,11 @@ class KeplerSelect extends HTMLElement {
             left: 0;
             width: 100%;
             box-sizing: border-box;
-            background: var(--base-text--);
+            background: var(--base-text--, rgba(29,29,29,1));
             z-index: 10;
             max-height: 200px;
             overflow-y: auto;
-            box-shadow: var(--shadow-medium, 0 4px 8px rgba(0, 0, 0, 0.2));
+            box-shadow: var(--shadow-medium, 0 4px 8px rgba(0,0,0,0.2));
           }
           .dropdown.open {
             display: block;
@@ -158,17 +189,17 @@ class KeplerSelect extends HTMLElement {
             padding: var(--spacing-medium, 8px);
             font-size: var(--font-size, 16px);
             font-family: Tomorrow, sans-serif;
-            color: var(--base-background, #000);
-            background: var(--base-text--);
+            color: var(--base-surface, rgba(241,246,250,1));
+            background: var(--base-text--, rgba(29,29,29,1));
             cursor: pointer;
             transition: background-color 0.2s ease, color 0.2s ease;
           }
           .dropdown-item:hover {
-            background: var(--base-text-emphasize);
+            background: var(--base-text-emphasize, rgba(56,56,57,1));
           }
           .dropdown-item.selected {
-            background: var(--primary--);
-            color: var(--primary-background--);
+            background: var(--primary--, rgba(4,134,209,1));
+            color: var(--primary-background--, rgba(245,250,250,1));
           }
           .hidden {
             display: none;
@@ -182,7 +213,7 @@ class KeplerSelect extends HTMLElement {
           .default-icon svg {
             width: 100%;
             height: 100%;
-            stroke: var(--base-text--, #ccc);
+            stroke: var(--base-text--, rgba(29,29,29,1));
             fill: none;
             transition: transform 0.2s ease;
           }
@@ -201,7 +232,7 @@ class KeplerSelect extends HTMLElement {
             display: inline-flex;
             align-items: center;
             background: var(--base-text--, #007bff);
-            color: var(--base-surface, #fff);
+            color: var(--base-surface, rgba(241,246,250,1));
             padding: 1px 4px;
             border-radius: 4px;
             font-size: 14px;
@@ -209,7 +240,7 @@ class KeplerSelect extends HTMLElement {
           .tag .remove {
             margin-left: 8px;
             cursor: pointer;
-            color: var(--primary-background--, #fff);
+            color: var(--primary-background--, rgba(245,250,250,1));
             font-size: 12px;
           }
         </style>
@@ -259,7 +290,9 @@ class KeplerSelect extends HTMLElement {
 
     updateSelectedDisplay(multiple, selectionMode) {
         if (multiple) {
-            const options = JSON.parse(this.getAttribute("options") || "[]");
+            const options =
+                this._options ||
+                JSON.parse(this.getAttribute("options") || "[]");
             const selectedOptions = options.filter((opt) =>
                 this.selectedValues.has(opt.value)
             );
@@ -270,13 +303,23 @@ class KeplerSelect extends HTMLElement {
                 this.selectedValueElement.innerHTML = selectedOptions
                     .map(
                         (opt) => `
-                <span class="tag">
-                    ${opt.label}
-                    <span class="remove" data-value="${opt.value}">✕</span>
-                </span>`
+                  <span class="tag">
+                      ${opt.label}
+                      <span class="remove" data-value="${opt.value}">✕</span>
+                  </span>`
                     )
                     .join("");
             }
+        } else {
+            const options =
+                this._options ||
+                JSON.parse(this.getAttribute("options") || "[]");
+            const selected = options.find((opt) => opt.selected);
+            const placeholder =
+                this.getAttribute("placeholder") || "Select an option";
+            this.selectedValueElement.textContent = selected
+                ? selected.label
+                : placeholder;
         }
     }
 
@@ -301,15 +344,17 @@ class KeplerSelect extends HTMLElement {
             }
         }
 
+        this._options = options;
+
         this.labelTextElement.textContent = label;
         this.setAttribute("label-position", labelPosition);
 
         this.dropdown.innerHTML = options
             .map(
                 (opt) => `
-            <div class="dropdown-item ${opt.selected ? "selected" : ""}" data-value="${opt.value}" role="option" aria-selected="${opt.selected ? "true" : "false"}">
-                ${opt.label}
-            </div>`
+              <div class="dropdown-item ${opt.selected ? "selected" : ""}" data-value="${opt.value}" role="option" aria-selected="${opt.selected ? "true" : "false"}">
+                  ${opt.label}
+              </div>`
             )
             .join("");
 
@@ -321,13 +366,10 @@ class KeplerSelect extends HTMLElement {
                         .map((opt) => opt.value)
                 );
             }
-        } else {
-            const selected = options.find((opt) => opt.selected);
-            this.selectedValueElement.textContent =
-                selected?.label || "Select an option";
         }
-
         this.updateSelectedDisplay(multiple, selectionMode);
+        this.updateHiddenInput();
+        this.updateValidation();
     }
 
     manageDefaultIconVisibility() {
@@ -354,6 +396,7 @@ class KeplerSelect extends HTMLElement {
 
         this.selectWrapper.addEventListener("blur", () => {
             this.labelWrapper.classList.remove("selected");
+            this.updateValidation();
         });
 
         this.selectWrapper.addEventListener("click", (event) => {
@@ -397,6 +440,7 @@ class KeplerSelect extends HTMLElement {
                 }
 
                 this.updateHiddenInput();
+                this.updateValidation();
 
                 this.dispatchEvent(
                     new CustomEvent("change", {
@@ -422,35 +466,24 @@ class KeplerSelect extends HTMLElement {
         this.selectedValueElement.addEventListener("click", (event) => {
             const removeButton = event.target.closest(".remove");
             if (removeButton) {
-                event.stopPropagation(); // ✅ Prevents opening dropdown
+                event.stopPropagation();
                 const value = removeButton.getAttribute("data-value");
-
-                // Remove the value from the selectedValues set
                 this.selectedValues.delete(value);
-
-                // Find the corresponding dropdown item and remove the "selected" class
                 const item = this.shadowRoot.querySelector(
                     `.dropdown-item[data-value="${value}"]`
                 );
                 if (item) {
                     item.classList.remove("selected");
                 }
-
-                // Update the displayed selected values
                 this.updateSelectedDisplay(
                     true,
                     this.getAttribute("selection-mode") || "combined"
                 );
-
-                // Update the hidden input field
                 this.updateHiddenInput();
-
-                // Dispatch the change event
+                this.updateValidation();
                 this.dispatchEvent(
                     new CustomEvent("change", {
-                        detail: {
-                            value: Array.from(this.selectedValues),
-                        },
+                        detail: { value: Array.from(this.selectedValues) },
                         bubbles: true,
                         composed: true,
                     })
@@ -464,11 +497,6 @@ class KeplerSelect extends HTMLElement {
         this.selectWrapper.classList.remove("open");
         this.selectWrapper.setAttribute("aria-expanded", "false");
         this.manageDefaultIconVisibility();
-        this.updateLabelState(false);
-    }
-
-    updateLabelState(isSelected) {
-        this.labelWrapper.classList.toggle("selected", isSelected);
     }
 
     updateHiddenInput() {
@@ -486,6 +514,29 @@ class KeplerSelect extends HTMLElement {
                     ? selectedItem.getAttribute("data-value")
                     : "";
             }
+        }
+    }
+
+    updateValidation() {
+        if (this.hasAttribute("data-manual-invalid")) return;
+        if (this.hasAttribute("required")) {
+            const multiple = this.hasAttribute("multiple");
+            if (multiple) {
+                if (this.selectedValues.size === 0) {
+                    this.setAttribute("invalid", "");
+                } else {
+                    this.removeAttribute("invalid");
+                }
+            } else {
+                const value = this.value;
+                if (!value || value === "Select an option") {
+                    this.setAttribute("invalid", "");
+                } else {
+                    this.removeAttribute("invalid");
+                }
+            }
+        } else {
+            this.removeAttribute("invalid");
         }
     }
 
@@ -518,6 +569,7 @@ class KeplerSelect extends HTMLElement {
             this.getAttribute("selection-mode") || "combined"
         );
         this.updateHiddenInput();
+        this.updateValidation();
     }
 
     setOptions(options) {
@@ -526,6 +578,20 @@ class KeplerSelect extends HTMLElement {
 
     setValue(val) {
         this.setAttribute("value", val);
+    }
+
+    get invalid() {
+        return this.hasAttribute("invalid");
+    }
+
+    set invalid(val) {
+        if (val) {
+            this.setAttribute("data-manual-invalid", "true");
+            this.setAttribute("invalid", "");
+        } else {
+            this.removeAttribute("data-manual-invalid");
+            this.removeAttribute("invalid");
+        }
     }
 }
 

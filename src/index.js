@@ -17,3 +17,6 @@ import "./components/kepler-panelbar.js";
 import "./components/kepler-panel.js";
 import "./components/kepler-router.js";
 import "./components/kepler-code.js";
+import "./components/kepler-progress.js";
+import "./components/kepler-switch.js";
+import "./components/kepler-textarea.js";

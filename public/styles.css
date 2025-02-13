@@ -17,10 +17,11 @@ body {
 }
 
 kp-theme {
-    background: var(--base-surface);
+    background: var(--base-surface, rgba(241, 246, 250, 1));
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    gap: var(--spacing-2x-large);
 }

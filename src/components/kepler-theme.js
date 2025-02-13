@@ -287,7 +287,7 @@ class KeplerTheme extends HTMLElement {
             }
 
             ::slotted(*) {
-                color: var(--base-text--);
+                color: var(--base-text--, rgba(29, 29, 29, 1));
             }
 
   
@@ -323,12 +323,12 @@ class KeplerTheme extends HTMLElement {
             }
 
             .display-1 {
-                color: var(--base-text--);
+                color: var(--base-text--, rgba(29, 29, 29, 1));
                 font-size: var(--size-display1);
             }
 
             .display-2 {
-                color: var(--primary--);
+                color: var(--primary--, rgba(4, 134, 209, 1));
                 font-size: var(--size-display2);
                 text-transform: uppercase;
             }
@@ -345,12 +345,12 @@ class KeplerTheme extends HTMLElement {
             }
 
             h1 {
-                color: var(--base-text--);
+                color: var(--base-text--, rgba(29, 29, 29, 1));
                 font-size: var(--size-h1);
             }
 
             h2 {
-                color: var(--primary--);
+                color: var(--primary--, rgba(4, 134, 209, 1));
                 font-size: var(--size-h2);
                 text-transform: uppercase;
             }
@@ -367,17 +367,17 @@ class KeplerTheme extends HTMLElement {
             }
 
             h5 {
-                color: var(--base-text--);
+                color: var(--base-text--, rgba(29, 29, 29, 1));
                 font-size: var(--size-h5);
             }
 
             h6 {
-                color: var(--primary--);
+                color: var(--primary--, rgba(4, 134, 209, 1));
                 font-size: var(--size-h6);
             }
 
             p {
-                color: var(--base-text--);
+                color: var(--base-text--, rgba(29, 29, 29, 1));
                 font-size: var(--size-p);
             }
 

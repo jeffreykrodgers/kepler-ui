@@ -2,7 +2,6 @@ class KeplerTabs extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-
         this.tabs = [];
         this.activeTab = null;
         this.render();
@@ -21,15 +20,13 @@ class KeplerTabs extends HTMLElement {
                     console.error("Invalid JSON for tabs:", newValue);
                     this.tabs = [];
                 }
-                // If no active tab is set via the active-tab attribute,
-                // then default to the first enabled tab.
                 if (!this.hasAttribute("active-tab") && this.tabs.length) {
                     const firstEnabled = this.tabs.find((tab) => !tab.disabled);
                     this.activeTab = firstEnabled ? firstEnabled.tab : null;
                 }
                 this.render();
             } else if (name === "active-tab") {
-                // Use the value of active-tab attribute as the default active tab.
+                // Use the active-tab attribute as the default active tab.
                 this.activeTab = newValue;
                 this.render();
             }
@@ -37,8 +34,7 @@ class KeplerTabs extends HTMLElement {
     }
 
     connectedCallback() {
-        // If no active tab is set (and no active-tab attribute is provided),
-        // default to the first enabled tab.
+        // If no active tab is set, default to the first enabled tab.
         if (!this.activeTab && this.tabs.length) {
             const firstEnabled = this.tabs.find((tab) => !tab.disabled);
             this.activeTab = firstEnabled ? firstEnabled.tab : null;
@@ -77,7 +73,7 @@ class KeplerTabs extends HTMLElement {
         this.tabs.forEach((tab) => {
             // Only the active tab gets an "active" class.
             const activeClass = this.activeTab === tab.tab ? " active" : "";
-            slotsHTML += `<slot name="${tab.tab}" class="${activeClass}"></slot>`;
+            slotsHTML += `<slot name="${tab.tab}" class="${activeClass}" part="tab-content"></slot>`;
         });
         return slotsHTML;
     }
@@ -88,34 +84,37 @@ class KeplerTabs extends HTMLElement {
         this.shadowRoot.innerHTML = `
         <style>
             :host {
-                display: block;
+                display: flex;
                 font-family: inherit;
+                flex-direction: column;
             }
             .tabs-header {
                 display: flex;
                 font-family: ProFontWindows, sans-serif;
+                margin-bottom: -1px;
+                z-index: 2;
             }
             .tab-header {
                 flex: 0 1 auto;
                 padding: var(--spacing-medium, 8px);
-                background: var(--base-text--);
+                background: var(--base-text--, rgba(29,29,29,1));
                 font-size: 18px;
-                color: var(--base-surface, #fff);
+                color: var(--base-surface, rgba(241, 246, 250, 1));
                 text-align: center;
                 text-transform: uppercase;
                 overflow: hidden;
                 cursor: pointer;
                 transition: background 0.2s ease;
-                border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
+                border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
                 border-bottom: none;
             }
             .tab-header:last-child {
                 border-right: none;
             }
             .tab-header.active {
-                background: var(--base-surface, #fff);
-                color: var(--base-text);
-                border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
+                background: var(--base-surface, rgba(241,246,250,1));
+                color: var(--base-text--, rgba(29,29,29,1));
+                border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
                 border-bottom: none;
             }
             .tab-header-content {
@@ -123,14 +122,12 @@ class KeplerTabs extends HTMLElement {
                 align-items: center;
                 padding: var(--spacing-small, 4px);
             }
-
             .tab-header.disabled {
                 position: relative;
                 cursor: default;
-                background: var(--base-text-subtle);
-                border: var(--border-medium, 2px) solid var(--base-text-subtle);
+                background: var(--base-text-subtle, rgba(109,110,112,1));
+                border: var(--border-medium, 2px) solid var(--base-text-subtle, rgba(109,110,112,1));
             }
-
             .tab-header.disabled::before {
                 content: '';
                 position: absolute;
@@ -140,33 +137,29 @@ class KeplerTabs extends HTMLElement {
                 height: 100%;
                 background: repeating-linear-gradient(
                     -45deg,
-                    var(--base-surface, #fff) 0,
-                    var(--base-surface, #fff) 2px,
+                    var(--base-surface, rgba(241,246,250,1)) 0,
+                    var(--base-surface, rgba(241,246,250,1)) 2px,
                     transparent 3px,
                     transparent 10px
                 );
                 pointer-events: none;
                 z-index: 1;
             }
-
             .tab-header.disabled .tab-header-content {
                 display: flex;
-                background: var(--base-text-subtle);
+                background: var(--base-text-subtle, rgba(109,110,112,1));
                 z-index: 2;
                 position: relative;
             }   
-
             .tabs-content slot {
                 display: none;
             }
-
             .tabs-content slot.active {
                 display: block;
-                border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
+                border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
                 margin-top: -2px;
                 padding: var(--spacing-medium, 8px);
             }
-
             .left-icon, .right-icon {
                 margin: 0 4px;
             }

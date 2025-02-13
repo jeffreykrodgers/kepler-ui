@@ -65,10 +65,10 @@ class KeplerSlider extends HTMLElement {
                     font-size: 21px;
                     line-height: 24px;
                     font-weight: 500;
-                    color: var(--base-surface, #fff);
-                    background: var(--base-text--, #000);
+                    color: var(--base-surface, rgba(241,246,250,1));
+                    background: var(--base-text--, rgba(29,29,29,1));
                     padding: var(--spacing-medium, 8px);
-                    border-radius: var(--border-small, 4px);
+                    border-radius: var(--border-small, 1px);
                     gap: var(--spacing-small, 8px);
                     transition: background-color 0.2s ease, color 0.2s ease;
                 }
@@ -76,13 +76,13 @@ class KeplerSlider extends HTMLElement {
                 :host([label-position="bottom"]) .label-wrapper {
                     width: 100%;
                     justify-content: flex-start;
-                    background-color: var(--base-surface, #fff);
-                    color: var(--base-text--, #000);
+                    background-color: var(--base-surface, rgba(241,246,250,1));
+                    color: var(--base-text--, rgba(29,29,29,1));
                     padding: 0;
                 }
                 .label-wrapper.selected {
-                    background-color: var(--primary--);
-                    color: var(--primary-background--, #fff);
+                    background-color: var(--primary--, rgba(4,134,209,1));
+                    color: var(--primary-background--, rgba(245,250,250,1));
                 }
                 .label-icon {
                     display: flex;
@@ -119,18 +119,18 @@ class KeplerSlider extends HTMLElement {
                     flex: 1 0 auto;
                     align-items: center;
                     padding: var(--spacing-2x-small, 2px);
-                    border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
-                    border-radius: var(--border-small, 5px);
-                    background: var(--base-surface);
-                    color: var(--base-text);
+                    border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
+                    border-radius: var(--border-small, 1px);
+                    background: var(--base-surface, rgba(241,246,250,1));
+                    color: var(--base-text--, rgba(29,29,29,1));
                     font-family: Tomorrow, sans-serif;
                     font-size: var(--font-size, 16px);
                     transition: border-color 0.2s ease, background-color 0.2s ease;
                     min-height: 40px;
                 }
                 .input-wrapper:focus-within {
-                    border-color: var(--primary--);
-                    background: var(--base-hover);
+                    border-color: var(--primary--, rgba(4,134,209,1));
+                    background: var(--base-hover, rgba(215,219,222,1));
                 }
                 input[type="range"] {
                     flex: 1;
@@ -144,42 +144,39 @@ class KeplerSlider extends HTMLElement {
                     height: 30px;
                     background: linear-gradient(
                         to right,
-                        var(--primary--, #007bff) 0%,
-                        var(--primary--, #007bff) var(--slider-percentage, 50%),
-                        var(--base-surface, #ddd) var(--slider-percentage, 50%),
-                        var(--base-surface, #ddd) 100%
+                        var(--primary--, rgba(4,134,209,1)) 0%,
+                        var(--primary--, rgba(4,134,209,1)) var(--slider-percentage, 50%),
+                        var(--base-surface, rgba(241,246,250,1)) var(--slider-percentage, 50%),
+                        var(--base-surface, rgba(241,246,250,1)) 100%
                     );
                 }
                 input[type="range"]::-moz-range-track {
                     height: 30px;
                     background: linear-gradient(
                         to right,
-                        var(--primary--, #007bff) 0%,
-                        var(--primary--, #007bff) var(--slider-percentage, 50%),
-                        var(--base-surface, #ddd) var(--slider-percentage, 50%),
-                        var(--base-surface, #ddd) 100%
+                        var(--primary--, rgba(4,134,209,1)) 0%,
+                        var(--primary--, rgba(4,134,209,1)) var(--slider-percentage, 50%),
+                        var(--base-surface, rgba(241,246,250,1)) var(--slider-percentage, 50%),
+                        var(--base-surface, rgba(241,246,250,1)) 100%
                     );
-                }
-
                 }
                 /* Slider Thumb (Square Grabber) */
                 input[type="range"]::-webkit-slider-thumb {
                     -webkit-appearance: none;
                     appearance: none;
-                    width: var(--spacing-medium);
-                    height: 26px; /* Added semicolon here */
-                    background: var(--base-text--);
-                    border: 2px solid var(--base-text--, #ccc);
+                    width: var(--spacing-medium, 8px);
+                    height: 26px;
+                    background: var(--base-text--, rgba(29,29,29,1));
+                    border: 2px solid var(--base-text--, rgba(29,29,29,1));
                     border-radius: 0;
                     cursor: pointer;
                     margin-top: -8px;
                 }
-
                 input[type="range"]::-moz-range-thumb {
-                    width: var(--spacing-medium);
+                    width: var(--spacing-medium, 8px);
                     height: 26px;
-                    background: var(--base-text--);
-                    border: 2px solid var(--base-text--, #ccc);
+                    background: var(--base-text--, rgba(29,29,29,1));
+                    border: 2px solid var(--base-text--, rgba(29,29,29,1));
                     border-radius: 0;
                     cursor: pointer;
                 }
@@ -267,12 +264,10 @@ class KeplerSlider extends HTMLElement {
     manageSlotVisibility(slotName, selector) {
         const slot = this.shadowRoot.querySelector(`slot[name="${slotName}"]`);
         const container = this.shadowRoot.querySelector(selector);
-
         const updateVisibility = () => {
-            const hasContent = slot && slot.assignedNodes().length > 0;
+            const hasContent = slot.assignedNodes().length > 0;
             container.classList.toggle("hidden", !hasContent);
         };
-
         if (slot) {
             slot.addEventListener("slotchange", updateVisibility);
             updateVisibility();

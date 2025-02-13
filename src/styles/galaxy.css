@@ -24,28 +24,28 @@
     --secondary-background-active: var(--neutral-7);
     --secondary-background-border: var(--neutral-6);
     --error--: var(--red--);
-    --error-hover: var(--red-light-8);
-    --error-active: var(--red-light-7);
-    --error-background--: var(--red-light-1);
-    --error-background-hover: var(--red-light-2);
-    --error-background-active: var(--red-light-3);
-    --error-background-border: var(--red-light-4);
+    --error-hover: var(--red-dark-8);
+    --error-active: var(--red-dark-7);
+    --error-background--: var(--red-dark-1);
+    --error-background-hover: var(--red-dark-2);
+    --error-background-active: var(--red-dark-3);
+    --error-background-border: var(--red-dark-4);
     --warning--: var(--pumpkin--);
-    --warning-hover: var(--pumpkin-light-8);
+    --warning-hover: var(--pumpkin-dark-8);
     --warning-active: var(--pumpkin-dark-7);
-    --warning-background--: var(--pumpkin-light-1);
-    --warning-background-hover: var(--pumpkin-light-2);
-    --warning-background-active: var(--pumpkin-light-3);
-    --warning-background-border: var(--pumpkin-light-4);
+    --warning-background--: var(--pumpkin-dark-1);
+    --warning-background-hover: var(--pumpkin-dark-2);
+    --warning-background-active: var(--pumpkin-dark-3);
+    --warning-background-border: var(--pumpkin-dark-4);
     --success--: var(--green--);
-    --success-hover: var(--green-light-8);
-    --success-active: var(--green-light-7);
-    --success-background--: var(--green-light-1);
-    --success-background-hover: var(--green-light-2);
-    --success-background-active: var(--green-light-3);
-    --success-background-border: var(--green-light-4);
+    --success-hover: var(--green-dark-8);
+    --success-active: var(--green-dark-7);
+    --success-background--: var(--green-dark-1);
+    --success-background-hover: var(--green-dark-2);
+    --success-background-active: var(--green-dark-3);
+    --success-background-border: var(--green-dark-4);
 }
 
 ::slotted(*) {
-    color: var(--base-text--);
+    color: var(--base-text--, rgba(29, 29, 29, 1));
 }

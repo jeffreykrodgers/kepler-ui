@@ -8,7 +8,14 @@ class KeplerDialog extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["title", "closable", "visible", "cover"];
+        return ["title", "closable", "visible", "cover", "anchor"];
+    }
+
+    getContainer(selector, multiple) {
+        const method = multiple ? "querySelectorAll" : "querySelector";
+        return window.__routerShadowRoot
+            ? window.__routerShadowRoot[method](selector)
+            : document[method](selector);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -19,6 +26,37 @@ class KeplerDialog extends HTMLElement {
             if (name === "visible") {
                 this.updateVisibility();
             }
+            if (name === "anchor") {
+                this.setupAnchor();
+            }
+        }
+    }
+
+    connectedCallback() {
+        this.setupAnchor();
+        const anchorSelector = this.getAttribute("anchor");
+        if (anchorSelector) {
+            const anchor = this.getContainer(anchorSelector);
+            if (anchor) {
+                this.anchorObserver = new MutationObserver(() => {
+                    this.setupAnchor();
+                });
+                this.anchorObserver.observe(anchor, {
+                    attributes: true,
+                    childList: true,
+                    subtree: true,
+                });
+            }
+        }
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener("keydown", this._keydownHandler);
+        if (this._anchor && this._openHandler) {
+            this._anchor.removeEventListener("click", this._openHandler);
+        }
+        if (this.anchorObserver) {
+            this.anchorObserver.disconnect();
         }
     }
 
@@ -31,7 +69,6 @@ class KeplerDialog extends HTMLElement {
     }
 
     updateVisibility() {
-        // When visible, add a "visible" class to fade in; otherwise fade out.
         if (this.getAttribute("visible") === "true") {
             this.classList.add("visible");
         } else {
@@ -43,7 +80,6 @@ class KeplerDialog extends HTMLElement {
         const title = this.getAttribute("title") || "";
         const isClosable = this.hasAttribute("closable");
         const hasCover = this.hasAttribute("cover");
-        // The host covers the entire viewport.
         this.shadowRoot.innerHTML = `
         <style>
           :host {
@@ -56,7 +92,6 @@ class KeplerDialog extends HTMLElement {
             display: flex;
             align-items: center;
             justify-content: center;
-            /* For animation */
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.1s ease;
@@ -80,14 +115,14 @@ class KeplerDialog extends HTMLElement {
             display: flex;
             flex-direction: column;
             width: 400px;
-            background: var(--base-surface, #fff);
-            border: var(--border-medium, 2px) solid var(--base-border, #ccc);
+            background: var(--base-surface, var(--neutral-1, rgba(241,246,250,1)));
+            border: var(--border-medium, 2px) solid var(--base-border, var(--neutral-2, rgba(215,219,222,1)));
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             overflow: hidden;
             font-family: Tomorrow, sans-serif;
           }
           .header, .footer {
-            background: var(--base-border, #ccc);
+            background: var(--base-border, var(--neutral-2, rgba(215,219,222,1)));
             padding: var(--spacing-medium, 8px);
             display: flex;
             align-items: center;
@@ -97,10 +132,10 @@ class KeplerDialog extends HTMLElement {
             font-weight: 500;
           }
           .header {
-            border-bottom: var(--border-medium, 2px) solid var(--base-border, #ccc);
+            border-bottom: var(--border-medium, 2px) solid var(--base-border, var(--neutral-2, rgba(215,219,222,1)));
           }
           .footer {
-            border-top: var(--border-medium, 2px) solid var(--base-border, #ccc);
+            border-top: var(--border-medium, 2px) solid var(--base-border, var(--neutral-2, rgba(215,219,222,1)));
           }
           .content {
             position: relative;
@@ -115,7 +150,7 @@ class KeplerDialog extends HTMLElement {
             padding: 0;
             margin: 0;
             line-height: 1;
-            color: var(--base-text--, #333);
+            color: var(--base-text--, var(--neutral-9, rgba(29,29,29,1)));
           }
           .close-btn svg {
             width: 20px;
@@ -130,10 +165,10 @@ class KeplerDialog extends HTMLElement {
             ${
                 isClosable
                     ? `<button class="close-btn" aria-label="Close dialog">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M6 6 L14 14 M14 6 L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>`
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                           <path d="M6 6 L14 14 M14 6 L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                         </svg>
+                       </button>`
                     : ""
             }
           </div>
@@ -148,19 +183,41 @@ class KeplerDialog extends HTMLElement {
     }
 
     attachEvents() {
-        // Close the dialog when the close button is clicked.
         this.shadowRoot.addEventListener("click", (e) => {
             if (e.target.closest(".close-btn")) {
                 this.close();
+            } else if (e.target.classList.contains("cover")) {
+                this.close();
             }
         });
-        // Listen for the Escape key.
+
         this._keydownHandler = (e) => {
             if (e.key === "Escape") {
                 this.close();
             }
         };
         document.addEventListener("keydown", this._keydownHandler);
+    }
+
+    setupAnchor() {
+        if (this._anchor && this._openHandler) {
+            this._anchor.removeEventListener("click", this._openHandler);
+            this._anchor = null;
+        }
+        const anchorSelector = this.getAttribute("anchor");
+        if (anchorSelector) {
+            const anchor = this.getContainer(anchorSelector);
+            if (anchor) {
+                this._openHandler = this._openDialog.bind(this);
+                anchor.addEventListener("click", this._openHandler);
+                this._anchor = anchor;
+            }
+        }
+    }
+
+    _openDialog(e) {
+        e.preventDefault();
+        this.visible = true;
     }
 
     close() {

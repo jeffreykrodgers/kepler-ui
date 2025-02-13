@@ -13,11 +13,11 @@
     "module": "kepler-ui.js",
     "scripts": {
         "build": "rollup -c",
-        "build:test": "rollup -c rollup.config.testsite.js",
+        "build:test": "rollup -c rollup.config.playground.js",
         "watch": "rollup -c -w",
         "watch:test:copy:html": "chokidar \"public/**/*.html\" -c \"npx cpy-cli \"public/**/*.html\" pub --flat\"",
         "watch:test:copy:css": "chokidar \"public/**/*.css\" -c \"npx cpy-cli \"public/**/*.css\" pub --flat\"",
-        "watch:test": "rollup -c rollup.config.testsite.js -w",
+        "watch:test": "rollup -c rollup.config.playground.js -w",
         "dev": "concurrently \"npm run watch\" \"npm run watch:test\" \"npm run watch:test:copy:html\" \"npm run watch:test:copy:css\" \"nodemon server.js\"",
         "prepublishOnly": "node prepare-publish.js && rollup -c"
     },
@@ -25,17 +25,14 @@
     "license": "MIT",
     "devDependencies": {
         "@eslint/js": "^9.19.0",
-        "rollup": "^2.79.2",
-        "rollup-plugin-copy": "^3.5.0",
-        "rollup-plugin-node-resolve": "^5.2.0",
         "@fortawesome/fontawesome-svg-core": "^6.7.2",
         "@fortawesome/free-solid-svg-icons": "^6.7.2",
         "@rollup/plugin-replace": "^6.0.2",
         "@rollup/plugin-terser": "^0.4.4",
         "chokidar-cli": "^3.0.0",
         "concurrently": "^9.1.2",
-        "cpy-cli": "^5.0.0",
         "connect-livereload": "^0.6.1",
+        "cpy-cli": "^5.0.0",
         "eslint": "^9.19.0",
         "eslint-config-prettier": "^10.0.1",
         "express": "^4.21.2",
@@ -43,6 +40,12 @@
         "globals": "^15.14.0",
         "livereload": "^0.9.3",
         "nodemon": "^3.1.9",
-        "prettier": "3.4.2"
+        "prettier": "3.4.2",
+        "rollup": "^2.79.2",
+        "rollup-plugin-copy": "^3.5.0",
+        "rollup-plugin-node-resolve": "^5.2.0"
+    },
+    "dependencies": {
+        "kepler-ui": "file:../kepler-ui-0.0.1.tgz"
     }
 }

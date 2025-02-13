@@ -75,45 +75,44 @@ class KeplerPanel extends HTMLElement {
         <style>
           :host {
             display: block;
-            background: var(--base-surface);
-            color: var(--base-text--);
+            background: var(--base-surface, rgba(241,246,250,1));
+            color: var(--base-text--, rgba(29,29,29,1));
             z-index: 10;
-            border-left: var(--border-medium) solid var(--base-surface);
+            border-left: var(--border-medium, 2px) solid var(--base-surface, rgba(241,246,250,1));
           }
           :host(.expanded) {
-            background: var(--base-text--);
-            color: var(--base-surface);
-            border-left: var(--border-medium) solid var(--base-text--);
+            background: var(--base-text--, rgba(29,29,29,1));
+            color: var(--base-surface, rgba(241,246,250,1));
+            border-left: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
           }
           :host(.selected) {
-            color: var(--primary--);
-            background: var(--primary-background-hover);
-            border-left: var(--border-medium) solid var(--primary--);
-            margin-left: calc(var(--border-medium) * -1);
-            padding-left: var(--border-medium);
+            color: var(--primary--, rgba(4,134,209,1));
+            background: var(--primary-background-hover, rgba(245,250,250,1));
+            border-left: var(--border-medium, 2px) solid var(--primary--, rgba(4,134,209,1));
+            margin-left: calc(var(--border-medium, 2px) * -1);
+            padding-left: var(--border-medium, 2px);
             z-index: 11;
           }
-            :host(.expanded) .header {
-            padding-left: calc(var(--spacing-medium) - var(--border-small));
-    }
-        :host(.expanded) .header:hover {
-            background: var(--bast-text-emphasize);
-        }
-        :host(.selected) .header:hover {
-            background: var(--primary-background-active);
-        }
-
+          :host(.expanded) .header {
+            padding-left: calc(var(--spacing-medium, 8px) - var(--border-small, 1px));
+          }
+          :host(.expanded) .header:hover {
+            background: var(--base-text-emphasize, rgba(56,56,57,1));
+          }
+          :host(.selected) .header:hover {
+            background: var(--primary-background-active, rgba(225,64,92,1));
+          }
           .header {
             display: flex;
             align-items: center;
-            padding: var(--spacing-medium);
-            padding-left: var(--spacing-large);
+            padding: var(--spacing-medium, 8px);
+            padding-left: var(--spacing-large, 10px);
             cursor: pointer;
             transition: background 0.2s ease;
-            gap: var(--spacing-medium);
+            gap: var(--spacing-medium, 8px);
           }
           .header:hover {
-            background: var(--base-hover);
+            background: var(--base-hover, rgba(215,219,222,1));
           }
           .header:not(.clickable) {
             cursor: default;
@@ -160,16 +159,13 @@ class KeplerPanel extends HTMLElement {
     addHeaderListeners() {
         const header = this.shadowRoot.querySelector(".header");
         header.addEventListener("click", () => {
-            // If an href attribute is present, behave as a link.
             if (this.hasAttribute("href")) {
                 window.location.href = this.getAttribute("href");
                 return;
             }
             if (this.hasChildren()) {
-                // For panels with children, toggle expansion.
                 this.toggle();
             } else {
-                // For panels without children, simply emit a "select" event.
                 this.dispatchEvent(
                     new CustomEvent("select", {
                         detail: { selected: true },
@@ -208,10 +204,8 @@ class KeplerPanel extends HTMLElement {
     }
 
     toggle() {
-        // Only toggle if there are children.
         if (!this.hasChildren()) return;
         if (!this._expanded) {
-            // If expanding and the parent panelbar is exclusive, collapse siblings.
             const parentBar = this.closest("kp-panelbar");
             if (parentBar && parentBar.hasAttribute("exclusive")) {
                 const siblingPanels = parentBar.querySelectorAll("kp-panel");

@@ -5,32 +5,58 @@ class KeplerCard extends HTMLElement {
         this.render();
     }
 
+    static get observedAttributes() {
+        return ["basic"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.render();
+        }
+    }
+
+    get basic() {
+        return this.hasAttribute("basic");
+    }
+
+    set basic(value) {
+        if (value) {
+            this.setAttribute("basic", "");
+        } else {
+            this.removeAttribute("basic");
+        }
+    }
+
     render() {
+        const showPatterns = !this.basic;
+
         this.shadowRoot.innerHTML = `
           <style>
             :host {
               display: flex;
               flex-direction: column;
-              border: var(--border-medium, 2px) solid var(--base-border, #ccc);
+              border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
             }
             .header,
             .footer {
-              background: var(--base-border, #ccc);
-              padding: var(--spacing-x-large, 8px);
+              background: var(--base-border, rgba(215,219,222,1));
+              padding: var(--spacing-x-large, 12px);
             }
             .header {
-              border-bottom: var(--border-medium, 2px) solid var(--base-border, #ccc);
+              border-bottom: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
             }
             .footer {
-              border-top: var(--border-medium, 2px) solid var(--base-border, #ccc);
+              border-top: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
             }
             .content {
               position: relative;
-              /* Increase top and bottom padding to account for the 10px high pattern */
               padding: 26px 16px 26px 16px;
               flex: 1;
             }
             /* Diagonal pattern at the top of the content */
+            ${
+                showPatterns
+                    ? `
             .content::before {
               content: '';
               position: absolute;
@@ -40,8 +66,8 @@ class KeplerCard extends HTMLElement {
               height: 10px;
               background: repeating-linear-gradient(
                 -45deg,
-                var(--base-border, #ccc) 0,
-                var(--base-border, #ccc) 2px,
+                var(--base-border, rgba(215,219,222,1)) 0,
+                var(--base-border, rgba(215,219,222,1)) 2px,
                 transparent 3px,
                 transparent 10px
               );
@@ -56,11 +82,14 @@ class KeplerCard extends HTMLElement {
               height: 10px;
               background: repeating-linear-gradient(
                 -45deg,
-                var(--base-border, #ccc) 0,
-                var(--base-border, #ccc) 2px,
+                var(--base-border, rgba(215,219,222,1)) 0,
+                var(--base-border, rgba(215,219,222,1)) 2px,
                 transparent 3px,
                 transparent 10px
               );
+            }
+            `
+                    : ""
             }
           </style>
           <div class="header" part="header">
@@ -76,7 +105,6 @@ class KeplerCard extends HTMLElement {
     }
 
     connectedCallback() {
-        // After rendering, set up slotchange listeners on the header and footer slots.
         const headerSlot = this.shadowRoot.querySelector('slot[name="header"]');
         const footerSlot = this.shadowRoot.querySelector('slot[name="footer"]');
 
@@ -94,7 +122,6 @@ class KeplerCard extends HTMLElement {
         }
     }
 
-    // Checks if the given slot (by name) has meaningful content.
     checkSlot(slotName) {
         const slotElement = this.shadowRoot.querySelector(
             `slot[name="${slotName}"]`
@@ -102,7 +129,6 @@ class KeplerCard extends HTMLElement {
         const assignedNodes = slotElement
             .assignedNodes({ flatten: true })
             .filter((node) => {
-                // Filter out empty text nodes.
                 return (
                     node.nodeType !== Node.TEXT_NODE ||
                     node.textContent.trim() !== ""
@@ -110,7 +136,6 @@ class KeplerCard extends HTMLElement {
             });
         const container = this.shadowRoot.querySelector(`.${slotName}`);
         if (assignedNodes.length === 0) {
-            // Hide the container if no content.
             container.style.display = "none";
         } else {
             container.style.display = "";

@@ -47,5 +47,5 @@
 }
 
 ::slotted(*) {
-    color: var(--base-text--);
+    color: var(--base-text--, rgba(29, 29, 29, 1));
 }

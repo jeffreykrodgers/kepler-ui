@@ -14,44 +14,22 @@
     </head>
     <body>
         <!-- Your test site content -->
-        <kp-theme theme-path="/styles/kepler-light.css">
-            <kp-card style="width: 300px; display: flex; align-items: center">
-                <kp-button id="ThemeSwitcher">
-                    <i class="fas fa-palette"></i>
-                </kp-button>
-                <kp-menu
-                    id="ThemeMenu"
-                    anchor="#ThemeSwitcher"
-                    position="top"
-                    track-selection="true"
-                    value="kepler-dark"
-                    align="end"
-                    items='[
-                    {"label": "Kepler Light", "value": "/themes/kepler-light.css"},
-                    {"label": "Kepler Dark", "value": "/themes/kepler-dark.css"},
-                    {"label": "Amber", "value": "/themes/amber.css"},
-                    {"label": "Galaxy", "value": "/themes/galaxy.css"}
-                ]'
-                ></kp-menu>
-                <kp-button id="MenuSwitcher">
-                    <i class="fas fa-palette"></i>
-                </kp-button>
-                <kp-menu
-                    id="MenuMenu"
-                    anchor="#MenuSwitcher"
-                    position="top"
-                    track-selection="true"
-                    value="kepler-dark"
-                    align="end"
-                    items='[
-                    {"label": "Kepler Light", "value": "/themes/kepler-light.css"},
-                    {"label": "Kepler Dark", "value": "/themes/kepler-dark.css"},
-                    {"label": "Amber", "value": "/themes/amber.css"},
-                    {"label": "Galaxy", "value": "/themes/galaxy.css"}
-                ]'
-                ></kp-menu>
-            </kp-card>
-        </kp-theme>
+        <div style="padding: 16px; box-sizing: border-box">
+            <kp-input label="Input" label-position="left"></kp-input>
+            <kp-checkbox label="checkbox"></kp-checkbox>
+            <kp-textarea label-position="left" label="Text Area"></kp-textarea>
+            <kp-select
+                label="Choose a city"
+                value="ny"
+                options='[
+    {"label": "New York", "value": "ny"},
+    {"label": "Los Angeles", "value": "la"},
+    {"label": "Chicago", "value": "chi"}
+]'
+            ></kp-select>
+            <kp-button size="medium">Test</kp-button>
+            <kp-progress style="width: 200px" size="small"></kp-progress>
+        </div>
         <!-- Your test site's script bundle -->
         <script type="module" src="/script.js"></script>
     </body>

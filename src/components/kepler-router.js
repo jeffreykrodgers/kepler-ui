@@ -3,6 +3,7 @@ class KeplerRouter extends HTMLElement {
         super();
         this.attachShadow({ mode: "open" });
         this.routes = [];
+        this.cache = new Map(); // Cache for external route responses.
         this.render = this.render.bind(this);
     }
 
@@ -13,7 +14,14 @@ class KeplerRouter extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "routes") {
             try {
-                this.routes = JSON.parse(newValue);
+                const rawRoutes = JSON.parse(newValue);
+                // Precompile each route's regex and parameter names.
+                this.routes = rawRoutes.map((route) => {
+                    const { regex, paramNames } = this.compileRoutePattern(
+                        route.route
+                    );
+                    return { ...route, regex, paramNames };
+                });
                 this.render();
             } catch (e) {
                 console.error("Invalid routes JSON:", e);
@@ -29,7 +37,13 @@ class KeplerRouter extends HTMLElement {
         }
         if (this.hasAttribute("routes")) {
             try {
-                this.routes = JSON.parse(this.getAttribute("routes"));
+                const rawRoutes = JSON.parse(this.getAttribute("routes"));
+                this.routes = rawRoutes.map((route) => {
+                    const { regex, paramNames } = this.compileRoutePattern(
+                        route.route
+                    );
+                    return { ...route, regex, paramNames };
+                });
             } catch (e) {
                 console.error("Invalid routes attribute:", e);
             }
@@ -47,7 +61,7 @@ class KeplerRouter extends HTMLElement {
             const url = new URL(anchor.href);
             if (url.origin === location.origin) {
                 e.preventDefault();
-                // Push both pathname and hash to update the URL
+                // Push both pathname and hash to update the URL.
                 history.pushState(null, "", url.pathname + url.hash);
                 const router = document.querySelector("kp-router");
                 if (router) {
@@ -57,146 +71,161 @@ class KeplerRouter extends HTMLElement {
         }
     }
 
-    findMatchedRoute(currentPath) {
-        for (const route of this.routes) {
-            const params = this.matchRoute(currentPath, route.route);
-            if (params !== null) {
-                return route;
-            }
-        }
-        return null;
-    }
-
-    matchRoute(path, routePattern) {
+    // Precompile the regex pattern and extract parameter names from a route pattern.
+    compileRoutePattern(routePattern) {
         const paramNames = [];
-        // Escape regex special characters in routePattern before replacing parameters.
+        // Escape regex special characters.
         const escapedPattern = routePattern.replace(
             /[-[\]{}()*+?.,\\^$|#\s]/g,
             "\\$&"
         );
+        // Replace parameters (e.g., ":id") with a regex capture group.
         const regexPattern = escapedPattern.replace(/:([^\/]+)/g, (_, key) => {
             paramNames.push(key);
             return "([^\\/]+)";
         });
         const regex = new RegExp(`^${regexPattern}$`);
-        const match = path.match(regex);
-        if (match) {
-            const params = {};
-            paramNames.forEach((name, index) => {
-                params[name] = match[index + 1];
-            });
-            return params;
+        return { regex, paramNames };
+    }
+
+    // Find a route that matches the current path using the precompiled regex.
+    findMatchedRoute(currentPath) {
+        for (const route of this.routes) {
+            const match = currentPath.match(route.regex);
+            if (match) {
+                const params = {};
+                route.paramNames.forEach((name, index) => {
+                    params[name] = match[index + 1];
+                });
+                return { ...route, params };
+            }
         }
         return null;
     }
 
-    // Render external HTML content into the shadow DOM.
-    renderExternalContent(route) {
-        fetch(route.src)
-            .then((response) => response.text())
-            .then((htmlText) => {
-                // Parse the fetched HTML using DOMParser.
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(htmlText, "text/html");
-                let content;
-                const template = doc.querySelector("template");
-                if (template) {
-                    content = template.content.cloneNode(true);
-                } else {
-                    content = doc.body.cloneNode(true);
-                }
-
-                // Create a document fragment.
-                const fragment = document.createDocumentFragment();
-
-                // If propagateStyles is enabled, clone global style elements from document.head.
-                if (route.propagateStyles) {
-                    const headStyles = document.head.querySelectorAll(
-                        'link[rel="stylesheet"], style'
-                    );
-                    headStyles.forEach((el) => {
-                        fragment.appendChild(el.cloneNode(true));
-                    });
-                }
-
-                // Append the parsed content.
-                fragment.appendChild(content);
-
-                // Clear the shadow root completely.
-                this.clearShadowRoot();
-
-                // Append the new content.
-                this.shadowRoot.appendChild(fragment);
-
-                // Process inline <script> elements in the new content.
-                const scripts = this.shadowRoot.querySelectorAll("script");
-                scripts.forEach((oldScript) => {
-                    // If the script is a module with a src, use dynamic import.
-                    if (
-                        oldScript.getAttribute("type") === "module" &&
-                        oldScript.src
-                    ) {
-                        // Append a cache-busting query parameter.
-                        const moduleUrl =
-                            oldScript.src +
-                            (oldScript.src.includes("?") ? "&" : "?") +
-                            "t=" +
-                            Date.now();
-                        import(moduleUrl).catch((err) =>
-                            console.error(
-                                "Error dynamically importing module script:",
-                                err
-                            )
-                        );
-                        // Remove the original script.
-                        oldScript.remove();
-                    } else {
-                        // For non-module or inline scripts, recreate and replace.
-                        const newScript = document.createElement("script");
-                        if (oldScript.hasAttribute("type")) {
-                            newScript.setAttribute(
-                                "type",
-                                oldScript.getAttribute("type")
-                            );
-                        }
-                        if (oldScript.hasAttribute("async")) {
-                            newScript.setAttribute(
-                                "async",
-                                oldScript.getAttribute("async")
-                            );
-                        }
-                        if (oldScript.hasAttribute("defer")) {
-                            newScript.setAttribute(
-                                "defer",
-                                oldScript.getAttribute("defer")
-                            );
-                        }
-                        if (oldScript.src) {
-                            newScript.src = oldScript.src;
-                        } else {
-                            newScript.textContent = oldScript.textContent;
-                        }
-                        oldScript.parentNode.replaceChild(newScript, oldScript);
-                    }
-                });
-            })
-            .catch((err) => {
-                this.shadowRoot.innerHTML = `<div>Error loading route content</div>`;
-            });
+    // New method: Render the loader slot.
+    renderLoader() {
+        this.clearShadowRoot();
+        const loaderSlot = document.createElement("slot");
+        loaderSlot.name = "loader";
+        this.shadowRoot.appendChild(loaderSlot);
     }
 
+    // Fetch and render external HTML content.
+    renderExternalContent(route) {
+        const cacheKey = route.src;
+        // Show the loader while fetching external content.
+        this.renderLoader();
+
+        const processHTML = (htmlText) => {
+            // Parse the fetched HTML using DOMParser.
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, "text/html");
+            let content;
+            const template = doc.querySelector("template");
+            if (template) {
+                content = template.content.cloneNode(true);
+            } else {
+                content = doc.body.cloneNode(true);
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            // If propagateStyles is enabled, clone global style elements from document.head.
+            if (route.propagateStyles) {
+                const headStyles = document.head.querySelectorAll(
+                    'link[rel="stylesheet"], style'
+                );
+                headStyles.forEach((el) => {
+                    fragment.appendChild(el.cloneNode(true));
+                });
+            }
+            fragment.appendChild(content);
+
+            // Clear the shadow root and append the new content.
+            this.clearShadowRoot();
+            this.shadowRoot.appendChild(fragment);
+
+            // Process any inline <script> elements.
+            this.processScripts();
+        };
+
+        // Use cached content if available.
+        if (this.cache.has(cacheKey)) {
+            processHTML(this.cache.get(cacheKey));
+        } else {
+            fetch(route.src)
+                .then((response) => response.text())
+                .then((htmlText) => {
+                    this.cache.set(cacheKey, htmlText);
+                    processHTML(htmlText);
+                })
+                .catch((err) => {
+                    console.error("Error loading route content:", err);
+                    this.shadowRoot.innerHTML = `<div>Error loading route content</div>`;
+                });
+        }
+    }
+
+    // Render content from a named slot.
     renderSlotContent(route) {
         const slot = document.createElement("slot");
         slot.name = route.slot;
+        this.clearShadowRoot();
         this.shadowRoot.appendChild(slot);
     }
 
+    // Clear all content from the shadow DOM.
     clearShadowRoot() {
         while (this.shadowRoot.firstChild) {
             this.shadowRoot.removeChild(this.shadowRoot.firstChild);
         }
     }
 
+    // Process and re-execute any inline or module scripts in the new content.
+    processScripts() {
+        const scripts = this.shadowRoot.querySelectorAll("script");
+        scripts.forEach((oldScript) => {
+            // For module scripts with a src, use dynamic import with a cache-busting query.
+            if (oldScript.getAttribute("type") === "module" && oldScript.src) {
+                const moduleUrl =
+                    oldScript.src +
+                    (oldScript.src.includes("?") ? "&" : "?") +
+                    "t=" +
+                    Date.now();
+                import(moduleUrl).catch((err) =>
+                    console.error(
+                        "Error dynamically importing module script:",
+                        err
+                    )
+                );
+                oldScript.remove();
+            } else {
+                // Recreate classic or inline scripts.
+                const newScript = document.createElement("script");
+                if (oldScript.hasAttribute("type")) {
+                    newScript.setAttribute(
+                        "type",
+                        oldScript.getAttribute("type")
+                    );
+                }
+                if (oldScript.hasAttribute("async")) {
+                    newScript.async = true;
+                }
+                if (oldScript.hasAttribute("defer")) {
+                    newScript.defer = true;
+                }
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    newScript.textContent = oldScript.textContent;
+                }
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            }
+        });
+    }
+
+    // Main render method: determine the current route and load its content.
     render() {
         const currentPath = window.location.pathname;
         const matchedRoute = this.findMatchedRoute(currentPath);
@@ -216,7 +245,10 @@ class KeplerRouter extends HTMLElement {
     }
 
     setRoutes(routes) {
-        this.routes = routes;
+        this.routes = routes.map((route) => {
+            const { regex, paramNames } = this.compileRoutePattern(route.route);
+            return { ...route, regex, paramNames };
+        });
         this.render();
     }
 }

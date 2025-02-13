@@ -66,7 +66,7 @@ class KeplerRadio extends HTMLElement {
                 .radio-wrapper {
                     display: flex;
                     justify-content: flex-start;
-                    padding: var(--spacing-medium);
+                    padding: var(--spacing-medium, 16px);
                     align-items: center;
                     flex-grow: 1;
                 }
@@ -94,31 +94,31 @@ class KeplerRadio extends HTMLElement {
                 :host([label-position="bottom"]) .label {
                     width: 100%;
                     justify-content: flex-start;
-                    background-color: var(--base-surface, #fff);
-                    color: var(--base-text--, #000);
+                    background-color: var(--base-surface, rgba(241,246,250,1));
+                    color: var(--base-text--, rgba(29,29,29,1));
                     padding: 0;
                 }
 
                 .radio {
                     width: 20px;
                     height: 20px;
-                    border: var(--border-medium, 2px) solid var(--base-text--, #ccc);
+                    border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
                     border-radius: 50%;
-                    background: var(--base-surface);
+                    background: var(--base-surface, rgba(241,246,250,1));
                     position: relative;
                     cursor: pointer;
                 }
 
                 .radio.checked {
-                    border-color: var(--primary--);
-                    background: var(--primary--);
+                    border-color: var(--primary--, rgba(4,134,209,1));
+                    background: var(--primary--, rgba(4,134,209,1));
                 }
 
                 .radio.checked::after {
                     content: "";
                     width: 10px;
                     height: 10px;
-                    background: var(--primary-background--, #fff);
+                    background: var(--primary-background--, rgba(245,250,250,1));
                     border-radius: 50%;
                     position: absolute;
                     top: 50%;
@@ -137,7 +137,7 @@ class KeplerRadio extends HTMLElement {
                     font-size: 21px;
                     line-height: 24px;
                     font-weight: 500;
-                    color: var(--base-surface, #fff);
+                    color: var(--base-surface, rgba(241,246,250,1));
                     background: var(--base-text--, #333);
                     padding: var(--spacing-medium, 16px);
                     cursor: pointer;
@@ -191,8 +191,6 @@ class KeplerRadio extends HTMLElement {
     updateHiddenInput() {
         if (this.hiddenInput) {
             this.hiddenInput.name = this.getAttribute("name") || "";
-            // Set the hidden input's value to the currently selected value.
-            // If your radio options represent booleans (e.g. "true" or "false"), then the hidden input will return that value.
             this.hiddenInput.value = this.getAttribute("selected-value") || "";
         }
     }

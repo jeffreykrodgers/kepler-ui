@@ -1,5 +1,4 @@
 class KeplerGrid extends HTMLElement {
-    // Native callbacks / static methods
     static get observedAttributes() {
         return ["data", "columns"];
     }
@@ -37,7 +36,6 @@ class KeplerGrid extends HTMLElement {
         }
     }
 
-    // Accessors
     get gridColumns() {
         return this.columns;
     }
@@ -54,7 +52,6 @@ class KeplerGrid extends HTMLElement {
         this.render();
     }
 
-    // Other methods
     attachSortListeners() {
         const headerCells = this.shadowRoot.querySelectorAll(
             'th[data-sortable="true"]'
@@ -127,20 +124,20 @@ class KeplerGrid extends HTMLElement {
             font-family: ProFontWindows, sans-serif;
             font-size: 20px;
             font-weight: 500;
-            border-bottom: var(--border-medium, 2px) solid var(--base-text--, #ccc);
+            border-bottom: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
             padding: var(--spacing-medium, 8px) 0;
           }
           tbody td {
             font-family: Tomorrow, sans-serif;
-            border-bottom: var(--border-small, 1px) solid var(--base-text--, #ccc);
+            border-bottom: var(--border-small, 1px) solid var(--base-text--, rgba(29,29,29,1));
             padding: var(--spacing-medium, 8px) 0;
           }
           tbody th {
             font-family: ProFontWindows, sans-serif;
-            background: var(--base-text--, #ccc);
+            background: var(--base-text--, rgba(29,29,29,1));
             font-size: 20px;
             font-weight: 500;
-            color: var(--base-surface, #fff);
+            color: var(--base-surface, rgba(241,246,250,1));
             padding: var(--spacing-medium, 8px);
           }
           th, td {
@@ -165,9 +162,7 @@ class KeplerGrid extends HTMLElement {
             this.columns.forEach((col) => {
                 const cellValue =
                     row[col.property] !== undefined ? row[col.property] : "";
-                // Determine the tag: use <th> if this is a row header; otherwise, <td>
                 const cellTag = col.isRowHeader ? "th" : "td";
-
                 if (col.template) {
                     const templateHTML = this._renderTemplate(
                         col.template,
@@ -191,7 +186,6 @@ class KeplerGrid extends HTMLElement {
             const widthStyle = width ? ` style="width: ${width};"` : "";
             const sortable = col.sortable !== false;
             let cellContent = "";
-
             if (col.headerTemplate) {
                 const templateHTML = this._renderHeaderTemplate(col);
                 cellContent =
@@ -206,12 +200,10 @@ class KeplerGrid extends HTMLElement {
                     this.sortState.property === col.property
                 ) {
                     if (this.sortState.direction === "asc") {
-                        // Ascending: rotate arrow 180 degrees
                         sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" style="transform: rotate(180deg);">
                 <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
               </svg>`;
                     } else if (this.sortState.direction === "desc") {
-                        // Descending: default arrow orientation
                         sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16">
                 <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
               </svg>`;
@@ -222,14 +214,12 @@ class KeplerGrid extends HTMLElement {
                     ? `<span class="header-text" style="cursor:pointer; display:inline-flex; align-items:center;">${col.header || col.property}${sortIconHTML}</span>`
                     : col.header || col.property;
             }
-
             headerHTML += `<th data-property="${col.property}" ${sortable ? 'data-sortable="true"' : ""}${widthStyle}>${cellContent}</th>`;
         });
         headerHTML += `</tr>`;
         return headerHTML;
     }
 
-    // Private helper methods
     _cloneTemplate(slotName) {
         const templateElement = this.querySelector(`[slot="${slotName}"]`);
         if (templateElement && templateElement.content) {
