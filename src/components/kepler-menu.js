@@ -98,6 +98,7 @@ class KeplerMenu extends HTMLElement {
 
     updateComponent() {
         let items = [];
+
         try {
             items = JSON.parse(this.getAttribute("items") || "[]");
         } catch (err) {
@@ -106,8 +107,10 @@ class KeplerMenu extends HTMLElement {
 
         const trackingEnabled =
             this.getAttribute("track-selection") !== "false";
+
         if (trackingEnabled && this.hasAttribute("value")) {
             const valueAttr = this.getAttribute("value");
+
             if (this.hasAttribute("multiple")) {
                 this.selectedValues = new Set(
                     valueAttr.split(",").map((val) => val.trim())
@@ -118,6 +121,7 @@ class KeplerMenu extends HTMLElement {
         }
 
         const container = this.shadowRoot.querySelector("#menuContainer");
+
         container.innerHTML = items
             .map((item, index) => {
                 const isSelected =
@@ -134,8 +138,10 @@ class KeplerMenu extends HTMLElement {
 
     addEventListeners() {
         const anchorSelector = this.getAttribute("anchor");
+
         if (anchorSelector) {
             const anchor = this.getContainer(anchorSelector);
+
             if (anchor) {
                 anchor.addEventListener("click", (e) => {
                     e.stopPropagation();
@@ -151,14 +157,17 @@ class KeplerMenu extends HTMLElement {
 
         this.shadowRoot.addEventListener("click", (e) => {
             const itemEl = e.target.closest(".menu-item");
+
             if (itemEl) {
                 const value = itemEl.getAttribute("data-value");
                 let items = [];
+
                 try {
                     items = JSON.parse(this.getAttribute("items") || "[]");
                 } catch (err) {
                     console.error("KeplerMenu: invalid items JSON", err);
                 }
+
                 const index = itemEl.getAttribute("data-index");
                 const selectedItem = items[index];
 
@@ -232,6 +241,7 @@ class KeplerMenu extends HTMLElement {
 
         const anchorSelector = this.getAttribute("anchor");
         const anchor = this.getContainer(anchorSelector);
+
         if (anchor) {
             this.positionMenu(anchor);
             this.scrollHandler = () =>
@@ -243,6 +253,7 @@ class KeplerMenu extends HTMLElement {
 
     hideMenu() {
         this.style.display = "none";
+
         if (this.scrollHandler) {
             window.removeEventListener("scroll", this.scrollHandler, true);
             window.removeEventListener("resize", this.scrollHandler);
@@ -287,6 +298,7 @@ class KeplerMenu extends HTMLElement {
 
         if (!this.style.width) {
             let maxWidth = 0;
+
             this.shadowRoot.querySelectorAll(".menu-item").forEach((item) => {
                 maxWidth = Math.max(maxWidth, item.offsetWidth);
             });

@@ -284,6 +284,7 @@ class KeplerSelect extends HTMLElement {
         this.rightLabelIcon = this.shadowRoot.querySelector(
             ".label-icon.right-label-icon"
         );
+
         this.manageSlotVisibility("left-label-icon", this.leftLabelIcon);
         this.manageSlotVisibility("right-label-icon", this.rightLabelIcon);
     }
@@ -376,6 +377,7 @@ class KeplerSelect extends HTMLElement {
         const hasRightIcon =
             this.rightIconSlot.assignedNodes().length > 0 ||
             this.rightIconSlot.innerHTML.trim().length > 0;
+
         this.defaultIcon.style.display = hasRightIcon ? "none" : "inline-block";
     }
 
@@ -385,6 +387,7 @@ class KeplerSelect extends HTMLElement {
             const hasContent = slot.assignedNodes().length > 0;
             element.classList.toggle("hidden", !hasContent);
         };
+
         updateVisibility();
         slot.addEventListener("slotchange", updateVisibility);
     }
@@ -518,7 +521,6 @@ class KeplerSelect extends HTMLElement {
     }
 
     updateValidation() {
-        if (this.hasAttribute("data-manual-invalid")) return;
         if (this.hasAttribute("required")) {
             const multiple = this.hasAttribute("multiple");
             if (multiple) {
@@ -563,6 +565,7 @@ class KeplerSelect extends HTMLElement {
         } else if (Array.isArray(newVal)) {
             this.selectedValues = new Set(newVal);
         }
+
         this.updateComponent();
         this.updateSelectedDisplay(
             multiple,

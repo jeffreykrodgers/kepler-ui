@@ -49,6 +49,7 @@ class KeplerTooltip extends HTMLElement {
     disconnectedCallback() {
         window.removeEventListener("scroll", this._boundReposition, true);
         window.removeEventListener("resize", this._boundReposition);
+
         if (this.anchorObserver) {
             this.anchorObserver.disconnect();
         }
@@ -130,12 +131,17 @@ class KeplerTooltip extends HTMLElement {
     showTooltip() {
         const anchor = this.getAnchor();
         if (!anchor) return;
+
         this.style.display = "block";
         this.positionTooltip(anchor);
+
         const timeAttr = this.getAttribute("time");
+
         if (timeAttr && !isNaN(parseInt(timeAttr, 10))) {
             const duration = parseInt(timeAttr, 10);
+
             if (this._timeoutId) clearTimeout(this._timeoutId);
+
             this._timeoutId = setTimeout(() => {
                 this.hideTooltip();
             }, duration);
@@ -144,6 +150,7 @@ class KeplerTooltip extends HTMLElement {
 
     hideTooltip() {
         this.style.display = "none";
+
         if (this._timeoutId) {
             clearTimeout(this._timeoutId);
             this._timeoutId = null;

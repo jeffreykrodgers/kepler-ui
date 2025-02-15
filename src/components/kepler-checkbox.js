@@ -39,6 +39,7 @@ class KeplerCheckbox extends HTMLElement {
         if (!this.inputElement) {
             this.inputElement = document.createElement("input");
             this.inputElement.type = "checkbox";
+
             // Hide the native checkbox.
             Object.assign(this.inputElement.style, {
                 position: "absolute",
@@ -47,6 +48,7 @@ class KeplerCheckbox extends HTMLElement {
                 width: "0",
                 height: "0",
             });
+
             // Set initial properties.
             this.inputElement.name = this.getAttribute("name") || "";
             this.inputElement.value = this.getAttribute("value") || "on";

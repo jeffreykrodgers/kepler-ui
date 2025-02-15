@@ -9,11 +9,13 @@ describe("KeplerDialog", () => {
             </kp-dialog>
         `);
         const header = el.shadowRoot.querySelector(".header");
+
         expect(header.textContent).to.contain("Test Dialog");
 
         const slot = el.shadowRoot.querySelector("slot");
         const assigned = slot.assignedNodes({ flatten: true });
         const assignedText = assigned.map((n) => n.textContent).join(" ");
+
         expect(assignedText).to.contain("Dialog Content");
     });
 
@@ -36,6 +38,7 @@ describe("KeplerDialog", () => {
         const closeBtn = el.shadowRoot.querySelector(".close-btn");
         // Simulate a click on the close button.
         setTimeout(() => closeBtn.click());
+
         const event = await oneEvent(el, "close");
         expect(event).to.exist;
         // After close, the getter for visible should return false.
@@ -53,6 +56,7 @@ describe("KeplerDialog", () => {
             const escapeEvent = new KeyboardEvent("keydown", { key: "Escape" });
             document.dispatchEvent(escapeEvent);
         });
+
         const event = await oneEvent(el, "close");
         expect(event).to.exist;
         expect(el.visible).to.be.false;

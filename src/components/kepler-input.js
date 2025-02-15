@@ -209,6 +209,7 @@ class KeplerInput extends HTMLElement {
                 this.syncAttributesToInput(attr, this.getAttribute(attr));
             }
         });
+
         this.updateLabel();
     }
 

@@ -2,7 +2,7 @@ class KeplerButton extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        // Create the inner button element.
+
         this.button = document.createElement("button");
         this.button.classList.add("button");
         this.button.setAttribute("role", "button");
@@ -20,6 +20,7 @@ class KeplerButton extends HTMLElement {
         if (!this.hasAttribute("size")) {
             this.setAttribute("size", "medium");
         }
+
         this.applyStyles();
         this.render();
         this.proxyNativeOnClick();
@@ -69,6 +70,7 @@ class KeplerButton extends HTMLElement {
                 "aria-pressed",
                 "aria-hidden",
             ];
+
             if (buttonAttributes.includes(name)) {
                 if (newValue === null) {
                     this.button.removeAttribute(name);
@@ -76,7 +78,9 @@ class KeplerButton extends HTMLElement {
                     this.button.setAttribute(name, newValue);
                 }
             }
+
             this.render();
+
             if (["color", "size", "style-type", "disabled"].includes(name)) {
                 this.updateStyles();
             }
@@ -100,6 +104,7 @@ class KeplerButton extends HTMLElement {
             "aria-pressed",
             "aria-hidden",
         ];
+
         buttonAttributes.forEach((attr) => {
             if (this.hasAttribute(attr)) {
                 this.button.setAttribute(attr, this.getAttribute(attr));
@@ -399,19 +404,19 @@ class KeplerButton extends HTMLElement {
         // For each style type, we include a fallback for each property.
         const styleVars = {
             outlined: {
-                "--background-color": `var(${colorVars[color][3] || "--base-surface"}, var(--base-surface, rgba(241,246,250,1)))`,
-                "--border-color": `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`,
-                "--text-color": `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`,
+                "--background-color": `var(${colorVars[color][3]}, rgba(241,246,250,1))`,
+                "--border-color": `var(${colorVars[color][0]}, rgba(29,29,29,1))`,
+                "--text-color": `var(${colorVars[color][0]}, rgba(29,29,29,1))`,
             },
             filled: {
-                "--background-color": `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`,
-                "--border-color": `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`,
-                "--text-color": `var(${colorVars[color][3] || "--base-surface"}, var(--base-surface, rgba(241,246,250,1)))`,
+                "--background-color": `var(${colorVars[color][0]}, rgba(29,29,29,1))`,
+                "--border-color": `var(${colorVars[color][0]}, rgba(29,29,29,1))`,
+                "--text-color": `var(${colorVars[color][3]}, rgba(241,246,250,1))`,
             },
             flat: {
-                "--background-color": `var(${colorVars[color][3] || "--base-surface"}, var(--base-surface, rgba(241,246,250,1)))`,
+                "--background-color": `var(${colorVars[color][3]},rgba(241,246,250,1))`,
                 "--border-color": "none",
-                "--text-color": `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`,
+                "--text-color": `var(${colorVars[color][0]},rgba(29,29,29,1))`,
             },
         };
 
@@ -422,27 +427,27 @@ class KeplerButton extends HTMLElement {
 
         this.button.style.setProperty(
             "--hover-background-color",
-            `var(${colorVars[color][4] || "--base-hover"}, var(--base-hover, rgba(215,219,222,1)))`
+            `var(${colorVars[color][4]}, rgba(215,219,222,1))`
         );
         this.button.style.setProperty(
             "--hover-text-color",
-            `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`
+            `var(${colorVars[color][0]}, rgba(29,29,29,1))`
         );
         this.button.style.setProperty(
             "--focus-background-color",
-            `var(${colorVars[color][5] || "--base-focus"}, var(--base-focus, rgba(188,192,195,1)))`
+            `var(${colorVars[color][5]}, rgba(188,192,195,1))`
         );
         this.button.style.setProperty(
             "--focus-text-color",
-            `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`
+            `var(${colorVars[color][0]}, rgba(29,29,29,1))`
         );
         this.button.style.setProperty(
             "--active-background-color",
-            `var(${colorVars[color][0] || "--base-text--"}, var(--base-text--, rgba(29,29,29,1)))`
+            `var(${colorVars[color][0]}, rgba(29,29,29,1))`
         );
         this.button.style.setProperty(
             "--active-text-color",
-            `var(${colorVars[color][3] || "--base-surface"}, var(--base-surface, rgba(241,246,250,1)))`
+            `var(${colorVars[color][3]}, rgba(241,246,250,1))`
         );
 
         const [contentPadding, buttonPadding] =

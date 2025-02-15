@@ -17,7 +17,7 @@ class KeplerTabs extends HTMLElement {
                 try {
                     this.tabs = JSON.parse(newValue);
                 } catch (e) {
-                    console.error("Invalid JSON for tabs:", newValue);
+                    console.error("Invalid JSON for tabs:", newValue, e);
                     this.tabs = [];
                 }
                 if (!this.hasAttribute("active-tab") && this.tabs.length) {

@@ -152,12 +152,12 @@ class KeplerProgress extends HTMLElement {
             this.lastSegmentsCount = count;
             this.progressContainer.innerHTML = "";
             this.segments = [];
+
             for (let i = 0; i < count; i++) {
                 const segment = document.createElement("div");
                 segment.classList.add("progress-segment");
                 segment.style.width = segmentWidth + "px";
                 segment.style.height = progressHeight + "px";
-                // Initially set positive delay; in determinate mode this is unused.
                 segment.style.animationDelay = i * 0.15 + "s";
                 this.progressContainer.appendChild(segment);
                 this.segments.push(segment);
@@ -175,6 +175,7 @@ class KeplerProgress extends HTMLElement {
         // Ensure segments are up-to-date.
         this.updateSegments();
         const segmentsCount = this.segments.length;
+
         if (this.hasAttribute("value")) {
             // Determinate mode: fill segments based on the given value.
             const value = parseFloat(this.getAttribute("value"));
@@ -183,6 +184,7 @@ class KeplerProgress extends HTMLElement {
             const segmentsToFill = Math.round(
                 (percentage / 100) * segmentsCount
             );
+
             this.progressContainer.classList.remove("indeterminate");
             this.segments.forEach((segment, index) => {
                 if (index < segmentsToFill) {

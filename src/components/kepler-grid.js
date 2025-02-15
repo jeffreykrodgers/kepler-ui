@@ -113,6 +113,7 @@ class KeplerGrid extends HTMLElement {
           <tbody>${bodyHTML}</tbody>
         </table>
       `;
+
         this.shadowRoot.innerHTML = `
         <style>
           table {
@@ -151,18 +152,22 @@ class KeplerGrid extends HTMLElement {
         </style>
         ${tableHTML}
       `;
+
         this.attachSortListeners();
     }
 
     renderBody() {
         let bodyHTML = "";
         const sortedData = this.getSortedData();
+
         sortedData.forEach((row) => {
             let rowHTML = `<tr>`;
+
             this.columns.forEach((col) => {
                 const cellValue =
                     row[col.property] !== undefined ? row[col.property] : "";
                 const cellTag = col.isRowHeader ? "th" : "td";
+
                 if (col.template) {
                     const templateHTML = this._renderTemplate(
                         col.template,
@@ -181,11 +186,13 @@ class KeplerGrid extends HTMLElement {
 
     renderHeader() {
         let headerHTML = `<tr>`;
+
         this.columns.forEach((col) => {
             const width = this.getColumnWidth(col);
             const widthStyle = width ? ` style="width: ${width};"` : "";
             const sortable = col.sortable !== false;
             let cellContent = "";
+
             if (col.headerTemplate) {
                 const templateHTML = this._renderHeaderTemplate(col);
                 cellContent =
@@ -201,40 +208,46 @@ class KeplerGrid extends HTMLElement {
                 ) {
                     if (this.sortState.direction === "asc") {
                         sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" style="transform: rotate(180deg);">
-                <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
-              </svg>`;
+                            <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+                        </svg>`;
                     } else if (this.sortState.direction === "desc") {
                         sortIconContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16">
-                <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
-              </svg>`;
+                            <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
+                        </svg>`;
                     }
                 }
                 const sortIconHTML = `<span class="sort-icon" style="margin-left:4px; display:inline-flex; align-items:center; width:16px;">${sortIconContent}</span>`;
+
                 cellContent = sortable
                     ? `<span class="header-text" style="cursor:pointer; display:inline-flex; align-items:center;">${col.header || col.property}${sortIconHTML}</span>`
                     : col.header || col.property;
             }
             headerHTML += `<th data-property="${col.property}" ${sortable ? 'data-sortable="true"' : ""}${widthStyle}>${cellContent}</th>`;
         });
+
         headerHTML += `</tr>`;
         return headerHTML;
     }
 
     _cloneTemplate(slotName) {
         const templateElement = this.querySelector(`[slot="${slotName}"]`);
+
         if (templateElement && templateElement.content) {
             return document.importNode(templateElement.content, true);
         }
+
         return null;
     }
 
     _renderHeaderTemplate(col) {
         const clone = this._cloneTemplate(col.headerTemplate);
         if (!clone) return null;
+
         const textPlaceholder = clone.querySelector("[data-header-text]");
         if (textPlaceholder) {
             textPlaceholder.textContent = col.header || col.property;
         }
+
         const sortIconPlaceholder = clone.querySelector("[data-sort-icon]");
         if (
             col.sortable !== false &&
@@ -254,22 +267,28 @@ class KeplerGrid extends HTMLElement {
             }
             sortIconPlaceholder.innerHTML = sortIconHTML;
         }
+
         const tempDiv = document.createElement("div");
         tempDiv.appendChild(clone);
+
         return tempDiv.innerHTML;
     }
 
     _renderTemplate(slotName, rowData) {
         const clone = this._cloneTemplate(slotName);
+
         if (!clone) return null;
+
         Object.keys(rowData).forEach((key) => {
             const placeholder = clone.querySelector(`[data-cell-${key}]`);
             if (placeholder) {
                 placeholder.textContent = rowData[key];
             }
         });
+
         const tempDiv = document.createElement("div");
         tempDiv.appendChild(clone);
+
         return tempDiv.innerHTML;
     }
 }

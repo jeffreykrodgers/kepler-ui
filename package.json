@@ -46,7 +46,8 @@
         "prettier": "3.4.2",
         "rollup": "^2.79.2",
         "rollup-plugin-copy": "^3.5.0",
-        "rollup-plugin-node-resolve": "^5.2.0"
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "sinon": "^19.0.2"
     },
     "dependencies": {
         "kepler-ui": "file:../kepler-ui-0.0.1.tgz"

@@ -18,18 +18,14 @@ class KeplerAvatar extends HTMLElement {
     render() {
         const src = this.getAttribute("src");
         const altRaw = this.getAttribute("alt") || "AN";
-
-        // Compute display text from the alt value.
-        let displayText;
         const words = altRaw.trim().split(/\s+/);
-        if (words.length >= 2) {
-            // Use the first letter of the first two words.
-            displayText = words[0].charAt(0) + words[1].charAt(0);
-        } else {
-            // Use the first two characters of the alt text.
-            displayText = altRaw.substring(0, 2);
-        }
-        displayText = displayText.toUpperCase();
+        const displayText =
+            words.lengh >= 2
+                ? words[0].charAt(0) + words[1].charAt(0)
+                : altRaw.substring(0, 2);
+
+        const shape = this.getAttribute("shape") || "circle";
+        const borderRadius = shape === "circle" ? "50%" : "0";
 
         // Determine dimensions based on size.
         const size = this.getAttribute("size") || "medium";
@@ -46,9 +42,6 @@ class KeplerAvatar extends HTMLElement {
                 dimensions = "50px";
                 break;
         }
-
-        const shape = this.getAttribute("shape") || "circle";
-        const borderRadius = shape === "circle" ? "50%" : "0";
 
         if (src) {
             this.shadowRoot.innerHTML = `

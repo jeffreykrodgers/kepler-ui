@@ -442,6 +442,7 @@ class KeplerTheme extends HTMLElement {
         // Extract CSS custom properties from the CSS text using a regex.
         const regex = /--([\w-]+):\s*([^;]+);/g;
         let match;
+
         while ((match = regex.exec(cssText)) !== null) {
             this.style.setProperty(`--${match[1]}`, match[2].trim());
         }

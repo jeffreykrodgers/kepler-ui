@@ -2,7 +2,6 @@ class KeplerPanel extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        // Internal state for expanded/collapsed.
         this._expanded = false;
         this.render();
     }
@@ -16,7 +15,6 @@ class KeplerPanel extends HTMLElement {
             this.updateSelectedState();
         }
         if (name === "expanded" && oldValue !== newValue) {
-            // When the "expanded" attribute changes, update the internal state accordingly.
             if (this.hasAttribute("expanded")) {
                 if (!this._expanded) {
                     this.expand();
@@ -158,11 +156,13 @@ class KeplerPanel extends HTMLElement {
 
     addHeaderListeners() {
         const header = this.shadowRoot.querySelector(".header");
+
         header.addEventListener("click", () => {
             if (this.hasAttribute("href")) {
                 window.location.href = this.getAttribute("href");
                 return;
             }
+
             if (this.hasChildren()) {
                 this.toggle();
             } else {
@@ -178,6 +178,7 @@ class KeplerPanel extends HTMLElement {
         const childrenSlot = this.shadowRoot.querySelector(
             'slot[name="children"]'
         );
+
         childrenSlot.addEventListener("slotchange", () =>
             this.checkForChildren()
         );
@@ -194,6 +195,7 @@ class KeplerPanel extends HTMLElement {
     checkForChildren() {
         const header = this.shadowRoot.querySelector(".header");
         const arrow = this.shadowRoot.querySelector("#arrow");
+
         if (this.hasChildren()) {
             arrow.style.visibility = "visible";
             header.classList.add("clickable");
@@ -219,6 +221,7 @@ class KeplerPanel extends HTMLElement {
         } else {
             this.collapse();
         }
+
         this.dispatchEvent(
             new CustomEvent("toggle", {
                 detail: { expanded: this._expanded },
@@ -232,6 +235,7 @@ class KeplerPanel extends HTMLElement {
         const childrenContainer =
             this.shadowRoot.querySelector("#childrenContainer");
         const arrow = this.shadowRoot.querySelector("#arrow");
+
         childrenContainer.classList.add("expanded");
         arrow.classList.add("expanded");
         this._expanded = true;
@@ -249,6 +253,7 @@ class KeplerPanel extends HTMLElement {
         const childrenContainer =
             this.shadowRoot.querySelector("#childrenContainer");
         const arrow = this.shadowRoot.querySelector("#arrow");
+
         childrenContainer.classList.remove("expanded");
         arrow.classList.remove("expanded");
         this._expanded = false;
