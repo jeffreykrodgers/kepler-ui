@@ -1,0 +1,51 @@
+/* Themes - Galaxy */
+:root {
+    --base-background: var(--blue-dark-1);
+    --base-text--: var(--blue-light-1);
+    --base-text-emphasize: var(--blue-light-2);
+    --base-text-light: var(--blue-light-3);
+    --base-text-subtle: var(--blue-light-4);
+    --base-surface: var(--blue-dark-2);
+    --base-hover: var(--blue-dark-3);
+    --base-focus: var(--blue-dark-4);
+    --base-border: var(--blue-dark-5);
+    --primary--: var(--teal--);
+    --primary-hover: var(--teal-dark-8);
+    --primary-active: var(--teal-dark-7);
+    --primary-background--: var(--teal-dark-2);
+    --primary-background-hover: var(--teal-dark-3);
+    --primary-background-active: var(--teal-dark-4);
+    --primary-background-border: var(--teal-dark-5);
+    --secondary--: var(--neutral-1);
+    --secondary-background--: var(--neutral-9);
+    --secondary-hover: var(--neutral-2);
+    --secondary-active: var(--neutral-3);
+    --secondary-background-hover: var(--neutral-8);
+    --secondary-background-active: var(--neutral-7);
+    --secondary-background-border: var(--neutral-6);
+    --error--: var(--red--);
+    --error-hover: var(--red-dark-8);
+    --error-active: var(--red-dark-7);
+    --error-background--: var(--red-dark-1);
+    --error-background-hover: var(--red-dark-2);
+    --error-background-active: var(--red-dark-3);
+    --error-background-border: var(--red-dark-4);
+    --warning--: var(--pumpkin--);
+    --warning-hover: var(--pumpkin-dark-8);
+    --warning-active: var(--pumpkin-dark-7);
+    --warning-background--: var(--pumpkin-dark-1);
+    --warning-background-hover: var(--pumpkin-dark-2);
+    --warning-background-active: var(--pumpkin-dark-3);
+    --warning-background-border: var(--pumpkin-dark-4);
+    --success--: var(--green--);
+    --success-hover: var(--green-dark-8);
+    --success-active: var(--green-dark-7);
+    --success-background--: var(--green-dark-1);
+    --success-background-hover: var(--green-dark-2);
+    --success-background-active: var(--green-dark-3);
+    --success-background-border: var(--green-dark-4);
+}
+
+::slotted(*) {
+    color: var(--base-text--, rgba(29, 29, 29, 1));
+}

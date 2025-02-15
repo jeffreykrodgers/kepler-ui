@@ -1,0 +1,16 @@
+{
+  "name": "kepler-ui",
+  "version": "0.0.1",
+  "description": "Sci-Fi inspired web component ui kit",
+  "type": "module",
+  "files": [
+    "styles",
+    "assets",
+    "kepler-ui.js",
+    "package.json"
+  ],
+  "main": "kepler-ui.js",
+  "module": "kepler-ui.js",
+  "author": "Jeffrey Rodgers",
+  "license": "MIT"
+}
