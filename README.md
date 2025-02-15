@@ -83,7 +83,7 @@ No configuration beyond adding the required JavaScript and optional CSS styleshe
 
 ## Playground
 
-This repository also includes a playground for testing components in a dev environment. The source files are located in `public`. To use it, first install the required dev dependencies:
+This repository also includes a playground for testing components in a dev environment. The source files are located in `playground`. To use it, first install the required dev dependencies:
 
 ```bash
 # npm
@@ -103,4 +103,4 @@ npm run dev
 yarn run dev
 ```
 
-The site will automatically recompile the `dist` and `pub` directories when changes are made to either the `src` or `public` directories.
+The site will automatically recompile the `dist` and `pub` directories when changes are made to either the `src` or `playground` directories.

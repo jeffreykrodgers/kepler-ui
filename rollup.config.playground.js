@@ -2,7 +2,7 @@ import resolve from "rollup-plugin-node-resolve";
 import copy from "rollup-plugin-copy";
 
 export default {
-    input: "public/script.js",
+    input: "playground/script.js",
     output: {
         file: "pub/script.js",
         format: "esm",
@@ -13,8 +13,8 @@ export default {
         resolve(),
         copy({
             targets: [
-                { src: "public/index.html", dest: "pub" },
-                { src: "public/styles.css", dest: "pub" },
+                { src: "playground/index.html", dest: "pub" },
+                { src: "playground/styles.css", dest: "pub" },
                 { src: "dist/styles/**/*", dest: "pub/styles" },
                 { src: "dist/assets/**/*", dest: "pub/assets" },
             ],
