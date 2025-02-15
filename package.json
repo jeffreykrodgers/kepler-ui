@@ -19,7 +19,8 @@
         "watch:test:copy:css": "chokidar \"public/**/*.css\" -c \"npx cpy-cli \"public/**/*.css\" pub --flat\"",
         "watch:test": "rollup -c rollup.config.playground.js -w",
         "dev": "concurrently \"npm run watch\" \"npm run watch:test\" \"npm run watch:test:copy:html\" \"npm run watch:test:copy:css\" \"nodemon server.js\"",
-        "prepublishOnly": "node prepare-publish.js && rollup -c"
+        "prepublishOnly": "node prepare-publish.js && rollup -c",
+        "test": "npx web-test-runner --config web-test-runner.config.js"
     },
     "author": "Jeffrey Rodgers",
     "license": "MIT",
@@ -27,8 +28,10 @@
         "@eslint/js": "^9.19.0",
         "@fortawesome/fontawesome-svg-core": "^6.7.2",
         "@fortawesome/free-solid-svg-icons": "^6.7.2",
+        "@open-wc/testing": "^3.0.0-next.5",
         "@rollup/plugin-replace": "^6.0.2",
         "@rollup/plugin-terser": "^0.4.4",
+        "@web/test-runner": "^0.20.0",
         "chokidar-cli": "^3.0.0",
         "concurrently": "^9.1.2",
         "connect-livereload": "^0.6.1",

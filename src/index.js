@@ -20,3 +20,4 @@ import "./components/kepler-code.js";
 import "./components/kepler-progress.js";
 import "./components/kepler-switch.js";
 import "./components/kepler-textarea.js";
+import "./components/kepler-tooltip.js";

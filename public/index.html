@@ -13,23 +13,23 @@
         <!-- Reference the UI kit that was built into dist -->
     </head>
     <body>
-        <!-- Your test site content -->
-        <div style="padding: 16px; box-sizing: border-box">
-            <kp-input label="Input" label-position="left"></kp-input>
-            <kp-checkbox label="checkbox"></kp-checkbox>
-            <kp-textarea label-position="left" label="Text Area"></kp-textarea>
-            <kp-select
-                label="Choose a city"
-                value="ny"
-                options='[
-    {"label": "New York", "value": "ny"},
-    {"label": "Los Angeles", "value": "la"},
-    {"label": "Chicago", "value": "chi"}
-]'
-            ></kp-select>
-            <kp-button size="medium">Test</kp-button>
-            <kp-progress style="width: 200px" size="small"></kp-progress>
-        </div>
+        <kp-theme
+            style="padding: 16px; box-sizing: border-box"
+            theme-path="/dist/styles/kepler-dark.css"
+        >
+            <kp-button id="getValueButton">Get Value</kp-button>
+            <kp-button id="multiMenuButton">Test</kp-button>
+            <kp-menu
+                id="multiMenu"
+                anchor="#multiMenuButton"
+                multiple
+                items='[
+                    {"value": "apple", "label": "Apple"},
+                    {"value": "banana", "label": "Banana"},
+                    {"value": "cherry", "label": "Cherry"}
+                ]'
+            ></kp-menu>
+        </kp-theme>
         <!-- Your test site's script bundle -->
         <script type="module" src="/script.js"></script>
     </body>

@@ -7,6 +7,7 @@ class KeplerButton extends HTMLElement {
         this.button.classList.add("button");
         this.button.setAttribute("role", "button");
         this.button.setAttribute("tabindex", "0");
+        this.button.setAttribute("part", "button");
         this.shadowRoot.appendChild(this.button);
 
         this.applyStyles();
@@ -262,6 +263,7 @@ class KeplerButton extends HTMLElement {
           line-height: 1.2;
           transition: background-color 0.1s, color 0.1s, border-color 0.1s;
           cursor: pointer;
+          width: 100%;
         }
         .button:disabled {
           pointer-events: none;
