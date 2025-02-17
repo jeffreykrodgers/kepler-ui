@@ -229,12 +229,10 @@ class KeplerTheme extends HTMLElement {
 
             @font-face {
                 font-family: ProFontWindows;
-                src: url("/src/assets/ProFontWindows.ttf");
             }
 
             @font-face {
                 font-family: Tomorrow;
-                src: url("/src/assets/Tomorrow-Medium.ttf");
             }
 
             /* Default Light Theme */

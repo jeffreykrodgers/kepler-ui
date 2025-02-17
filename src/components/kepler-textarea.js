@@ -61,6 +61,13 @@ class KeplerTextarea extends HTMLElement {
         this.updateHiddenInput();
     }
 
+    updateHiddenInput() {
+        if (this.hiddenInput) {
+            this.hiddenInput.name = this.getAttribute("name") || "";
+            this.hiddenInput.value = this.inputElement.value;
+        }
+    }
+
     render() {
         this.shadowRoot.innerHTML = `
         <style>
