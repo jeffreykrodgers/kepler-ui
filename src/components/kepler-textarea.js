@@ -53,8 +53,8 @@ class KeplerTextarea extends HTMLElement {
             this.hiddenInput = document.createElement("input");
             this.hiddenInput.type = "hidden";
             this.hiddenInput.name = this.getAttribute("name") || "";
-            this.hiddenInput.value = this.inputElement
-                ? this.inputElement.value
+            this.hiddenInput.value = this.textareaElement
+                ? this.textareaElement.value
                 : "";
             this.appendChild(this.hiddenInput);
         }
@@ -64,7 +64,7 @@ class KeplerTextarea extends HTMLElement {
     updateHiddenInput() {
         if (this.hiddenInput) {
             this.hiddenInput.name = this.getAttribute("name") || "";
-            this.hiddenInput.value = this.inputElement.value;
+            this.hiddenInput.value = this.textareaElement?.value;
         }
     }
 

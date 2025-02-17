@@ -229,10 +229,19 @@ class KeplerTheme extends HTMLElement {
 
             @font-face {
                 font-family: ProFontWindows;
+                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.ttf") format("ttf");
             }
 
             @font-face {
                 font-family: Tomorrow;
+                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.ttf") format("ttf"),
+                    url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.ttf") format("ttf")
+                    url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-BoldItalic.ttf") format("ttf")
+                    url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Light.ttf") format("ttf")
+                    url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-LightItalic.ttf") format("ttf")
+                    url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-SemiBold.ttf") format("ttf")
+                    url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-SemiBoldItalic.ttf") format("ttf")
+
             }
 
             /* Default Light Theme */
