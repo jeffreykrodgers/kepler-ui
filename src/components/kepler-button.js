@@ -10,6 +10,7 @@ class KeplerButton extends HTMLElement {
         this.button.setAttribute("part", "button");
         this.shadowRoot.appendChild(this.button);
 
+        this.injectGlobalFonts();
         this.applyStyles();
         this.render();
         this.proxyNativeOnClick();
@@ -241,11 +242,60 @@ class KeplerButton extends HTMLElement {
         );
     }
 
+    injectGlobalFonts() {
+        if (document.getElementById("kepler-fonts")) return; // Prevent duplicate injection
+
+        const fontCSS = `
+            @font-face {
+                font-family: "ProFontWindows";
+                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2") format("woff2");
+                font-display: swap;
+            }
+
+            @font-face {
+                font-family: "Tomorrow";
+                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2") format("woff2");
+                font-display: swap;
+            }
+
+            @font-face {
+                font-family: "Tomorrow";
+                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2") format("woff2");
+                font-weight: bold;
+                font-display: swap;
+            }
+        `;
+
+        const styleTag = document.createElement("style");
+        styleTag.id = "kepler-fonts";
+        styleTag.textContent = fontCSS;
+        document.head.appendChild(styleTag);
+    }
+
     applyStyles() {
         const style = document.createElement("style");
         style.textContent = `
         :host {
           display: inline-block;
+        }
+        /* Ensure fonts exist in Shadow DOM */
+        @font-face {
+            font-family: "ProFontWindows";
+            src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2") format("woff2");
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Tomorrow";
+            src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2") format("woff2");
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Tomorrow";
+            src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2") format("woff2");
+            font-weight: bold;
+            font-display: swap;
         }
         .button {
           box-sizing: border-box;

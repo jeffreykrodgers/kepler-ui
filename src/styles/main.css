@@ -1,3 +1,28 @@
+@font-face {
+    font-family: ProFontWindows;
+    src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2")
+        format("woff2");
+}
+
+@font-face {
+    font-family: Tomorrow;
+    src:
+        url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2")
+            format("woff2"),
+        url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2")
+            format("woff2")
+            url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-BoldItalic.woff2")
+            format("woff2")
+            url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Light.woff2")
+            format("woff2")
+            url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-LightItalic.woff2")
+            format("woff2")
+            url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-SemiBold.woff2")
+            format("woff2")
+            url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-SemiBoldItalic.woff2")
+            format("woff2");
+}
+
 html,
 body {
     margin: 0;

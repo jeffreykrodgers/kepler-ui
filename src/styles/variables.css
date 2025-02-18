@@ -196,13 +196,3 @@
     --spacing-2x-large: 16px;
     --font-family: "ProFontWindows", monospace;
 }
-
-@font-face {
-    font-family: ProFontWindows;
-    src: url("/src/assets/ProFontWindows.ttf");
-}
-
-@font-face {
-    font-family: Tomorrow;
-    src: url("/src/assets/Tomorrow-Medium.ttf");
-}
