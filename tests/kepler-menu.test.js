@@ -1,4 +1,5 @@
 import { fixture, html, expect, oneEvent } from "@open-wc/testing";
+import sinon from "sinon";
 import "../src/components/kepler-menu.js";
 
 describe("KeplerMenu", () => {
@@ -25,7 +26,7 @@ describe("KeplerMenu", () => {
         const el = await fixture(html`
             <kp-menu items="${JSON.stringify(sampleItems)}"></kp-menu>
         `);
-        // Manually show the menu (simulate that it was opened)
+        // Manually show the menu.
         el.style.display = "block";
         const container = el.shadowRoot.querySelector("#menuContainer");
         const items = container.querySelectorAll(".menu-item");
@@ -40,50 +41,75 @@ describe("KeplerMenu", () => {
         expect(el.style.display).to.equal("none");
     });
 
-    // TODO: This test is not working
-    // it("allows multiple selection when multiple attribute is set", async () => {
+    // TODO Fix this test
+    // it("supports multi-select mode without auto-hiding", async () => {
     //     const el = await fixture(html`
-    //         <kp-menu
-    //             items="${JSON.stringify(sampleItems)}"
-    //             multiple
-    //             track-selection
-    //         ></kp-menu>
+    //         <kp-menu multiple items="${JSON.stringify(sampleItems)}"></kp-menu>
     //     `);
-
     //     el.style.display = "block";
     //     const container = el.shadowRoot.querySelector("#menuContainer");
     //     const items = container.querySelectorAll(".menu-item");
 
-    //     // Debug: Listen for events
-    //     el.addEventListener("select", (e) => {
-    //         console.log("DEBUG: Event detected", e.detail);
-    //     });
-
-    //     // Click on the first item.
+    //     // Click the first item.
     //     items[0].click();
-    //     await new Promise((resolve) => setTimeout(resolve, 50));
+    //     // In multi-select, the menu should remain open.
+    //     expect(el.style.display).to.equal("block");
+    //     expect(el.getAttribute("value")).to.equal(sampleItems[0].value);
 
-    //     // Click on the third item.
-    //     items[2].click();
-    //     await new Promise((resolve) => setTimeout(resolve, 50));
-
-    //     // Debugging output before assertion
-    //     console.log("DEBUG: Final value:", el.getAttribute("value"));
-
-    //     // The value attribute should now be "1,3".
-    //     expect(el.getAttribute("value")).to.equal("1,3");
+    //     // Click the second item.
+    //     items[1].click();
+    //     // The value attribute should now have both values, comma-separated.
+    //     expect(el.getAttribute("value")).to.equal(
+    //         `${sampleItems[0].value},${sampleItems[1].value}`
+    //     );
     // });
 
     it("hides the menu when clicking outside the component", async () => {
         const el = await fixture(html`
             <kp-menu items="${JSON.stringify(sampleItems)}"></kp-menu>
         `);
-        // Show the menu.
         el.style.display = "block";
         // Simulate a click outside the element.
         document.body.click();
-        // Wait for the click event to propagate.
         await new Promise((r) => setTimeout(r, 0));
         expect(el.style.display).to.equal("none");
+    });
+
+    it("renders custom template for items", async () => {
+        const templateItem = [
+            { label: "Template Item", value: "tmpl", template: "customTpl" },
+        ];
+        const el = await fixture(html`
+            <kp-menu items="${JSON.stringify(templateItem)}">
+                <template slot="customTpl">
+                    <span data-label></span> - <span data-value></span>
+                </template>
+            </kp-menu>
+        `);
+        const renderedItem = el.shadowRoot.querySelector(".menu-item");
+        expect(renderedItem.textContent).to.include("Template Item");
+        expect(renderedItem.textContent).to.include("tmpl");
+    });
+
+    it("uses history navigation when history property is true", async () => {
+        const historyItem = {
+            label: "History Item",
+            value: "hist",
+            href: "/history",
+            history: true,
+        };
+        const el = await fixture(html`
+            <kp-menu items="${JSON.stringify([historyItem])}"></kp-menu>
+        `);
+        el.style.display = "block";
+        const item = el.shadowRoot.querySelector(".menu-item");
+
+        // Spy on history.pushState.
+        const pushStateSpy = sinon.spy(history, "pushState");
+        item.click();
+        expect(pushStateSpy.calledOnce).to.be.true;
+        // In history navigation, the menu should auto-hide.
+        expect(el.style.display).to.equal("none");
+        pushStateSpy.restore();
     });
 });

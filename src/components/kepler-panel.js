@@ -4,6 +4,7 @@ class KeplerPanel extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.injectGlobalFonts();
         this._expanded = false;
+        this.checkRouteMatchBound = this.checkRouteMatch.bind(this);
         this.render();
     }
 
@@ -31,7 +32,6 @@ class KeplerPanel extends HTMLElement {
     get selected() {
         return this.hasAttribute("selected");
     }
-
     set selected(val) {
         if (val) {
             this.setAttribute("selected", "");
@@ -43,7 +43,6 @@ class KeplerPanel extends HTMLElement {
     get expanded() {
         return this.hasAttribute("expanded");
     }
-
     set expanded(val) {
         if (val) {
             this.setAttribute("expanded", "");
@@ -53,7 +52,6 @@ class KeplerPanel extends HTMLElement {
     }
 
     updateSelectedState() {
-        // Apply the "selected" class if the attribute is present.
         if (this.selected) {
             this.classList.add("selected");
         } else {
@@ -63,36 +61,50 @@ class KeplerPanel extends HTMLElement {
 
     connectedCallback() {
         this.addHeaderListeners();
-        // Check for children; if none, hide the arrow.
         this.checkForChildren();
-        // Apply selected styling based on the "selected" attribute.
         this.updateSelectedState();
+        // If this panel acts as a link, check if its route matches the current URL.
+        if (this.hasAttribute("href")) {
+            this.checkRouteMatch();
+            window.addEventListener("popstate", this.checkRouteMatchBound);
+        }
+    }
+
+    disconnectedCallback() {
+        if (this.hasAttribute("href")) {
+            window.removeEventListener("popstate", this.checkRouteMatchBound);
+        }
+    }
+
+    checkRouteMatch() {
+        const href = this.getAttribute("href");
+        if (href && window.location.pathname === href) {
+            this.selected = true;
+        } else {
+            this.selected = false;
+        }
     }
 
     injectGlobalFonts() {
-        if (document.getElementById("kepler-fonts")) return; // Prevent duplicate injection
-
+        if (document.getElementById("kepler-fonts")) return;
         const fontCSS = `
-            @font-face {
-                font-family: "ProFontWindows";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2") format("woff2");
-                font-display: swap;
-            }
-
-            @font-face {
-                font-family: "Tomorrow";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2") format("woff2");
-                font-display: swap;
-            }
-
-            @font-face {
-                font-family: "Tomorrow";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2") format("woff2");
-                font-weight: bold;
-                font-display: swap;
-            }
-        `;
-
+        @font-face {
+          font-family: "ProFontWindows";
+          src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2") format("woff2");
+          font-display: swap;
+        }
+        @font-face {
+          font-family: "Tomorrow";
+          src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2") format("woff2");
+          font-display: swap;
+        }
+        @font-face {
+          font-family: "Tomorrow";
+          src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2") format("woff2");
+          font-weight: bold;
+          font-display: swap;
+        }
+      `;
         const styleTag = document.createElement("style");
         styleTag.id = "kepler-fonts";
         styleTag.textContent = fontCSS;
@@ -187,13 +199,24 @@ class KeplerPanel extends HTMLElement {
 
     addHeaderListeners() {
         const header = this.shadowRoot.querySelector(".header");
-
         header.addEventListener("click", () => {
+            // If the panel is a link, handle navigation.
             if (this.hasAttribute("href")) {
-                window.location.href = this.getAttribute("href");
+                const href = this.getAttribute("href");
+                if (
+                    this.hasAttribute("history") &&
+                    this.getAttribute("history") !== "false"
+                ) {
+                    history.pushState({}, "", href);
+                    window.dispatchEvent(
+                        new PopStateEvent("popstate", { state: {} })
+                    );
+                } else {
+                    window.location.href = href;
+                }
                 return;
             }
-
+            // Otherwise, if the panel has children, toggle expansion.
             if (this.hasChildren()) {
                 this.toggle();
             } else {
@@ -206,10 +229,10 @@ class KeplerPanel extends HTMLElement {
                 );
             }
         });
+
         const childrenSlot = this.shadowRoot.querySelector(
             'slot[name="children"]'
         );
-
         childrenSlot.addEventListener("slotchange", () =>
             this.checkForChildren()
         );
@@ -226,7 +249,6 @@ class KeplerPanel extends HTMLElement {
     checkForChildren() {
         const header = this.shadowRoot.querySelector(".header");
         const arrow = this.shadowRoot.querySelector("#arrow");
-
         if (this.hasChildren()) {
             arrow.style.visibility = "visible";
             header.classList.add("clickable");
@@ -252,7 +274,6 @@ class KeplerPanel extends HTMLElement {
         } else {
             this.collapse();
         }
-
         this.dispatchEvent(
             new CustomEvent("toggle", {
                 detail: { expanded: this._expanded },
@@ -266,7 +287,6 @@ class KeplerPanel extends HTMLElement {
         const childrenContainer =
             this.shadowRoot.querySelector("#childrenContainer");
         const arrow = this.shadowRoot.querySelector("#arrow");
-
         childrenContainer.classList.add("expanded");
         arrow.classList.add("expanded");
         this._expanded = true;
@@ -284,7 +304,6 @@ class KeplerPanel extends HTMLElement {
         const childrenContainer =
             this.shadowRoot.querySelector("#childrenContainer");
         const arrow = this.shadowRoot.querySelector("#arrow");
-
         childrenContainer.classList.remove("expanded");
         arrow.classList.remove("expanded");
         this._expanded = false;
