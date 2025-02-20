@@ -15,13 +15,13 @@ Getting started with the Kepler UI kit is incredibly straight-forward. All you h
 You only need to include the kepler-ui.js script at the end of your document body
 
 ```html
-<script src="https://cdn.kepler-ui.com/kepler-ui.js"></script>
+<script src="https://cdn.keplerui.com/kepler-ui.js"></script>
 ```
 
 You can also include the stylesheet at the beginning of your document, although this is optional. Kepler components are self styled, but this stylesheet will style everything else on your site to match.
 
 ```html
-<link type="stylesheet" src="https://cdn.kepler-ui.com/styles/main.css" />
+<link type="stylesheet" src="https://cdn.keplerui.com/styles/main.css" />
 ```
 
 ### Using a Package Manager
@@ -50,13 +50,13 @@ No configuration beyond adding the required JavaScript and optional CSS styleshe
         <meta charset="UTF-8" />
         <link
             rel="stylesheet"
-            href="https://cdn.kepler-ui.com/styles/main.css"
+            href="https://cdn.keplerui.com/styles/main.css"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Kepler App</title>
     </head>
     <body>
-        <kp-theme theme-path="https://cdn.kepler-ui.com/styles/kepler-dark.css">
+        <kp-theme theme-path="https://cdn.keplerui.com/styles/kepler-dark.css">
             <div id="app">
                 <h1>Welcome!</h1>
                 <kp-button>Click Me</kp-button>
@@ -65,7 +65,7 @@ No configuration beyond adding the required JavaScript and optional CSS styleshe
 
         <script
             type="module"
-            src="https://cdn.kepler-ui.com/kepler-ui.js"
+            src="https://cdn.keplerui.com/kepler-ui.js"
         ></script>
     </body>
 </html>
