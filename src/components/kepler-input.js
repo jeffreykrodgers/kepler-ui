@@ -98,6 +98,7 @@ class KeplerInput extends HTMLElement {
                     color: inherit;
                     font-family: inherit;
                     font-size: inherit;
+                    max-height: 40px;
                 }
                 input::placeholder {
                     color: var(--base-text-subtle, rgba(109,110,112,1));

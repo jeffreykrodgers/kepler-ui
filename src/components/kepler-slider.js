@@ -196,12 +196,11 @@ class KeplerSlider extends HTMLElement {
                     -webkit-appearance: none;
                     appearance: none;
                     width: var(--spacing-medium, 8px);
-                    height: 26px;
+                    height: 30px;
                     background: var(--base-text--, rgba(29,29,29,1));
                     border: 2px solid var(--base-text--, rgba(29,29,29,1));
                     border-radius: 0;
                     cursor: pointer;
-                    margin-top: -8px;
                 }
                 input[type="range"]::-moz-range-thumb {
                     width: var(--spacing-medium, 8px);
