@@ -24,6 +24,26 @@ jobs:
             - name: Build project
               run: npm run build
 
+            - name: Prepare deployment files
+              run: |
+                  # Get version number from the dist folder's package.json
+                  VERSION=$(jq -r .version dist/package.json)
+                  echo "Version: $VERSION"
+
+                  # Create a tarball of the dist directory
+                  tar -czf dist.tar.gz -C dist .
+
+                  # Create a folder "v/<version>" and copy dist contents there
+                  mkdir -p v/$VERSION
+                  cp -r dist/* v/$VERSION/
+
+                  # Create a deploy folder and copy the latest dist, the tarball, and the versioned folder
+                  mkdir deploy
+                  cp -r dist deploy/
+                  cp dist.tar.gz deploy/
+                  cp -r v deploy/
+              shell: bash
+
             - name: Deploy to S3
               uses: jakejarvis/s3-sync-action@v0.5.1
               with:
@@ -33,4 +53,4 @@ jobs:
                   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   AWS_REGION: ${{ secrets.AWS_REGION }}
-                  SOURCE_DIR: "dist"
+                  SOURCE_DIR: "deploy"
