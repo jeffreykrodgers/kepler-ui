@@ -1,4 +1,4 @@
-name: Deploy to S3
+name: Deploy to S3, Invalidate CloudFront, and Publish to npm
 
 on:
     push:
@@ -26,18 +26,18 @@ jobs:
 
             - name: Prepare deployment files
               run: |
-                  # Get version number from the dist folder's package.json
+                  # Read version from dist/package.json
                   VERSION=$(jq -r .version dist/package.json)
                   echo "Version: $VERSION"
 
-                  # Create a tarball of the dist directory
+                  # Create a tarball of the dist
                   tar -czf dist.tar.gz -C dist .
 
-                  # Create a folder "v/<version>" and copy dist contents there
+                  # Create versioned folder under "v"
                   mkdir -p v/$VERSION
                   cp -r dist/* v/$VERSION/
 
-                  # Create a deploy folder and copy the latest dist, the tarball, and the versioned folder
+                  # Create a deploy folder containing the latest dist, the tarball, and the v folder
                   mkdir deploy
                   cp -r dist deploy/
                   cp dist.tar.gz deploy/
@@ -54,3 +54,23 @@ jobs:
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   AWS_REGION: ${{ secrets.AWS_REGION }}
                   SOURCE_DIR: "deploy"
+
+            - name: Configure AWS Credentials for CloudFront
+              uses: aws-actions/configure-aws-credentials@v2
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ${{ secrets.AWS_REGION }}
+
+            - name: Create CloudFront Invalidation
+              run: |
+                  aws cloudfront create-invalidation \
+                    --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+                    --paths "/*"
+
+            - name: Publish to npm
+              run: |
+                  cd dist
+                  npm publish --access public
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
