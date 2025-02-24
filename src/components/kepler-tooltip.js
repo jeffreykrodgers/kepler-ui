@@ -121,10 +121,10 @@ class KeplerTooltip extends HTMLElement {
             transform: rotate(45deg);
           }
         </style>
-        <div class="tooltip-content">
+        <div class="tooltip-content" part="tooltip-content">
           <slot></slot>
         </div>
-        <div class="tooltip-pointer"></div>
+        <div class="tooltip-pointer" part="tooltip-pointer"></div>
       `;
         this.pointer = this.shadowRoot.querySelector(".tooltip-pointer");
     }

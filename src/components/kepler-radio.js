@@ -179,7 +179,7 @@ class KeplerRadio extends HTMLElement {
                     opacity: 0.5;
                 }
             </style>
-            <div class="radio-group"></div>
+            <div class="radio-group" part="radio-group"></div>
         `;
     }
 
@@ -199,8 +199,8 @@ class KeplerRadio extends HTMLElement {
         this.radioGroup.innerHTML = options
             .map(
                 (opt) => `
-                <div class="radio-container">
-                    <div class="radio-wrapper">
+                <div class="radio-container" part="radio-container">
+                    <div class="radio-wrapper" part="radio-wrapper">
                         <div
                             class="radio ${opt.value === selectedValue ? "checked" : ""} ${disabled ? "disabled" : ""}"
                             data-value="${opt.value}"

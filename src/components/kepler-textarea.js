@@ -226,14 +226,14 @@ class KeplerTextarea extends HTMLElement {
         </style>
         <div class="input-container" part="input-container">
             <div class="label-wrapper" part="label-wrapper">
-                <span class="label-icon left-label-icon"><slot name="left-label-icon"></slot></span>
-                <span class="label-text"></span>
-                <span class="label-icon right-label-icon"><slot name="right-label-icon"></slot></span>
+                <span class="label-icon left-label-icon" part="left-label-icon"><slot name="left-label-icon"></slot></span>
+                <span class="label-text" part="label-text"></span>
+                <span class="label-icon right-label-icon" part="right-label-text"><slot name="right-label-icon"></slot></span>
             </div>
             <div class="input-wrapper" part="input-wrapper">
-                <span class="icon left-icon"><slot name="left-icon"></slot></span>
-                <textarea></textarea>
-                <span class="icon right-icon"><slot name="right-icon"></slot></span>
+                <span class="icon left-icon" part="left-icon"><slot name="left-icon"></slot></span>
+                <textarea part="textarea"></textarea>
+                <span class="icon right-icon" part="right-icon"><slot name="right-icon"></slot></span>
             </div>
         </div>
       `;

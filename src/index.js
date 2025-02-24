@@ -21,3 +21,5 @@ import "./components/kepler-progress.js";
 import "./components/kepler-switch.js";
 import "./components/kepler-textarea.js";
 import "./components/kepler-tooltip.js";
+import "./components/kepler-toast.js";
+import "./components/kepler-gauge.js";

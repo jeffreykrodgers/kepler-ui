@@ -261,12 +261,13 @@ class KeplerSwitch extends HTMLElement {
             color: ${state ? contrast : inactiveColor};
           }
         </style>
-        <div class="switch-wrapper label-${labelPosition}">
-          ${label ? `<div class="switch-label">${label}</div>` : ""}
+        <div class="switch-wrapper label-${labelPosition}" part="switch-wrapper">
+          ${label ? `<div class="switch-label" part="switch-label">${label}</div>` : ""}
           <div class="switch ${disabled ? "disabled" : ""}"
                role="switch"
                tabindex="0"
-               aria-checked="${state}">
+               aria-checked="${state}"
+               part="switch">
             <div class="active-indicator"></div>
             <div class="switch-text">
               <span class="off-text" part="off">

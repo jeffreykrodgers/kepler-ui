@@ -190,12 +190,12 @@ class KeplerDialog extends HTMLElement {
           }
         </style>
         ${hasCover ? `<div class="cover"></div>` : ""}
-        <div class="dialog">
+        <div class="dialog" part="dialog">
           <div class="header" part="header">
-            <span class="title">${title}</span>
+            <span class="title" part="title">${title}</span>
             ${
                 isClosable
-                    ? `<button class="close-btn" aria-label="Close dialog">
+                    ? `<button class="close-btn" aria-label="Close dialog" part="close-btn">
                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                            <path d="M6 6 L14 14 M14 6 L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                          </svg>

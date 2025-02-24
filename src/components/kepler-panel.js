@@ -182,16 +182,16 @@ class KeplerPanel extends HTMLElement {
             display: block;
           }
         </style>
-        <div class="header">
+        <div class="header" part="header">
           <slot name="icon"></slot>
           <slot name="label"></slot>
-          <span class="arrow" id="arrow">
+          <span class="arrow" id="arrow" part="arrow">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
               <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
             </svg>
           </span>
         </div>
-        <div class="children" id="childrenContainer">
+        <div class="children" id="childrenContainer" part="children">
           <slot name="children"></slot>
         </div>
       `;

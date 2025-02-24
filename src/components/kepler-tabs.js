@@ -57,10 +57,10 @@ class KeplerTabs extends HTMLElement {
                 ? `<span class="right-icon">${tab.rightIcon}</span>`
                 : "";
             headerHTML += `
-          <div class="tab-header${isActive ? " active" : ""}${disabledClass}" data-tab="${tab.tab}">
-            <div class="tab-header-content">
+          <div class="tab-header${isActive ? " active" : ""}${disabledClass}" data-tab="${tab.tab}" part="tab-header">
+            <div class="tab-header-content" part="tab-header-content">
               ${leftIconHTML}
-              <span class="tab-name">${tab.name}</span>
+              <span class="tab-name" part="tab-name">${tab.name}</span>
               ${rightIconHTML}
             </div>
           </div>

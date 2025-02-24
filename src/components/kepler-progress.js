@@ -12,7 +12,7 @@ class KeplerProgress extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["value", "max", "size"];
+        return ["value", "max", "size", "indeterminate-speed"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -65,18 +65,17 @@ class KeplerProgress extends HTMLElement {
             /* Default styling variables; these may be overridden by updateSize() */
             --progress-filled-color: var(--primary--, rgba(4, 134, 209, 1));
             --progress-unfilled-color: var(--base-surface, rgba(241, 246, 250, 1));
-            --progress-animation-duration: 1.5s;
+            --progress-animation-duration: ${this.getAttribute("indeterminate-speed") || "2s"};
             --progress-height: 28px;
             --segment-margin: var(--spacing-x-small, 4px);
           }
           .progress-container {
             display: flex;
-            width: auto;
-            max-width: 100%;
-            padding: var(--segment-margin);
-            border: var(--border-medium, 2px) solid var(--base-text--, rgba(29, 29, 29, 1));
+            width: 100%;
             box-sizing: border-box;
             overflow: hidden;
+            padding: var(--segment-margin);
+            border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
           }
           .progress-segment {
             background-color: var(--progress-unfilled-color);
@@ -88,20 +87,21 @@ class KeplerProgress extends HTMLElement {
             background-color: var(--progress-filled-color);
           }
           .indeterminate .progress-segment {
-            opacity: 0.3;
+            opacity: 0.1;
             background-color: var(--primary--, rgba(4, 134, 209, 1));
             animation: fade var(--progress-animation-duration) linear infinite;
           }
           
-          /* Adjusted keyframes so the full-opacity (gradient) portion is spread wider */
           @keyframes fade {
-            0% { opacity: 0.3; }
+            0% { opacity: 0.1; }
+            10% { opacity: 0.15; }
             40% { opacity: 1; }
             60% { opacity: 1; }
-            100% { opacity: 0.3; }
+            90% { opacity: 0.15; }
+            100% { opacity: 0.1; }
           }
         </style>
-        <div class="progress-container"></div>
+        <div class="progress-container" part="progress-container"></div>
       `;
     }
 
@@ -190,6 +190,7 @@ class KeplerProgress extends HTMLElement {
                 segment.style.width = segmentWidth + "px";
                 segment.style.height = progressHeight + "px";
                 segment.style.animationDelay = i * 0.15 + "s";
+                segment.part = "progress-segment";
                 this.progressContainer.appendChild(segment);
                 this.segments.push(segment);
             }
@@ -225,8 +226,17 @@ class KeplerProgress extends HTMLElement {
                 }
             });
         } else {
+            const indeterminateSpeed =
+                this.getAttribute("indeterminate-speed") || "2s";
+
             // Indeterminate mode.
             this.progressContainer.classList.add("indeterminate");
+
+            // Set animation duration based on the "indeterminate-speed" attribute.
+            this.style.setProperty(
+                "--progress-animation-duration",
+                indeterminateSpeed
+            );
 
             this.segments.forEach((segment, i) => {
                 segment.classList.remove("filled");

@@ -277,16 +277,16 @@ class KeplerSelect extends HTMLElement {
         </style>
         <div class="select-container" part="select-container">
           <div class="label-wrapper" part="label-wrapper">
-            <span class="label-icon left-label-icon"><slot name="left-label-icon"></slot></span>
-            <span class="label-text"></span>
-            <span class="label-icon right-label-icon"><slot name="right-label-icon"></slot></span>
+            <span class="label-icon left-label-icon" part="left-label-icon"><slot name="left-label-icon"></slot></span>
+            <span class="label-text" part="label-text"></span>
+            <span class="label-icon right-label-icon" part="right-label-icon"><slot name="right-label-icon"></slot></span>
           </div>
           <div class="select-wrapper" part="select-wrapper" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false">
-            <span class="icon left-icon"><slot name="left-icon"></slot></span>
-            <span class="selected-value" aria-live="polite"></span>
-            <span class="icon right-icon">
+            <span class="icon left-icon" part="left-icon"><slot name="left-icon"></slot></span>
+            <span class="selected-value" aria-live="polite" part="selected-value"></span>
+            <span class="icon right-icon" part="right-icon">
               <slot name="right-icon"></slot>
-              <span class="default-icon">
+              <span class="default-icon" part="default-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
                   <path d="M5 7 L10 12 L15 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" />
                 </svg>
@@ -384,7 +384,12 @@ class KeplerSelect extends HTMLElement {
         this.dropdown.innerHTML = options
             .map(
                 (opt) => `
-              <div class="dropdown-item ${opt.selected ? "selected" : ""}" data-value="${opt.value}" role="option" aria-selected="${opt.selected ? "true" : "false"}">
+              <div 
+                class="dropdown-item ${opt.selected ? "selected" : ""}"
+                data-value="${opt.value}"
+                role="option"
+                part="dropdown-item"
+                aria-selected="${opt.selected ? "true" : "false"}">
                   ${opt.label}
               </div>`
             )

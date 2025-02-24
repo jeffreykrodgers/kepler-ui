@@ -42,13 +42,10 @@ class KeplerCard extends HTMLElement {
             `slot[name="${slotName}"]`
         );
         if (slotElement) {
+            // Only consider element nodes
             const assignedNodes = slotElement
                 .assignedNodes({ flatten: true })
-                .filter(
-                    (node) =>
-                        node.nodeType !== Node.TEXT_NODE ||
-                        node.textContent.trim() !== ""
-                );
+                .filter((node) => node.nodeType === Node.ELEMENT_NODE);
             const container = this.shadowRoot.querySelector(`.${slotName}`);
             if (container) {
                 container.style.display =

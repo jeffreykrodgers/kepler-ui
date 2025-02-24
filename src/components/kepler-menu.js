@@ -167,7 +167,8 @@ class KeplerMenu extends HTMLElement {
                 return `
             <div class="menu-item ${isSelected ? "selected" : ""}" 
                 data-index="${index}" 
-                data-value="${item.value}">
+                data-value="${item.value}"
+                part="menu-item">
                 ${content}
             </div>
         `;
