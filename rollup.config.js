@@ -24,6 +24,7 @@ export default {
             targets: [
                 { src: "src/styles", dest: "dist" },
                 { src: "src/assets", dest: "dist" },
+                { src: "README.md", dest: "dist" },
             ],
         }),
     ],

@@ -24,6 +24,10 @@ jobs:
             - name: Build project
               run: npm run build
 
+            - name: Prepare package.json for npm
+              run: node prep-package.js
+              shell: bash
+
             - name: Prepare deployment files
               run: |
                   # Read version from dist/package.json
