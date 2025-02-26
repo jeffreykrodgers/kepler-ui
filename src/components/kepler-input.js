@@ -53,7 +53,7 @@ class KeplerInput extends HTMLElement {
                 .input-container {
                     display: flex;
                     flex-direction: column;
-                    gap: var(--spacing-small, 8px);
+                    gap: var(--spacing-small, 4px);
                 }
                 :host([label-position="left"]) .input-container {
                     flex-direction: row;
@@ -70,6 +70,53 @@ class KeplerInput extends HTMLElement {
                 :host([label-position="bottom"]) .input-container {
                     flex-direction: column-reverse;
                     align-items: stretch;
+                }
+                :host([disabled]) .input-wrapper {
+                    opacity: 0.8;
+                }
+
+                /* Apply diagonal pattern only for left/right label positions */
+                :host([disabled][label-position="left"]) .label-wrapper,
+                :host([disabled][label-position="right"]) .label-wrapper {
+                    position: relative;
+                    overflow: hidden;
+                    opacity: 0.6; /* Match button opacity */
+                    border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
+                }
+
+                /* Diagonal pattern overlay */
+                :host([disabled][label-position="left"]) .label-wrapper::before,
+                :host([disabled][label-position="right"]) .label-wrapper::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%; /* Ensures no extra height */
+                    background: repeating-linear-gradient(
+                        -45deg,
+                        var(--base-border, rgba(215,219,222,1)) 0,
+                        var(--base-border, rgba(215,219,222,1)) 2px,
+                        transparent 3px,
+                        transparent 10px
+                    );
+                    opacity: 1;
+                    z-index: 0;
+                }
+
+                /* Keep label text readable without adding extra height */
+                :host([disabled][label-position="left"]) .label-text,
+                :host([disabled][label-position="right"]) .label-text {
+                    position: relative;
+                    z-index: 1;
+                    background: var(--base-text--, rgba(29,29,29,1));
+                    padding: 0 4px; /* Only horizontal padding to avoid height change */
+                    border-radius: 2px;
+                    line-height: 1; /* Ensure no added height */
+                }
+                :host([disabled][label-position="left"]) .input-wrapper {
+                    border-color: var(--base-border, rgba(215,219,222,1));
+                    color: var(--base-text-subtle, rgba(109,110,112,1));
                 }
                 .input-wrapper {
                     box-sizing: border-box;

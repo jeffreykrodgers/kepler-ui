@@ -100,7 +100,7 @@ class KeplerSlider extends HTMLElement {
                     background: var(--base-text--, rgba(29,29,29,1));
                     padding: var(--spacing-medium, 8px);
                     border-radius: var(--border-small, 1px);
-                    gap: var(--spacing-small, 8px);
+                    gap: var(--spacing-small, 4px);
                     transition: background-color 0.2s ease, color 0.2s ease;
                 }
                 :host([label-position="top"]) .label-wrapper,
@@ -122,7 +122,7 @@ class KeplerSlider extends HTMLElement {
                 .input-container {
                     display: flex;
                     flex-direction: column;
-                    gap: var(--spacing-small, 8px);
+                    gap: var(--spacing-small, 4px);
                 }
                 :host([label-position="left"]) .input-container {
                     flex-direction: row;
@@ -144,6 +144,61 @@ class KeplerSlider extends HTMLElement {
                 :host([label-position="bottom"]) .input-container {
                     gap: 0;
                 }
+                :host([disabled]) .input-wrapper {
+                    opacity: 0.8;
+                    pointer-events: none;
+                }
+
+                /* Apply diagonal pattern only for left/right label positions */
+                :host([disabled][label-position="left"]) .label-wrapper,
+                :host([disabled][label-position="right"]) .label-wrapper {
+                    position: relative;
+                    overflow: hidden;
+                    opacity: 0.6; /* Match button, input, and select */
+                    border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
+                }
+
+                /* Diagonal pattern overlay */
+                :host([disabled][label-position="left"]) .label-wrapper::before,
+                :host([disabled][label-position="right"]) .label-wrapper::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%; /* Ensures no extra height */
+                    background: repeating-linear-gradient(
+                        -45deg,
+                        var(--base-border, rgba(215,219,222,1)) 0,
+                        var(--base-border, rgba(215,219,222,1)) 2px,
+                        transparent 3px,
+                        transparent 10px
+                    );
+                    opacity: 1;
+                    z-index: 0;
+                }
+
+                /* Keep label text readable */
+                :host([disabled][label-position="left"]) .label-text,
+                :host([disabled][label-position="right"]) .label-text {
+                    position: relative;
+                    z-index: 1;
+                    background: var(--base-text--, rgba(29,29,29,1));
+                    padding: 0 4px; /* Prevent height changes */
+                    border-radius: 2px;
+                    line-height: 1;
+                }
+
+                /* Disable slider interactions */
+                :host([disabled]) input[type="range"] {
+                    pointer-events: none;
+                    opacity: 0.6;
+                }
+
+                :host([disabled][label-position="left"]) .input-wrapper {
+                    border-color: var(--base-border, rgba(215,219,222,1));
+                }
+
                 .input-wrapper {
                     box-sizing: border-box;
                     display: flex;

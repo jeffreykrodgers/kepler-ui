@@ -54,14 +54,24 @@ class KeplerSwitch extends HTMLElement {
     }
 
     attachEvents() {
-        this.shadowRoot.addEventListener("click", (e) => {
-            if (this.disabled) return;
+        const isDisabled = () => this.hasAttribute("disabled");
+
+        this.shadowRoot.addEventListener("click", (event) => {
+            if (isDisabled()) {
+                event.stopPropagation();
+                return;
+            }
             this._toggle();
         });
-        this.shadowRoot.addEventListener("keydown", (e) => {
-            if (this.disabled) return;
-            if (e.key === " " || e.key === "Enter") {
-                e.preventDefault();
+
+        this.shadowRoot.addEventListener("keydown", (event) => {
+            if (isDisabled()) {
+                event.preventDefault();
+                return;
+            }
+
+            if (event.key === " " || event.key === "Enter") {
+                event.preventDefault();
                 this._toggle();
             }
         });
@@ -179,7 +189,7 @@ class KeplerSwitch extends HTMLElement {
               color: var(--base-surface, rgba(241,246,250,1));
               font-size: var(--size-h5, 21px);
               font-family: ProFontWindows, monospace;
-              padding: var(--spacing-medium, 4px);
+              padding: var(--spacing-medium, 8px);
               line-height: 24px;
               height: ${maxHeight};
           }
@@ -260,9 +270,70 @@ class KeplerSwitch extends HTMLElement {
           .switch-text .on-text {
             color: ${state ? contrast : inactiveColor};
           }
+            :host([disabled]) .switch {
+                opacity: 0.8;
+                pointer-events: none;
+            }
+
+            /* Ensure label structure consistency */
+            .switch-label {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                background: var(--base-text--, rgba(29,29,29,1)); /* Match button & input */
+                color: var(--base-surface, rgba(241,246,250,1));
+                font-family: ProFontWindows, sans-serif;
+                font-size: 21px;
+                font-weight: 500;
+                padding: var(--spacing-medium, 8px);
+                min-height: 40px;
+                min-width: 40px;
+                border-radius: var(--border-small, 1px);
+                box-sizing: border-box;
+            }
+
+            /* Apply diagonal pattern for disabled state */
+            :host([disabled][label-position="left"]) .switch-label,
+            :host([disabled][label-position="right"]) .switch-label {
+                overflow: hidden;
+                opacity: 0.6; /* Match other elements */
+                border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
+            }
+
+            /* Diagonal pattern overlay */
+            :host([disabled][label-position="left"]) .switch-label::before,
+            :host([disabled][label-position="right"]) .switch-label::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(
+                    -45deg,
+                    var(--base-border, rgba(215,219,222,1)) 0,
+                    var(--base-border, rgba(215,219,222,1)) 2px,
+                    transparent 3px,
+                    transparent 10px
+                );
+                opacity: 1;
+                z-index: 0;
+            }
+
+            /* Keep label text readable */
+            :host([disabled][label-position="left"]) .label-text,
+            :host([disabled][label-position="right"]) .label-text {
+                position: relative;
+                z-index: 1;
+                background: var(--base-text--, rgba(29,29,29,1));
+                padding: 0 4px; /* Only horizontal padding */
+                border-radius: 2px;
+                line-height: 1;
+            }
         </style>
         <div class="switch-wrapper label-${labelPosition}" part="switch-wrapper">
-          ${label ? `<div class="switch-label" part="switch-label">${label}</div>` : ""}
+          ${label ? `<div class="switch-label" part="switch-label"><span class="label-text" part="label-text">${label}</span></div>` : ""}
           <div class="switch ${disabled ? "disabled" : ""}"
                role="switch"
                tabindex="0"

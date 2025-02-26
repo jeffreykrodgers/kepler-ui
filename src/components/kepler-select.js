@@ -114,7 +114,7 @@ class KeplerSelect extends HTMLElement {
             background: var(--base-text--, rgba(29,29,29,1));
             padding: var(--spacing-medium, 8px);
             border-radius: var(--border-small, 1px);
-            gap: var(--spacing-small, 8px);
+            gap: var(--spacing-small, 4px);
             transition: background-color 0.2s ease, color 0.2s ease;
           }
           .label-wrapper.selected {
@@ -128,7 +128,7 @@ class KeplerSelect extends HTMLElement {
           .select-container {
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-small, 8px);
+            gap: var(--spacing-small, 4px);
           }
           :host([label-position="left"]) .select-container {
             flex-direction: row;
@@ -156,6 +156,53 @@ class KeplerSelect extends HTMLElement {
           :host([label-position="bottom"]) .select-container {
             gap: 0;
           }
+            :host([disabled]) .select-wrapper {
+                opacity: 0.8;
+                pointer-events: none;
+            }
+
+            :host([disabled][label-position="left"]) .label-wrapper,
+            :host([disabled][label-position="right"]) .label-wrapper {
+                position: relative;
+                overflow: hidden;
+                opacity: 0.6; /* Match button and input */
+                border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
+            }
+
+            /* Diagonal pattern overlay */
+            :host([disabled][label-position="left"]) .label-wrapper::before,
+            :host([disabled][label-position="right"]) .label-wrapper::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(
+                    -45deg,
+                    var(--base-border, rgba(215,219,222,1)) 0,
+                    var(--base-border, rgba(215,219,222,1)) 2px,
+                    transparent 3px,
+                    transparent 10px
+                );
+                opacity: 1;
+                z-index: 0;
+            }
+
+            /* Keep label text readable */
+            :host([disabled][label-position="left"]) .label-text,
+            :host([disabled][label-position="right"]) .label-text {
+                position: relative;
+                z-index: 1;
+                background: var(--base-text--, rgba(29,29,29,1));
+                padding: 0 4px; /* Prevent height changes */
+                border-radius: 2px;
+                line-height: 1;
+            }
+            :host([disabled][label-position="left"]) .select-wrapper {
+                border-color: var(--base-border, rgba(215,219,222,1));
+                color: var(--base-text-subtle, rgba(109,110,112,1));
+            }
           .select-wrapper {
             position: relative;
             box-sizing: border-box;
@@ -429,18 +476,22 @@ class KeplerSelect extends HTMLElement {
     }
 
     addEventListeners() {
+        // Prevent interaction when disabled
+        const isDisabled = () => this.hasAttribute("disabled");
+
+        // Handle focus styling
         this.selectWrapper.addEventListener("focus", () => {
+            if (isDisabled()) return;
             this.labelWrapper.classList.add("selected");
         });
 
         this.selectWrapper.addEventListener("blur", () => {
             this.labelWrapper.classList.remove("selected");
-            this.updateValidation();
         });
 
+        // Handle opening the dropdown
         this.selectWrapper.addEventListener("click", (event) => {
-            // Prevent opening the dropdown if the click is on a remove button
-            if (event.target.closest(".remove")) {
+            if (isDisabled()) {
                 event.stopPropagation();
                 return;
             }
@@ -450,59 +501,53 @@ class KeplerSelect extends HTMLElement {
             this.selectWrapper.setAttribute("aria-expanded", isOpen.toString());
         });
 
+        // Handle dropdown item selection
         this.dropdown.addEventListener("click", (event) => {
-            event.stopPropagation();
+            if (isDisabled()) {
+                event.stopPropagation();
+                return;
+            }
 
             const item = event.target.closest(".dropdown-item");
             if (item) {
-                const value = item.getAttribute("data-value");
-                const multiple = this.hasAttribute("multiple");
-                const selectionMode =
-                    this.getAttribute("selection-mode") || "combined";
-
-                if (multiple) {
-                    if (this.selectedValues.has(value)) {
-                        this.selectedValues.delete(value);
-                        item.classList.remove("selected");
-                    } else {
-                        this.selectedValues.add(value);
-                        item.classList.add("selected");
-                    }
-                    this.updateSelectedDisplay(multiple, selectionMode);
-                } else {
-                    this.shadowRoot
-                        .querySelectorAll(".dropdown-item")
-                        .forEach((el) => el.classList.remove("selected"));
-                    item.classList.add("selected");
-                    this.selectedValueElement.textContent = item.textContent;
-                    this.closeDropdown();
-                }
-
-                this.updateHiddenInput();
-                this.updateValidation();
-
-                this.dispatchEvent(
-                    new CustomEvent("change", {
-                        detail: {
-                            value: multiple
-                                ? Array.from(this.selectedValues)
-                                : value,
-                        },
-                        bubbles: true,
-                        composed: true,
-                    })
-                );
+                this.handleSelection(item);
             }
         });
 
+        // Close dropdown when clicking outside
         document.addEventListener("click", (event) => {
+            if (isDisabled()) return;
+
             const path = event.composedPath();
             if (!path.includes(this)) {
                 this.closeDropdown();
             }
         });
 
+        // Prevent keyboard selection when disabled
+        this.selectWrapper.addEventListener("keydown", (event) => {
+            if (isDisabled()) {
+                event.preventDefault();
+                return;
+            }
+
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                this.selectWrapper.click();
+            } else if (event.key === "ArrowDown") {
+                event.preventDefault();
+                this.openDropdown();
+                this.focusFirstOption();
+            }
+        });
+
+        // Prevent removing selected tags when disabled
         this.selectedValueElement.addEventListener("click", (event) => {
+            if (isDisabled()) {
+                event.stopPropagation();
+                return;
+            }
+
             const removeButton = event.target.closest(".remove");
             if (removeButton) {
                 event.stopPropagation();

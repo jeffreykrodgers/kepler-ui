@@ -223,6 +223,70 @@ class KeplerTextarea extends HTMLElement {
           :host([invalid][label-position="right"]) .label-wrapper {
             background-color: var(--error--, rgba(217,4,40,1));
           }
+            :host([disabled]) .input-wrapper {
+                opacity: 0.8;
+                pointer-events: none;
+            }
+
+            /* Ensure label structure consistency */
+            .label-wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                background: var(--base-text--, rgba(29,29,29,1)); /* Match button & input */
+                color: var(--base-surface, rgba(241,246,250,1));
+                font-family: ProFontWindows, sans-serif;
+                font-size: 21px;
+                font-weight: 500;
+                padding: var(--spacing-medium, 8px);
+                min-height: 40px;
+                min-width: 40px;
+                border-radius: var(--border-small, 1px);
+                box-sizing: border-box;
+            }
+
+            /* Apply diagonal pattern for disabled state */
+            :host([disabled][label-position="left"]) .label-wrapper,
+            :host([disabled][label-position="right"]) .label-wrapper {
+                overflow: hidden;
+                opacity: 0.6; /* Match other elements */
+                border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
+            }
+
+            /* Diagonal pattern overlay */
+            :host([disabled][label-position="left"]) .label-wrapper::before,
+            :host([disabled][label-position="right"]) .label-wrapper::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(
+                    -45deg,
+                    var(--base-border, rgba(215,219,222,1)) 0,
+                    var(--base-border, rgba(215,219,222,1)) 2px,
+                    transparent 3px,
+                    transparent 10px
+                );
+                opacity: 1;
+                z-index: 0;
+            }
+
+            /* Keep label text readable */
+            :host([disabled][label-position="left"]) .label-text,
+            :host([disabled][label-position="right"]) .label-text {
+                position: relative;
+                z-index: 1;
+                background: var(--base-text--, rgba(29,29,29,1));
+                padding: 0 4px; /* Only horizontal padding */
+                border-radius: 2px;
+                line-height: 1;
+            }
+            :host([disabled]) .input-wrapper {
+                border-color: var(--base-border, rgba(215,219,222,1));
+            }
         </style>
         <div class="input-container" part="input-container">
             <div class="label-wrapper" part="label-wrapper">

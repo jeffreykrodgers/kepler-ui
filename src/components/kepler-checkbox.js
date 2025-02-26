@@ -200,12 +200,77 @@ class KeplerCheckbox extends HTMLElement {
           :host([invalid][label-position="right"]) .label-wrapper {
               background-color: var(--error--, var(--red--, rgba(217,4,40,1)));
           }
+        :host([disabled]) .checkbox {
+            opacity: 0.8;
+            pointer-events: none;
+            border-color: var(--base-border, rgba(215,219,222,1));
+        }
+
+        .label-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: var(--base-text--, rgba(29,29,29,1)); /* Match button & input */
+            color: var(--base-surface, rgba(241,246,250,1));
+            font-family: ProFontWindows, sans-serif;
+            font-size: 21px;
+            font-weight: 500;
+            padding: var(--spacing-medium, 8px);
+            min-height: 40px;
+            min-width: 40px;
+            border-radius: var(--border-small, 1px);
+            box-sizing: border-box;
+        }
+
+        :host([disabled][label-position="left"]) .label-wrapper,
+        :host([disabled][label-position="right"]) .label-wrapper {
+            overflow: hidden;
+            opacity: 0.6; /* Match other elements */
+            border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
+        }
+
+        /* Diagonal pattern overlay */
+        :host([disabled][label-position="left"]) .label-wrapper::before,
+        :host([disabled][label-position="right"]) .label-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--base-border, rgba(215,219,222,1)) 0,
+                var(--base-border, rgba(215,219,222,1)) 2px,
+                transparent 3px,
+                transparent 10px
+            );
+            opacity: 1;
+            z-index: 0;
+        }
+
+        :host([disabled][label-position="left"]) .label-text,
+        :host([disabled][label-position="right"]) .label-text {
+            position: relative;
+            z-index: 1;
+            background: var(--base-text--, rgba(29,29,29,1));
+            padding: 0 4px; /* Only horizontal padding */
+            border-radius: 2px;
+            line-height: 1;
+        }
         </style>
         <div class="checkbox-container" part="checkbox-container">
             <div class="checkbox-wrapper" part="checkbox-wrapper">
                 <div class="checkbox" part="checkbox"></div>
             </div>
-            <div class="label-wrapper" part="label-wrapper"></div>
+            ${
+                this.getAttribute("label")
+                    ? `
+            <div class="label-wrapper" part="label-wrapper outer">
+                <span class="label-text" part="label-text">${this.getAttribute("label")}</span>
+            </div>`
+                    : ""
+            }
         </div>
       `;
     }
@@ -223,13 +288,20 @@ class KeplerCheckbox extends HTMLElement {
         const labelPosition = this.getAttribute("label-position") || "left";
 
         this.setAttribute("label-position", labelPosition);
-        this.labelWrapperElement.textContent = label;
-        this.labelWrapperElement.style.display = label ? "block" : "none";
+
+        // Ensure elements exist before modifying them
+        if (this.labelWrapperElement) {
+            this.labelWrapperElement.style.display = label ? "flex" : "none";
+        }
+
+        if (this.labelTextElement) {
+            this.labelTextElement.textContent = label;
+        }
 
         this.checkboxElement.classList.toggle("checked", checked);
-        this.labelWrapperElement.classList.toggle("checked", checked);
+        this.labelWrapperElement?.classList.toggle("checked", checked);
         this.checkboxElement.classList.toggle("disabled", disabled);
-        this.labelWrapperElement.classList.toggle("disabled", disabled);
+        this.labelWrapperElement?.classList.toggle("disabled", disabled);
 
         // Update the hidden checkbox input.
         this.updateHiddenInput();

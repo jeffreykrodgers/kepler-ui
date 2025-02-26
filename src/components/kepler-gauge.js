@@ -49,8 +49,8 @@ class KeplerGauge extends HTMLElement {
         <div class="gauge-container">
           <svg class="gauge-svg" viewBox="0 0 181 181">
             <!-- Background circles -->
-            <circle cx="90.5" cy="90.5" r="91" fill="var(--base-text--)" />
-            <circle cx="90.5" cy="90.5" r="88" fill="var(--base-background)" />
+            <circle cx="90.5" cy="90.5" r="91" fill="var(--base-text--, rgba(29,29,29,1))" />
+            <circle cx="90.5" cy="90.5" r="88" fill="var(--base-surface, rgba(255,255,255,1))" />
     
             <!-- Gauge outline path -->
             <path d="" fill="none" stroke-width="4" class="gauge-outline"/>

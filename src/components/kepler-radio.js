@@ -9,18 +9,16 @@ class KeplerRadio extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return [
-            "options",
-            "name",
-            "selected-value",
-            "disabled",
-            "label-position",
-        ];
+        return ["options", "name", "value", "disabled", "label-position"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            this.updateComponent();
+            if (name === "value") {
+                this.updateSelection();
+            } else {
+                this.updateComponent();
+            }
             this.updateHiddenInput();
         }
     }
@@ -28,21 +26,19 @@ class KeplerRadio extends HTMLElement {
     connectedCallback() {
         this.updateComponent();
 
-        // Create and append the hidden input if it doesn't exist
         if (!this.hiddenInput) {
             this.hiddenInput = document.createElement("input");
             this.hiddenInput.type = "hidden";
             this.hiddenInput.name =
                 this.getAttribute("name") || `radio-${Date.now()}`;
-            // Set initial value from the "selected-value" attribute (if any)
-            this.hiddenInput.value = this.getAttribute("selected-value") || "";
+            this.hiddenInput.value = this.getAttribute("value") || "";
             this.appendChild(this.hiddenInput);
         }
         this.updateHiddenInput();
     }
 
     injectGlobalFonts() {
-        if (document.getElementById("kepler-fonts")) return; // Prevent duplicate injection
+        if (document.getElementById("kepler-fonts")) return;
 
         const fontCSS = `
             @font-face {
@@ -73,113 +69,141 @@ class KeplerRadio extends HTMLElement {
 
     render() {
         this.shadowRoot.innerHTML = `
-            <style>
-                :host {
-                    display: inline-block;
-                    position: relative;
-                }
+        <style>
+            :host {
+                display: inline-block;
+                position: relative;
+            }
 
-                .radio-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: var(--spacing-small, 8px);
-                    width: 100%;
-                }
+            .radio-group {
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-small, 8px);
+                width: 100%;
+            }
 
-                .radio-container {
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    gap: var(--spacing-small, 8px);
-                    width: 100%;
-                }
+            .radio-container {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-large, 16px);
+                width: 100%;
+            }
 
-                .radio-wrapper {
-                    display: flex;
-                    justify-content: flex-start;
-                    padding: var(--spacing-medium, 16px);
-                    align-items: center;
-                    flex-grow: 1;
-                }
+            :host([label-position="left"]) .radio-container {
+                flex-direction: row-reverse;
+                justify-content: flex-end;
+            }
 
-                :host([label-position="top"]) .radio-container,
-                :host([label-position="bottom"]) .radio-container {
-                    gap: 0;
-                }
+            :host([label-position="top"]) .radio-container {
+                flex-direction: column-reverse;
+                align-items: flex-start;
+            }
 
-                :host([label-position="left"]) .radio-container {
-                    flex-direction: row-reverse;
-                }
+            :host([label-position="bottom"]) .radio-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-                :host([label-position="top"]) .radio-container {
-                    flex-direction: column-reverse;
-                    align-items: flex-start;
-                }
+            .radio {
+                width: 20px;
+                height: 20px;
+                border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
+                border-radius: 50%;
+                background: var(--base-surface, rgba(241,246,250,1));
+                position: relative;
+                cursor: pointer;
+                transition: border-color 0.2s ease, background-color 0.2s ease;
+            }
 
-                :host([label-position="bottom"]) .radio-container {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
+            .radio.checked {
+                border-color: var(--primary--, rgba(4,134,209,1));
+                background: var(--primary--, rgba(4,134,209,1));
+            }
 
-                :host([label-position="top"]) .label,
-                :host([label-position="bottom"]) .label {
-                    width: 100%;
-                    justify-content: flex-start;
-                    background-color: var(--base-surface, rgba(241,246,250,1));
-                    color: var(--base-text--, rgba(29,29,29,1));
-                    padding: 0;
-                }
+            .radio.checked::after {
+                content: "";
+                width: 10px;
+                height: 10px;
+                background: var(--primary-background--, rgba(245,250,250,1));
+                border-radius: 50%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
 
-                .radio {
-                    width: 20px;
-                    height: 20px;
-                    border: var(--border-medium, 2px) solid var(--base-text--, rgba(29,29,29,1));
-                    border-radius: 50%;
-                    background: var(--base-surface, rgba(241,246,250,1));
-                    position: relative;
-                    cursor: pointer;
-                }
+            .radio.disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
 
-                .radio.checked {
-                    border-color: var(--primary--, rgba(4,134,209,1));
-                    background: var(--primary--, rgba(4,134,209,1));
-                }
+            .label {
+                display: flex;
+                align-items: center;
+                position: relative;
+                background: var(--base-text--, rgba(29,29,29,1));
+                color: var(--base-surface, rgba(241,246,250,1));
+                font-family: ProFontWindows, sans-serif;
+                font-size: 21px;
+                font-weight: 500;
+                padding: var(--spacing-medium, 8px);
+                min-height: 40px;
+                min-width: 40px;
+                border-radius: var(--border-small, 1px);
+                box-sizing: border-box;
+                cursor: pointer;
+            }
 
-                .radio.checked::after {
-                    content: "";
-                    width: 10px;
-                    height: 10px;
-                    background: var(--primary-background--, rgba(245,250,250,1));
-                    border-radius: 50%;
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
+            .label-text {
+                background: var(--base-text--, rgba(29,29,29,1));
+                z-index: 1;
+                padding: 0 var(--spacing-small, 2px);
+            }
 
-                .radio.disabled {
-                    cursor: not-allowed;
-                    opacity: 0.5;
-                }
+            :host([disabled]) .radio {
+                opacity: 0.8;
+                pointer-events: none;
+            }
 
-                .label {
-                    box-sizing: border-box;
-                    font-family: ProFontWindows, sans-serif;
-                    font-size: 21px;
-                    line-height: 24px;
-                    font-weight: 500;
-                    color: var(--base-surface, rgba(241,246,250,1));
-                    background: var(--base-text--, #333);
-                    padding: var(--spacing-medium, 16px);
-                    cursor: pointer;
-                }
+            /* Disabled Labels */
+            :host([disabled]) .label,
+            .label.disabled {
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
 
-                .label.disabled {
-                    cursor: not-allowed;
-                    opacity: 0.5;
-                }
-            </style>
-            <div class="radio-group" part="radio-group"></div>
+            /* Apply diagonal pattern to disabled labels */
+            :host([disabled][label-position="left"]) .label,
+            :host([disabled][label-position="right"]) .label {
+                overflow: hidden;
+                opacity: 0.6;
+                border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
+            }
+
+            :host([disabled][label-position="left"]) .label::before,
+            :host([disabled][label-position="right"]) .label::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(
+                    -45deg,
+                    var(--base-border, rgba(215,219,222,1)) 0,
+                    var(--base-border, rgba(215,219,222,1)) 2px,
+                    transparent 3px,
+                    transparent 10px
+                );
+                opacity: 1;
+                z-index: 0;
+            }
+            
+            :host([disabled]) .radio {
+                border-color: var(--base-border, rgba(215,219,222,1));
+            }
+        </style>
+        <div class="radio-group" part="radio-group"></div>
         `;
     }
 
@@ -190,52 +214,52 @@ class KeplerRadio extends HTMLElement {
     updateComponent() {
         const options = JSON.parse(this.getAttribute("options") || "[]");
         const name = this.getAttribute("name") || `radio-${Date.now()}`;
-        const selectedValue = this.getAttribute("selected-value") || "";
+        const selectedValue = this.getAttribute("value") || "";
         const disabled = this.hasAttribute("disabled");
-        const labelPosition = this.getAttribute("label-position") || "right";
-
-        this.setAttribute("label-position", labelPosition);
 
         this.radioGroup.innerHTML = options
             .map(
                 (opt) => `
                 <div class="radio-container" part="radio-container">
-                    <div class="radio-wrapper" part="radio-wrapper">
-                        <div
-                            class="radio ${opt.value === selectedValue ? "checked" : ""} ${disabled ? "disabled" : ""}"
-                            data-value="${opt.value}"
-                            part="radio"
-                        ></div>
+                    <div class="radio" 
+                        data-value="${opt.value}" 
+                        part="radio"
+                        class="${opt.value === selectedValue ? "checked" : ""} ${disabled ? "disabled" : ""}">
                     </div>
-                    <div class="label ${disabled ? "disabled" : ""}" part="label">${opt.label}</div>
+                    <div class="label ${disabled ? "disabled" : ""}" part="label">
+                        <span class="label-text" part="label-text">${opt.label}</span>
+                    </div>
                 </div>
             `
             )
             .join("");
 
-        // Set the radio's name for each radio element
+        this.updateSelection();
+    }
+
+    updateSelection() {
+        const selectedValue = this.getAttribute("value") || "";
         this.radioGroup.querySelectorAll(".radio").forEach((radio) => {
-            radio.setAttribute("name", name);
+            const value = radio.getAttribute("data-value");
+            radio.classList.toggle("checked", value === selectedValue);
         });
+        this.updateHiddenInput();
     }
 
     updateHiddenInput() {
         if (this.hiddenInput) {
             this.hiddenInput.name = this.getAttribute("name") || "";
-            this.hiddenInput.value = this.getAttribute("selected-value") || "";
+            this.hiddenInput.value = this.getAttribute("value") || "";
         }
     }
 
     addEventListeners() {
         this.radioGroup.addEventListener("click", (event) => {
             const radio = event.target.closest(".radio");
-            if (!radio || this.hasAttribute("disabled")) {
-                return;
-            }
+            if (!radio || this.hasAttribute("disabled")) return;
 
             const selectedValue = radio.getAttribute("data-value");
-            this.setAttribute("selected-value", selectedValue);
-
+            this.setAttribute("value", selectedValue);
             this.dispatchEvent(
                 new CustomEvent("change", {
                     detail: { value: selectedValue },
@@ -244,8 +268,7 @@ class KeplerRadio extends HTMLElement {
                 })
             );
 
-            this.updateComponent();
-            this.updateHiddenInput();
+            this.updateSelection();
         });
     }
 }
