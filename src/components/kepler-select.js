@@ -66,26 +66,22 @@ class KeplerSelect extends HTMLElement {
     injectGlobalFonts() {
         if (document.getElementById("kepler-fonts")) return; // Prevent duplicate injection
 
-        const fontCSS = `
-            @font-face {
+        const fontCSS = `@font-face {
                 font-family: "ProFontWindows";
                 src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2") format("woff2");
                 font-display: swap;
             }
-
             @font-face {
                 font-family: "Tomorrow";
                 src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2") format("woff2");
                 font-display: swap;
             }
-
             @font-face {
                 font-family: "Tomorrow";
                 src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2") format("woff2");
                 font-weight: bold;
                 font-display: swap;
-            }
-        `;
+            }`;
 
         const styleTag = document.createElement("style");
         styleTag.id = "kepler-fonts";
@@ -94,8 +90,7 @@ class KeplerSelect extends HTMLElement {
     }
 
     render() {
-        this.shadowRoot.innerHTML = `
-        <style>
+        this.shadowRoot.innerHTML = `<style>
           :host {
             display: inline-block;
             width: 100%;
@@ -165,7 +160,7 @@ class KeplerSelect extends HTMLElement {
             :host([disabled][label-position="right"]) .label-wrapper {
                 position: relative;
                 overflow: hidden;
-                opacity: 0.6; /* Match button and input */
+                opacity: 0.6;
                 border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
             }
 
@@ -195,7 +190,7 @@ class KeplerSelect extends HTMLElement {
                 position: relative;
                 z-index: 1;
                 background: var(--base-text--, rgba(29,29,29,1));
-                padding: 0 4px; /* Prevent height changes */
+                padding: 0 4px;
                 border-radius: 2px;
                 line-height: 1;
             }
@@ -341,8 +336,7 @@ class KeplerSelect extends HTMLElement {
             </span>
             <div class="dropdown" part="dropdown" role="listbox"></div>
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
     setupRefs() {
@@ -381,8 +375,8 @@ class KeplerSelect extends HTMLElement {
             } else {
                 this.selectedValueElement.innerHTML = selectedOptions
                     .map(
-                        (opt) => `
-                  <span class="tag">
+                        (opt) =>
+                            `<span class="tag">
                       ${opt.label}
                       <span class="remove" data-value="${opt.value}">✕</span>
                   </span>`
@@ -430,8 +424,8 @@ class KeplerSelect extends HTMLElement {
 
         this.dropdown.innerHTML = options
             .map(
-                (opt) => `
-              <div 
+                (opt) =>
+                    `<div 
                 class="dropdown-item ${opt.selected ? "selected" : ""}"
                 data-value="${opt.value}"
                 role="option"
@@ -495,7 +489,6 @@ class KeplerSelect extends HTMLElement {
                 event.stopPropagation();
                 return;
             }
-
             const isOpen = this.dropdown.classList.toggle("open");
             this.selectWrapper.classList.toggle("open", isOpen);
             this.selectWrapper.setAttribute("aria-expanded", isOpen.toString());
@@ -507,7 +500,8 @@ class KeplerSelect extends HTMLElement {
                 event.stopPropagation();
                 return;
             }
-
+            // Prevent the click from bubbling up to selectWrapper.
+            event.stopPropagation();
             const item = event.target.closest(".dropdown-item");
             if (item) {
                 this.handleSelection(item);
@@ -517,7 +511,6 @@ class KeplerSelect extends HTMLElement {
         // Close dropdown when clicking outside
         document.addEventListener("click", (event) => {
             if (isDisabled()) return;
-
             const path = event.composedPath();
             if (!path.includes(this)) {
                 this.closeDropdown();
@@ -530,7 +523,6 @@ class KeplerSelect extends HTMLElement {
                 event.preventDefault();
                 return;
             }
-
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
                 this.selectWrapper.click();
@@ -541,13 +533,12 @@ class KeplerSelect extends HTMLElement {
             }
         });
 
-        // Prevent removing selected tags when disabled
+        // Handle removal of selected tags (for multiple selection)
         this.selectedValueElement.addEventListener("click", (event) => {
             if (isDisabled()) {
                 event.stopPropagation();
                 return;
             }
-
             const removeButton = event.target.closest(".remove");
             if (removeButton) {
                 event.stopPropagation();
@@ -574,6 +565,59 @@ class KeplerSelect extends HTMLElement {
                 );
             }
         });
+    }
+
+    handleSelection(item) {
+        const value = item.getAttribute("data-value");
+        const multiple = this.hasAttribute("multiple");
+        const options =
+            this._options || JSON.parse(this.getAttribute("options") || "[]");
+
+        if (multiple) {
+            // Toggle the selected value.
+            if (this.selectedValues.has(value)) {
+                this.selectedValues.delete(value);
+            } else {
+                this.selectedValues.add(value);
+            }
+            // Update _options to reflect current selections.
+            this._options = options.map((opt) => ({
+                ...opt,
+                selected: this.selectedValues.has(opt.value),
+            }));
+            item.classList.toggle("selected");
+        } else {
+            // For single selection, remove previous selection.
+            const currentSelected = this.shadowRoot.querySelector(
+                ".dropdown-item.selected"
+            );
+            if (currentSelected) {
+                currentSelected.classList.remove("selected");
+            }
+            item.classList.add("selected");
+            this.selectedValues = new Set([value]);
+            // Update _options so that only the selected option is marked as selected.
+            this._options = options.map((opt) => ({
+                ...opt,
+                selected: opt.value === value,
+            }));
+            this.closeDropdown();
+        }
+
+        const selectionMode = this.getAttribute("selection-mode") || "combined";
+        this.updateSelectedDisplay(multiple, selectionMode);
+        this.updateHiddenInput();
+        this.updateValidation();
+
+        this.dispatchEvent(
+            new CustomEvent("change", {
+                detail: {
+                    value: multiple ? Array.from(this.selectedValues) : value,
+                },
+                bubbles: true,
+                composed: true,
+            })
+        );
     }
 
     closeDropdown() {
