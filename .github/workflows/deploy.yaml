@@ -72,6 +72,9 @@ jobs:
                     --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
                     --paths "/*"
 
+            - name: Configure npm authentication
+              run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
             - name: Publish to npm
               run: |
                   cd dist
