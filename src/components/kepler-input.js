@@ -114,7 +114,7 @@ class KeplerInput extends HTMLElement {
                     border-radius: 2px;
                     line-height: 1; /* Ensure no added height */
                 }
-                :host([disabled][label-position="left"]) .input-wrapper {
+                :host([disabled]) .input-wrapper {
                     border-color: var(--base-border, rgba(215,219,222,1));
                     color: var(--base-text-subtle, rgba(109,110,112,1));
                 }

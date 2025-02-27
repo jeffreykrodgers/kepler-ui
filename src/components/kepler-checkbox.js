@@ -1,6 +1,12 @@
 class KeplerCheckbox extends HTMLElement {
     constructor() {
         super();
+
+        // Defaults
+        if (!this.hasAttribute("label-position")) {
+            this.setAttribute("label-position", "right");
+        }
+
         this.attachShadow({ mode: "open" });
         this.injectGlobalFonts();
         this.render();
