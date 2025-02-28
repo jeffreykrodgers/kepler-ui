@@ -3,6 +3,15 @@ class KeplerToast extends HTMLElement {
         super();
         // We still use shadow DOM for container styling,
         // but toast notifications are added as light-DOM children.
+
+        // Set Defaults
+        if (!this.hasAttribute("position")) {
+            this.setAttribute("position", "bottom");
+        }
+        if (!this.hasAttribute("alignment")) {
+            this.setAttribute("alignment", "right");
+        }
+
         this.attachShadow({ mode: "open" });
         this.render();
     }
@@ -19,13 +28,6 @@ class KeplerToast extends HTMLElement {
     // Return the alignment ("left", "center", "right"). Default: right.
     get alignment() {
         return this.getAttribute("alignment") || "right";
-    }
-
-    connectedCallback() {
-        // Ensure the toast container is attached to document.body so that its fixed positioning is not affected by parent elements.
-        if (this.parentNode !== document.body) {
-            document.body.appendChild(this);
-        }
     }
 
     render() {
@@ -70,6 +72,7 @@ class KeplerToast extends HTMLElement {
               min-width: 200px;
               max-width: 300px;
               padding: 10px 15px;
+              font-family: Tomorrow, monospace;
               border-radius: var(--border-radius-small, 1px);
               box-shadow: 0 2px 6px rgba(0,0,0,0.3);
               margin: 5px 0;
@@ -87,7 +90,7 @@ class KeplerToast extends HTMLElement {
               cursor: pointer;
             }
             /* Default style types */
-            ::slotted(.toast.base) { background: var(--base-text--); }
+            ::slotted(.toast.base) { background: var(--base-text--, rgba(29,29,29,1)); }
             ::slotted(.toast.primary) { background: var(--primary--, rgba(4,134,209,1)); }
             ::slotted(.toast.secondary) { background: var(--secondary--, rgba(29,29,29,1)); }
             ::slotted(.toast.success) { background: var(--success--, rgba(45,186,115,1)); }
@@ -165,15 +168,21 @@ class KeplerToast extends HTMLElement {
 
     removeToast(toast) {
         toast.classList.remove("show");
-        toast.addEventListener(
-            "transitionend",
-            () => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            },
-            { once: true }
-        );
+
+        // Ensure removal only happens after transition ends
+        const removeAfterTransition = () => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        };
+
+        // Listen for transitionend, ensuring it fires in tests
+        toast.addEventListener("transitionend", removeAfterTransition, {
+            once: true,
+        });
+
+        // Fallback: If transitionend doesn't fire, remove after timeout
+        setTimeout(removeAfterTransition, 500);
     }
 }
 

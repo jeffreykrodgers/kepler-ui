@@ -1,6 +1,6 @@
 {
     "name": "@sregdorffej/kepler-ui",
-    "version": "0.2.0",
+    "version": "0.2.2",
     "description": "Sci-Fi inspired web component ui kit",
     "type": "module",
     "files": [

@@ -23,3 +23,4 @@ import "./components/kepler-textarea.js";
 import "./components/kepler-tooltip.js";
 import "./components/kepler-toast.js";
 import "./components/kepler-gauge.js";
+import "./components/kepler-tag.js";

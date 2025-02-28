@@ -373,15 +373,53 @@ class KeplerSelect extends HTMLElement {
             if (selectionMode === "combined") {
                 this.selectedValueElement.textContent = `${selectedOptions.length} Items Selected`;
             } else {
-                this.selectedValueElement.innerHTML = selectedOptions
-                    .map(
-                        (opt) =>
-                            `<span class="tag">
-                      ${opt.label}
-                      <span class="remove" data-value="${opt.value}">✕</span>
-                  </span>`
-                    )
-                    .join("");
+                this.selectedValueElement.innerHTML = ""; // Clear previous tags
+
+                selectedOptions.forEach((opt) => {
+                    const tag = document.createElement("kp-tag");
+                    tag.setAttribute("closable", "true");
+                    tag.setAttribute("size", "small");
+                    tag.textContent = opt.label;
+                    tag.setAttribute("data-value", opt.value);
+
+                    // Apply color if provided
+                    if (opt.color) {
+                        tag.setAttribute("color", opt.color);
+                    }
+
+                    // Apply text color if provided
+                    if (opt.textColor) {
+                        tag.style.color = opt.textColor;
+                    }
+
+                    // Handle removal
+                    tag.addEventListener("remove", () => {
+                        this.selectedValues.delete(opt.value);
+                        const item = this.shadowRoot.querySelector(
+                            `.dropdown-item[data-value="${opt.value}"]`
+                        );
+                        if (item) {
+                            item.classList.remove("selected");
+                        }
+                        this.updateSelectedDisplay(
+                            true,
+                            this.getAttribute("selection-mode") || "combined"
+                        );
+                        this.updateHiddenInput();
+                        this.updateValidation();
+                        this.dispatchEvent(
+                            new CustomEvent("change", {
+                                detail: {
+                                    value: Array.from(this.selectedValues),
+                                },
+                                bubbles: true,
+                                composed: true,
+                            })
+                        );
+                    });
+
+                    this.selectedValueElement.appendChild(tag);
+                });
             }
         } else {
             const options =
@@ -574,20 +612,22 @@ class KeplerSelect extends HTMLElement {
             this._options || JSON.parse(this.getAttribute("options") || "[]");
 
         if (multiple) {
-            // Toggle the selected value.
+            // Toggle selection
             if (this.selectedValues.has(value)) {
                 this.selectedValues.delete(value);
             } else {
                 this.selectedValues.add(value);
             }
-            // Update _options to reflect current selections.
+
+            // Update options state
             this._options = options.map((opt) => ({
                 ...opt,
                 selected: this.selectedValues.has(opt.value),
             }));
+
             item.classList.toggle("selected");
         } else {
-            // For single selection, remove previous selection.
+            // Single selection: Clear previous selection
             const currentSelected = this.shadowRoot.querySelector(
                 ".dropdown-item.selected"
             );
@@ -596,11 +636,13 @@ class KeplerSelect extends HTMLElement {
             }
             item.classList.add("selected");
             this.selectedValues = new Set([value]);
-            // Update _options so that only the selected option is marked as selected.
+
+            // Update options state
             this._options = options.map((opt) => ({
                 ...opt,
                 selected: opt.value === value,
             }));
+
             this.closeDropdown();
         }
 
