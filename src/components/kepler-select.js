@@ -111,6 +111,7 @@ class KeplerSelect extends HTMLElement {
             border-radius: var(--border-small, 1px);
             gap: var(--spacing-small, 4px);
             transition: background-color 0.2s ease, color 0.2s ease;
+            cursor: pointer;
           }
           .label-wrapper.selected {
             background-color: var(--primary--, rgba(4,134,209,1));
@@ -222,7 +223,6 @@ class KeplerSelect extends HTMLElement {
             border-color: var(--primary--, rgba(4,134,209,1));
             background: var(--base-hover, rgba(215,219,222,1));
           }
-          /* Invalid state styles */
           :host([invalid]) .select-wrapper {
               border-color: var(--error--, rgba(217,4,40,1));
               background: var(--error-background--, #ffe6e6);
@@ -382,17 +382,14 @@ class KeplerSelect extends HTMLElement {
                     tag.textContent = opt.label;
                     tag.setAttribute("data-value", opt.value);
 
-                    // Apply color if provided
                     if (opt.color) {
                         tag.setAttribute("color", opt.color);
                     }
 
-                    // Apply text color if provided
                     if (opt.textColor) {
                         tag.style.color = opt.textColor;
                     }
 
-                    // Handle removal
                     tag.addEventListener("remove", () => {
                         this.selectedValues.delete(opt.value);
                         const item = this.shadowRoot.querySelector(
@@ -508,7 +505,6 @@ class KeplerSelect extends HTMLElement {
     }
 
     addEventListeners() {
-        // Prevent interaction when disabled
         const isDisabled = () => this.hasAttribute("disabled");
 
         // Handle focus styling
@@ -532,13 +528,20 @@ class KeplerSelect extends HTMLElement {
             this.selectWrapper.setAttribute("aria-expanded", isOpen.toString());
         });
 
+        this.labelWrapper.addEventListener("click", (event) => {
+            if (isDisabled()) {
+                event.stopPropagation();
+                return;
+            }
+            this.selectWrapper.click();
+        });
+
         // Handle dropdown item selection
         this.dropdown.addEventListener("click", (event) => {
             if (isDisabled()) {
                 event.stopPropagation();
                 return;
             }
-            // Prevent the click from bubbling up to selectWrapper.
             event.stopPropagation();
             const item = event.target.closest(".dropdown-item");
             if (item) {
@@ -568,39 +571,6 @@ class KeplerSelect extends HTMLElement {
                 event.preventDefault();
                 this.openDropdown();
                 this.focusFirstOption();
-            }
-        });
-
-        // Handle removal of selected tags (for multiple selection)
-        this.selectedValueElement.addEventListener("click", (event) => {
-            if (isDisabled()) {
-                event.stopPropagation();
-                return;
-            }
-            const removeButton = event.target.closest(".remove");
-            if (removeButton) {
-                event.stopPropagation();
-                const value = removeButton.getAttribute("data-value");
-                this.selectedValues.delete(value);
-                const item = this.shadowRoot.querySelector(
-                    `.dropdown-item[data-value="${value}"]`
-                );
-                if (item) {
-                    item.classList.remove("selected");
-                }
-                this.updateSelectedDisplay(
-                    true,
-                    this.getAttribute("selection-mode") || "combined"
-                );
-                this.updateHiddenInput();
-                this.updateValidation();
-                this.dispatchEvent(
-                    new CustomEvent("change", {
-                        detail: { value: Array.from(this.selectedValues) },
-                        bubbles: true,
-                        composed: true,
-                    })
-                );
             }
         });
     }

@@ -228,7 +228,6 @@ class KeplerTextarea extends HTMLElement {
                 pointer-events: none;
             }
 
-            /* Ensure label structure consistency */
             .label-wrapper {
                 display: flex;
                 align-items: center;
@@ -244,9 +243,9 @@ class KeplerTextarea extends HTMLElement {
                 min-width: 40px;
                 border-radius: var(--border-small, 1px);
                 box-sizing: border-box;
+                cursor: pointer;
             }
 
-            /* Apply diagonal pattern for disabled state */
             :host([disabled][label-position="left"]) .label-wrapper,
             :host([disabled][label-position="right"]) .label-wrapper {
                 overflow: hidden;
@@ -254,7 +253,6 @@ class KeplerTextarea extends HTMLElement {
                 border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
             }
 
-            /* Diagonal pattern overlay */
             :host([disabled][label-position="left"]) .label-wrapper::before,
             :host([disabled][label-position="right"]) .label-wrapper::before {
                 content: '';
@@ -274,7 +272,6 @@ class KeplerTextarea extends HTMLElement {
                 z-index: 0;
             }
 
-            /* Keep label text readable */
             :host([disabled][label-position="left"]) .label-text,
             :host([disabled][label-position="right"]) .label-text {
                 position: relative;
@@ -302,18 +299,15 @@ class KeplerTextarea extends HTMLElement {
         </div>
       `;
 
-        // Access elements
         this.textareaElement = this.shadowRoot.querySelector("textarea");
         this.labelTextElement = this.shadowRoot.querySelector(".label-text");
         this.labelWrapper = this.shadowRoot.querySelector(".label-wrapper");
 
-        // Manage visibility of icons dynamically
         this.manageSlotVisibility("left-label-icon", ".left-label-icon");
         this.manageSlotVisibility("right-label-icon", ".right-label-icon");
         this.manageSlotVisibility("left-icon", ".left-icon");
         this.manageSlotVisibility("right-icon", ".right-icon");
 
-        // Add default event listeners
         this.addEventListeners();
     }
 
@@ -379,12 +373,14 @@ class KeplerTextarea extends HTMLElement {
             );
             this.updateValidation();
         });
+
+        this.labelWrapper.addEventListener("click", () => {
+            this.textareaElement.focus();
+        });
     }
 
     updateValidation() {
-        // If manual invalid override is active, skip auto-updating.
         if (this.hasAttribute("data-manual-invalid")) return;
-        // If required and the value is empty, mark as invalid.
         if (
             this.hasAttribute("required") &&
             !this.textareaElement.value.trim()
@@ -403,7 +399,6 @@ class KeplerTextarea extends HTMLElement {
         this.setAttribute("value", newValue);
     }
 
-    // Getter and setter for manual control of the invalid state.
     get invalid() {
         return this.hasAttribute("invalid");
     }

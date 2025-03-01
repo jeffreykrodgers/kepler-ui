@@ -194,6 +194,11 @@ class KeplerSwitch extends HTMLElement {
               height: ${maxHeight};
           }
 
+            .switch-wrapper.label-top,
+            .switch-wrapper.label-bottom {
+                gap: 0;
+            }
+
           .switch-wrapper.label-left .switch-label {
             text-align: right;
           }
@@ -203,6 +208,8 @@ class KeplerSwitch extends HTMLElement {
           .switch-wrapper.label-top .switch-label,
           .switch-wrapper.label-bottom .switch-label {
             color: var(--base-text--, #333);
+            background: none;
+            padding: 0;
           }
 
           .switch {
@@ -275,7 +282,6 @@ class KeplerSwitch extends HTMLElement {
                 pointer-events: none;
             }
 
-            /* Ensure label structure consistency */
             .switch-label {
                 display: flex;
                 align-items: center;
@@ -293,7 +299,14 @@ class KeplerSwitch extends HTMLElement {
                 box-sizing: border-box;
             }
 
-            /* Apply diagonal pattern for disabled state */
+            :host([label-position="top"]) .switch-label,
+            :host([label-position="bottom"]) .switch-label,
+            :host(:not[label-position]) .switch-label,{
+                padding: 0;
+                color: var(--base-text--, rgba(29,29,29,1));
+                background: none;
+            }
+
             :host([disabled][label-position="left"]) .switch-label,
             :host([disabled][label-position="right"]) .switch-label {
                 overflow: hidden;
@@ -301,7 +314,6 @@ class KeplerSwitch extends HTMLElement {
                 border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
             }
 
-            /* Diagonal pattern overlay */
             :host([disabled][label-position="left"]) .switch-label::before,
             :host([disabled][label-position="right"]) .switch-label::before {
                 content: '';
@@ -321,7 +333,6 @@ class KeplerSwitch extends HTMLElement {
                 z-index: 0;
             }
 
-            /* Keep label text readable */
             :host([disabled][label-position="left"]) .label-text,
             :host([disabled][label-position="right"]) .label-text {
                 position: relative;

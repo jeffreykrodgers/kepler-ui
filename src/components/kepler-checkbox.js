@@ -115,11 +115,15 @@ class KeplerCheckbox extends HTMLElement {
           }
           :host([label-position="top"]) .label-wrapper,
           :host([label-position="bottom"]) .label-wrapper {
-            width: 100%;
-            justify-content: flex-start;
             background-color: var(--base-surface, var(--neutral-1, rgba(241,246,250,1)));
             color: var(--base-text--, var(--neutral-9, rgba(29,29,29,1)));
             padding: 0;
+          }
+          :host([label-position="left"]) .label-wrapper,
+          :host([label-position="right"]) .label-wrapper {
+            padding: var(--spacing-medium, 8px);
+            color: var(--base-surface, var(--neutral-1, rgba(241,246,250,1)));
+            background: var(--base-text--, var(--neutral-9, rgba(29,29,29,1)));
           }
           .checkbox-wrapper {
             display: flex;
@@ -165,14 +169,13 @@ class KeplerCheckbox extends HTMLElement {
             opacity: 0.5;
           }
           .label-wrapper {
+            width: 100%;
+            justify-content: flex-start;
             box-sizing: border-box;
             font-family: ProFontWindows, sans-serif;
             font-size: 21px;
             line-height: 24px;
             font-weight: 500;
-            padding: var(--spacing-medium, 8px);
-            color: var(--base-surface, var(--neutral-1, rgba(241,246,250,1)));
-            background: var(--base-text--, var(--neutral-9, rgba(29,29,29,1)));
             transition: color 0.2s ease, background-color 0.2s ease;
             cursor: pointer;
           }
@@ -180,7 +183,6 @@ class KeplerCheckbox extends HTMLElement {
             cursor: not-allowed;
             opacity: 0.5;
           }
-          /* Invalid state styles with fallback values */
           :host([invalid]) .checkbox {
               border-color: var(--error--, var(--red--, rgba(217,4,40,1)));
               background: var(--error-background--, var(--red-light-1, rgba(250,245,246,1)));
@@ -229,7 +231,6 @@ class KeplerCheckbox extends HTMLElement {
             border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
         }
 
-        /* Diagonal pattern overlay */
         :host([disabled][label-position="left"]) .label-wrapper::before,
         :host([disabled][label-position="right"]) .label-wrapper::before {
             content: '';

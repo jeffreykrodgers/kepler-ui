@@ -29,6 +29,7 @@ class KeplerInput extends HTMLElement {
                     transition: background-color 0.2s ease, color 0.2s ease;
                     min-height: 40px;
                     min-width: 40px;
+                    cursor: pointer;
                 }
                 :host([label-position="top"]) .label-wrapper,
                 :host([label-position="bottom"]) .label-wrapper {
@@ -193,18 +194,15 @@ class KeplerInput extends HTMLElement {
             </div>
         `;
 
-        // Access elements
         this.inputElement = this.shadowRoot.querySelector("input");
         this.labelTextElement = this.shadowRoot.querySelector(".label-text");
         this.labelWrapper = this.shadowRoot.querySelector(".label-wrapper");
 
-        // Manage visibility of icons dynamically
         this.manageSlotVisibility("left-label-icon", ".left-label-icon");
         this.manageSlotVisibility("right-label-icon", ".right-label-icon");
         this.manageSlotVisibility("left-icon", ".left-icon");
         this.manageSlotVisibility("right-icon", ".right-icon");
 
-        // Add default event listeners
         this.addEventListeners();
     }
 
@@ -293,7 +291,6 @@ class KeplerInput extends HTMLElement {
     }
 
     syncAttributesToInput(name, value) {
-        // Do not pass the "invalid" attribute to the inner input.
         if (name === "invalid") return;
         if (value === null) {
             this.inputElement.removeAttribute(name);
@@ -352,6 +349,10 @@ class KeplerInput extends HTMLElement {
             this.dispatchEvent(
                 new Event("change", { bubbles: true, composed: true })
             );
+        });
+
+        this.labelWrapper.addEventListener("click", () => {
+            this.inputElement.focus();
         });
     }
 
