@@ -103,6 +103,7 @@ class KeplerRadio extends HTMLElement {
             :host([label-position="top"]) .radio-container {
                 flex-direction: column-reverse;
                 align-items: flex-start;
+                gap: 0;
             }
 
             :host([label-position="bottom"]) .radio-container {
@@ -110,6 +111,7 @@ class KeplerRadio extends HTMLElement {
                 align-items: flex-start;
             }
 
+ 
             .radio {
                 width: 20px;
                 height: 20px;
@@ -166,6 +168,26 @@ class KeplerRadio extends HTMLElement {
                 padding: 0 var(--spacing-small, 2px);
             }
 
+            :host([label-position="top"]),
+            :host([label-position="bottom"]) {
+                gap: 0;
+            }
+
+            :host([label-position="top"]) .label,
+            :host([label-position="bottom"]) .label {
+                color: var(--base-text--, rgba(29,29,29,1));
+                background: var(--base-surface, rgba(241,246,250,1));
+                padding: 0;
+            }
+
+            :host([label-position="top"]) .label-text,
+            :host([label-position="bottom"]) .label-text {
+                color: var(--base-text--, rgba(29,29,29,1));
+                background: var(--base-surface, rgba(241,246,250,1));
+                padding: 0;
+            }
+
+
             :host([disabled]) .radio {
                 opacity: 0.8;
                 pointer-events: none;
@@ -180,14 +202,16 @@ class KeplerRadio extends HTMLElement {
 
             /* Apply diagonal pattern to disabled labels */
             :host([disabled][label-position="left"]) .label,
-            :host([disabled][label-position="right"]) .label {
+            :host([disabled][label-position="right"]) .label,
+            :host([disabled]:not([label-position])) .label {
                 overflow: hidden;
                 opacity: 0.6;
                 border: var(--border-medium, 2px) solid var(--base-border, rgba(215,219,222,1));
             }
 
             :host([disabled][label-position="left"]) .label::before,
-            :host([disabled][label-position="right"]) .label::before {
+            :host([disabled][label-position="right"]) .label::before,
+            :host([disabled]:not([label-position])) .label::before {
                 content: '';
                 position: absolute;
                 top: 0;
@@ -219,7 +243,6 @@ class KeplerRadio extends HTMLElement {
 
     updateComponent() {
         const options = JSON.parse(this.getAttribute("options") || "[]");
-        const name = this.getAttribute("name") || `radio-${Date.now()}`;
         const selectedValue = this.getAttribute("value") || "";
         const disabled = this.hasAttribute("disabled");
 
@@ -262,20 +285,36 @@ class KeplerRadio extends HTMLElement {
     addEventListeners() {
         this.radioGroup.addEventListener("click", (event) => {
             const radio = event.target.closest(".radio");
-            if (!radio || this.hasAttribute("disabled")) return;
+            const label = event.target.closest(".label");
 
-            const selectedValue = radio.getAttribute("data-value");
-            this.setAttribute("value", selectedValue);
-            this.dispatchEvent(
-                new CustomEvent("change", {
-                    detail: { value: selectedValue },
-                    bubbles: true,
-                    composed: true,
-                })
-            );
+            if (this.hasAttribute("disabled")) return;
 
-            this.updateSelection();
+            if (radio) {
+                this.selectRadio(radio);
+            }
+
+            if (label) {
+                const radioContainer = label.closest(".radio-container");
+                const associatedRadio = radioContainer.querySelector(".radio");
+                if (associatedRadio) {
+                    this.selectRadio(associatedRadio);
+                }
+            }
         });
+    }
+
+    selectRadio(radio) {
+        const selectedValue = radio.getAttribute("data-value");
+        this.setAttribute("value", selectedValue);
+        this.dispatchEvent(
+            new CustomEvent("change", {
+                detail: { value: selectedValue },
+                bubbles: true,
+                composed: true,
+            })
+        );
+
+        this.updateSelection();
     }
 }
 

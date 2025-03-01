@@ -25,14 +25,14 @@ class KeplerGauge extends HTMLElement {
     
           .gauge-text {
             font-size: 1.2em;
-            fill: ${this.getAttribute("text-color") || "#333"};
+            fill: ${this.getAttribute("text-color") || "var(--base-text--, rgba(29,29,29,1))"};
             text-anchor: middle;
             font-family: Tomorrow, monospace;
           }
     
           .label {
             font-size: 1em;
-            fill: ${this.getAttribute("label-color") || "#333"};
+            fill: ${this.getAttribute("label-color") || "var(--base-text--, rgba(29,29,29,1))"};
             text-anchor: middle;
             font-family: ProFontWindows, monospace;
           }
@@ -81,14 +81,20 @@ class KeplerGauge extends HTMLElement {
         this.unit = this.getAttribute("unit") || "%";
         this.labelRadius = this.getAttribute("label-radius") || 63;
 
-        // Set colors for outline, needle, text, and label
-        this.outlineColor = this.getAttribute("outline-color") || "#5FB6FF";
-        this.needleColor = this.getAttribute("needle-color") || "#D9D9D9";
-        this.textColor = this.getAttribute("text-color") || "#333";
-        this.labelColor = this.getAttribute("label-color") || "#333";
+        this.outlineColor =
+            this.getAttribute("outline-color") ||
+            "var(--base-text--, rgba(29,29,29,1))";
+        this.needleColor =
+            this.getAttribute("needle-color") ||
+            "var(--base-text--, rgba(29,29,29,1))";
+        this.textColor =
+            this.getAttribute("text-color") ||
+            "var(--base-text--, rgba(29,29,29,1))";
+        this.labelColor =
+            this.getAttribute("label-color") ||
+            "var(--base-text--, rgba(29,29,29,1))";
         this.ranges = JSON.parse(this.getAttribute("ranges") || "[]");
 
-        // Apply size, colors, and draw gauge components.
         this.applySize();
         this.applyColors();
         this.drawGaugeOutline();
