@@ -195,7 +195,7 @@ class KeplerSlider extends HTMLElement {
                     opacity: 0.6;
                 }
 
-                :host([disabled][label-position="left"]) .input-wrapper {
+                :host([disabled]) .input-wrapper {
                     border-color: var(--base-border, rgba(215,219,222,1));
                 }
 

@@ -24,10 +24,6 @@ jobs:
             - name: Build project
               run: npm run build
 
-            - name: Prepare package.json for npm
-              run: node prep-package.js
-              shell: bash
-
             - name: Prepare deployment files
               run: |
                   # Read version from dist/package.json
@@ -35,7 +31,8 @@ jobs:
                   echo "Version: $VERSION"
 
                   # Create a tarball of the dist
-                  tar -czf dist.tar.gz -C dist .
+                  TARBALL_NAME="sregdorffej-kepler-ui-$VERSION.tar.gz"
+                  tar -czf $TARBALL_NAME -C dist .
 
                   # Create versioned folder under "v"
                   mkdir -p v/$VERSION
@@ -43,12 +40,12 @@ jobs:
 
                   # Create a deploy folder containing the latest dist, the tarball, and the v folder
                   mkdir deploy
-                  cp -r dist deploy/
-                  cp dist.tar.gz deploy/
+                  cp -r dist/* deploy/  # Copy only contents of dist, not the folder itself
+                  cp $TARBALL_NAME deploy/
                   cp -r v deploy/
               shell: bash
 
-            - name: Deploy to S3
+            - name: Deploy to S3 (Root Files Only)
               uses: jakejarvis/s3-sync-action@v0.5.1
               with:
                   args: --delete
@@ -58,6 +55,19 @@ jobs:
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   AWS_REGION: ${{ secrets.AWS_REGION }}
                   SOURCE_DIR: "deploy"
+                  DEST_DIR: "" # Ensure deployment to root, not a `/` folder
+
+            - name: Deploy to S3 (Versioned Folder)
+              uses: jakejarvis/s3-sync-action@v0.5.1
+              with:
+                  args: "--exact-timestamps" # Ensure older versions are preserved
+              env:
+                  AWS_S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_REGION: ${{ secrets.AWS_REGION }}
+                  SOURCE_DIR: "deploy/v"
+                  DEST_DIR: "v" # Ensure deployment to /v instead of /v/
 
             - name: Configure AWS Credentials for CloudFront
               uses: aws-actions/configure-aws-credentials@v2
@@ -71,6 +81,9 @@ jobs:
                   aws cloudfront create-invalidation \
                     --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
                     --paths "/*"
+
+            - name: Configure npm authentication
+              run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
             - name: Publish to npm
               run: |
