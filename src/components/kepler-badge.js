@@ -46,6 +46,7 @@ class KeplerBadge extends HTMLElement {
                 font-family: ProFontWindows, monospace;
                 min-width: ${minSize};
                 height: ${minSize};
+                z-index: 20;
             }
             ::slotted(*) {
                 position: relative;
