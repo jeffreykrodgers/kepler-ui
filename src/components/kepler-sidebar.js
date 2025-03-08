@@ -39,7 +39,7 @@ class KeplerSidebar extends HTMLElement {
                     flex-direction: column;
                     width: var(--sidebar-collapsed-width, 56px);
                     transition: width 0.3s ease-in-out;
-                    border-right: 2px solid var(--base-border, #d7dbde);
+                    border-right: var(--border-medium, 2px) solid var(--base-border, #d7dbde);
                     overflow: hidden;
                 }
 
