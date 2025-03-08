@@ -61,8 +61,6 @@ class KeplerProgress extends HTMLElement {
           :host {
             display: inline-block;
             min-width: 20px;
-            max-width: 100%;
-            /* Default styling variables; these may be overridden by updateSize() */
             --progress-filled-color: var(--primary--, rgba(4, 134, 209, 1));
             --progress-unfilled-color: var(--base-surface, rgba(241, 246, 250, 1));
             --progress-animation-duration: ${this.getAttribute("indeterminate-speed") || "2s"};

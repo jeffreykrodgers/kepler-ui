@@ -1,0 +1,51 @@
+/* Themes - Amber */
+:root {
+    --base-background: var(--neutral-black);
+    --base-text--: var(--green--);
+    --base-text-emphasize: var(--green-dark-7);
+    --base-text-light: var(--green-dark-6);
+    --base-text-subtle: var(--green-dark-5);
+    --base-surface: var(--green-dark-1);
+    --base-hover: var(--green-dark-2);
+    --base-focus: var(--green-dark-2);
+    --base-border: var(--green-dark-3);
+    --primary--: var(--neutral-1);
+    --primary-hover: var(--neutral-2);
+    --primary-active: var(--neutral-3);
+    --primary-background--: var(--neutral-9);
+    --primary-background-hover: var(--neutral-8);
+    --primary-background-active: var(--neutral-7);
+    --primary-background-border: var(--neutral-6);
+    --secondary--: var(--green-dark-8);
+    --secondary-background--: var(--green-dark-1);
+    --secondary-hover: var(--green-dark-7);
+    --secondary-active: var(--green-dark-6);
+    --secondary-background-hover: var(--green-dark-2);
+    --secondary-background-active: var(--green-dark-3);
+    --secondary-background-border: var(--green-dark-4);
+    --error--: var(--red--);
+    --error-hover: var(--red-dark-8);
+    --error-active: var(--red-dark-7);
+    --error-background--: var(--red-dark-1);
+    --error-background-hover: var(--red-dark-2);
+    --error-background-active: var(--red-dark-3);
+    --error-background-border: var(--red-dark-4);
+    --warning--: var(--yellow--);
+    --warning-hover: var(--yellow-dark-8);
+    --warning-active: var(--yellow-dark-7);
+    --warning-background--: var(--yellow-dark-1);
+    --warning-background-hover: var(--yellow-dark-2);
+    --warning-background-active: var(--yellow-dark-3);
+    --warning-background-border: var(--yellow-dark-4);
+    --success--: var(--green--);
+    --success-hover: var(--green-dark-8);
+    --success-active: var(--green-dark-7);
+    --success-background--: var(--green-dark-1);
+    --success-background-hover: var(--green-dark-2);
+    --success-background-active: var(--green-dark-3);
+    --success-background-border: var(--green-dark-4);
+}
+
+::slotted(*) {
+    color: var(--base-text--, rgba(29, 29, 29, 1));
+}

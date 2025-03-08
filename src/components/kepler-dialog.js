@@ -1,3 +1,5 @@
+import { getContainer } from "../modules/helpers";
+
 class KeplerDialog extends HTMLElement {
     constructor() {
         super();
@@ -10,13 +12,6 @@ class KeplerDialog extends HTMLElement {
 
     static get observedAttributes() {
         return ["title", "closable", "visible", "cover", "anchor"];
-    }
-
-    getContainer(selector, multiple) {
-        const method = multiple ? "querySelectorAll" : "querySelector";
-        return window.__routerShadowRoot
-            ? window.__routerShadowRoot[method](selector)
-            : document[method](selector);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -37,7 +32,7 @@ class KeplerDialog extends HTMLElement {
         this.setupAnchor();
         const anchorSelector = this.getAttribute("anchor");
         if (anchorSelector) {
-            const anchor = this.getContainer(anchorSelector);
+            const anchor = getContainer(anchorSelector);
             if (anchor) {
                 this.anchorObserver = new MutationObserver(() => {
                     this.setupAnchor();
@@ -237,7 +232,7 @@ class KeplerDialog extends HTMLElement {
         }
         const anchorSelector = this.getAttribute("anchor");
         if (anchorSelector) {
-            const anchor = this.getContainer(anchorSelector);
+            const anchor = getContainer(anchorSelector);
             if (anchor) {
                 this._openHandler = this._openDialog.bind(this);
                 anchor.addEventListener("click", this._openHandler);
