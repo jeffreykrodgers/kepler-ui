@@ -25,3 +25,5 @@ import "./components/kepler-toast.js";
 import "./components/kepler-gauge.js";
 import "./components/kepler-tag.js";
 import "./components/kepler-badge.js";
+import "./components/kepler-sidebar.js";
+// import "./components/kepler-drawer.js";
