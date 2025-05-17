@@ -1,8 +1,10 @@
+import { injectGlobalFonts } from "../modules/helpers.js";
+
 class KeplerSwitch extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        this.injectGlobalFonts();
+        injectGlobalFonts();
         this._toggle = this._toggle.bind(this);
         this.render();
         this.attachEvents();
@@ -88,36 +90,6 @@ class KeplerSwitch extends HTMLElement {
             })
         );
         this.updateSwitchState();
-    }
-
-    injectGlobalFonts() {
-        if (document.getElementById("kepler-fonts")) return; // Prevent duplicate injection
-
-        const fontCSS = `
-            @font-face {
-                font-family: "ProFontWindows";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2") format("woff2");
-                font-display: swap;
-            }
-
-            @font-face {
-                font-family: "Tomorrow";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2") format("woff2");
-                font-display: swap;
-            }
-
-            @font-face {
-                font-family: "Tomorrow";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2") format("woff2");
-                font-weight: bold;
-                font-display: swap;
-            }
-        `;
-
-        const styleTag = document.createElement("style");
-        styleTag.id = "kepler-fonts";
-        styleTag.textContent = fontCSS;
-        document.head.appendChild(styleTag);
     }
 
     render() {
