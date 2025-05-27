@@ -1,10 +1,12 @@
+import { injectGlobalFonts } from "../modules/helpers.js";
+
 class KeplerMenu extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
-        this.injectGlobalFonts();
-        this.render();
+        injectGlobalFonts();
         this.selectedValues = new Set();
+        this.render();
     }
 
     static get observedAttributes() {
@@ -19,249 +21,126 @@ class KeplerMenu extends HTMLElement {
         ];
     }
 
-    getContainer(selector, multiple) {
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            name === "value" ? (this.value = newValue) : this.updateComponent();
+        }
+    }
+
+    connectedCallback() {
+        this.updateComponent();
+        this._bindAnchorEvents();
+        this._bindMenuEvents();
+        this._observeAnchor();
+    }
+
+    disconnectedCallback() {
+        if (this.anchorObserver) this.anchorObserver.disconnect();
+    }
+
+    get items() {
+        return this._parseItems();
+    }
+
+    set items(value) {
+        if (Array.isArray(value)) {
+            this.setAttribute("items", JSON.stringify(value));
+            this.updateComponent();
+        } else {
+            console.error("KeplerMenu: items must be an array.");
+        }
+    }
+
+    get value() {
+        return this.hasAttribute("multiple")
+            ? Array.from(this.selectedValues).join(",")
+            : Array.from(this.selectedValues)[0] || "";
+    }
+
+    set value(newVal) {
+        if (this.hasAttribute("multiple")) {
+            this.selectedValues = new Set(
+                typeof newVal === "string"
+                    ? newVal.split(",").map((v) => v.trim())
+                    : newVal
+            );
+        } else {
+            this.selectedValues = new Set([String(newVal).trim()]);
+        }
+        this.updateComponent();
+    }
+
+    _bindAnchorEvents() {
+        const anchor = this._anchorElement();
+        if (!anchor) return;
+        anchor.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.toggleMenu(anchor);
+        });
+    }
+
+    _bindMenuEvents() {
+        this.shadowRoot.addEventListener("click", (e) =>
+            this._handleItemClick(e)
+        );
+        document.addEventListener("click", (e) => {
+            if (!e.composedPath().includes(this)) this.hideMenu();
+        });
+    }
+
+    _anchorElement() {
+        const selector = this.getAttribute("anchor");
+        if (!selector) return null;
+        const root = this.getRootNode();
+        return root instanceof ShadowRoot
+            ? root.querySelector(selector)
+            : document.querySelector(selector);
+    }
+
+    _cloneTemplate(slotId) {
+        const tpl = this.querySelector(`[slot="${slotId}"]`);
+        return tpl?.content ? document.importNode(tpl.content, true) : null;
+    }
+
+    _getContainer(selector, multiple) {
         const method = multiple ? "querySelectorAll" : "querySelector";
         return window.__routerShadowRoot
             ? window.__routerShadowRoot[method](selector)
             : document[method](selector);
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            if (name === "value") {
-                this.value = newValue; // Update property when the value attribute changes
-            } else {
-                this.updateComponent();
-            }
-        }
-    }
-
-    connectedCallback() {
-        this.updateComponent();
-        this.addEventListeners();
-
-        // Observe the anchor for changes (e.g., when re-rendered dynamically)
-        const anchorSelector = this.getAttribute("anchor");
-        if (anchorSelector) {
-            const anchor = this.getContainer(anchorSelector);
-            if (anchor) {
-                this.anchorObserver = new MutationObserver(() => {
-                    this.positionMenu(anchor);
-                });
-                this.anchorObserver.observe(anchor, {
-                    attributes: true,
-                    childList: true,
-                    subtree: true,
-                });
-            }
-        }
-    }
-
-    disconnectedCallback() {
-        if (this.anchorObserver) {
-            this.anchorObserver.disconnect();
-        }
-    }
-
-    injectGlobalFonts() {
-        if (document.getElementById("kepler-fonts")) return; // Prevent duplicate injection
-
-        const fontCSS = `
-            @font-face {
-                font-family: "ProFontWindows";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/ProFontWindows.woff2") format("woff2");
-                font-display: swap;
-            }
-
-            @font-face {
-                font-family: "Tomorrow";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Regular.woff2") format("woff2");
-                font-display: swap;
-            }
-
-            @font-face {
-                font-family: "Tomorrow";
-                src: url("https://kepler-ui.s3.us-west-2.amazonaws.com/assets/Tomorrow-Bold.woff2") format("woff2");
-                font-weight: bold;
-                font-display: swap;
-            }
-        `;
-
-        const styleTag = document.createElement("style");
-        styleTag.id = "kepler-fonts";
-        styleTag.textContent = fontCSS;
-        document.head.appendChild(styleTag);
-    }
-
-    render() {
-        this.shadowRoot.innerHTML = `
-        <style>
-            :host {
-                display: none;
-                position: absolute;
-                box-sizing: border-box;
-                background: var(--base-text--, rgba(29,29,29,1));
-                z-index: 10;
-                max-height: 200px;
-                overflow-y: auto;
-                box-shadow: var(--shadow-medium, 0 4px 8px rgba(0, 0, 0, 0.2));
-            }
-            .menu-item {
-                padding: var(--spacing-medium, 8px);
-                font-size: var(--font-size, 16px);
-                font-family: Tomorrow, sans-serif;
-                color: var(--base-surface, rgba(241,246,250,1));
-                background: var(--base-text--, rgba(29,29,29,1));
-                cursor: pointer;
-                transition: background-color 0.2s ease, color 0.2s ease;
-            }
-            .menu-item:hover {
-                background: var(--base-text-emphasize, rgba(56,56,57,1));
-            }
-            .menu-item.selected {
-                background: var(--primary--, rgba(4,134,209,1));
-                color: var(--primary-background--, rgba(245,250,250,1));
-            }
-        </style>
-        <div id="menuContainer" part="menuContainer"></div>
-      `;
-    }
-
-    updateComponent() {
-        let items = [];
-
-        try {
-            items = JSON.parse(this.getAttribute("items") || "[]");
-        } catch (err) {
-            console.error("KeplerMenu: invalid items JSON", err);
-        }
-
-        const trackingEnabled =
-            this.getAttribute("track-selection") !== "false";
-
-        if (trackingEnabled && this.hasAttribute("value")) {
-            const valueAttr = this.getAttribute("value");
-
-            if (this.hasAttribute("multiple")) {
-                this.selectedValues = new Set(
-                    valueAttr.split(",").map((val) => val.trim())
-                );
-            } else {
-                this.selectedValues = new Set([valueAttr.trim()]);
-            }
-        }
-
-        const container = this.shadowRoot.querySelector("#menuContainer");
-
-        container.innerHTML = items
-            .map((item, index) => {
-                const isSelected =
-                    trackingEnabled &&
-                    this.selectedValues.has(String(item.value));
-
-                // Use template if provided, otherwise default to label
-                const content = item.template
-                    ? this._renderTemplate(item.template, item)
-                    : `<label>${item.label || ""}</label>`;
-
-                return `
-            <div class="menu-item ${isSelected ? "selected" : ""}" 
-                data-index="${index}" 
-                data-value="${item.value}"
-                part="menu-item">
-                ${content}
-            </div>
-        `;
-            })
-            .join("");
-    }
-
-    addEventListeners() {
-        const anchorSelector = this.getAttribute("anchor");
-
-        if (anchorSelector) {
-            const anchor = this.getContainer(anchorSelector);
-
-            if (anchor) {
-                anchor.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    if (this.style.display === "block") {
-                        this.hideMenu();
-                    } else {
-                        this.showMenu();
-                        this.positionMenu(anchor);
-                    }
-                });
-            }
-        }
-
-        this.shadowRoot.addEventListener("click", (e) => {
-            this.handleItemClick(e);
-        });
-
-        document.addEventListener("click", (e) => {
-            if (!this.contains(e.target)) {
-                this.hideMenu();
-            }
-        });
-    }
-
-    handleItemClick(e) {
+    _handleItemClick(e) {
         const itemEl = e.target.closest(".menu-item");
         if (!itemEl) return;
 
-        const value = itemEl.getAttribute("data-value");
-        const index = parseInt(itemEl.getAttribute("data-index"), 10);
+        const index = Number(itemEl.dataset.index);
         const items = this.items;
-
-        // Ensure items is an array and index is within range
-        if (
-            !Array.isArray(items) ||
-            isNaN(index) ||
-            index < 0 ||
-            index >= items.length
-        ) {
-            console.error("Invalid menu item index:", index, items);
-            return;
-        }
-
         const selectedItem = items[index];
+        if (!selectedItem) return;
 
-        // Handle history-based navigation
-        if (selectedItem && selectedItem.href) {
+        if (selectedItem.href) {
             if (selectedItem.history) {
                 history.pushState({}, "", selectedItem.href);
                 window.dispatchEvent(
                     new PopStateEvent("popstate", { state: {} })
                 );
-                this.hideMenu();
             } else {
                 window.location.href = selectedItem.href;
             }
+            this.hideMenu();
             return;
         }
 
-        // Selection handling
-        const trackingEnabled =
-            this.getAttribute("track-selection") !== "false";
-        if (trackingEnabled) {
+        if (this._isTracking()) {
+            const value = itemEl.dataset.value;
             if (this.hasAttribute("multiple")) {
-                if (this.selectedValues.has(value)) {
-                    this.selectedValues.delete(value);
-                    itemEl.classList.remove("selected");
-                } else {
-                    this.selectedValues.add(value);
-                    itemEl.classList.add("selected");
-                }
+                this.selectedValues.has(value)
+                    ? this.selectedValues.delete(value)
+                    : this.selectedValues.add(value);
             } else {
-                this.shadowRoot
-                    .querySelectorAll(".menu-item.selected")
-                    .forEach((el) => el.classList.remove("selected"));
-                itemEl.classList.add("selected");
                 this.selectedValues = new Set([value]);
                 this.hideMenu();
             }
-
             this.setAttribute("value", this.value);
             this.updateComponent();
 
@@ -279,75 +158,62 @@ class KeplerMenu extends HTMLElement {
         }
     }
 
-    toggleMenu() {
-        if (this.style.display === "none" || this.style.display === "") {
-            this.showMenu();
-        } else {
-            this.hideMenu();
-        }
+    _isTracking() {
+        return this.getAttribute("track-selection") !== "false";
     }
 
-    showMenu() {
-        this.getContainer("kp-menu", true).forEach((menu) => {
-            if (menu !== this) {
-                menu.hideMenu();
-            }
-        });
-
-        this.style.display = "block";
-
-        const anchorSelector = this.getAttribute("anchor");
-        const anchor = this.getContainer(anchorSelector);
-
-        if (anchor) {
-            this.positionMenu(anchor);
-            this.scrollHandler = () =>
-                requestAnimationFrame(() => this.positionMenu(anchor));
-            window.addEventListener("scroll", this.scrollHandler, true);
-            window.addEventListener("resize", this.scrollHandler);
-        }
-    }
-
-    hideMenu() {
-        this.style.display = "none";
-
-        if (this.scrollHandler) {
-            window.removeEventListener("scroll", this.scrollHandler, true);
-            window.removeEventListener("resize", this.scrollHandler);
-        }
-    }
-
-    positionMenu(anchor) {
+    _observeAnchor() {
+        const anchor = this._anchorElement();
         if (!anchor) return;
 
+        this.anchorObserver = new MutationObserver(() =>
+            this._positionMenu(anchor)
+        );
+
+        this.anchorObserver.observe(anchor, {
+            attributes: true,
+            childList: true,
+            subtree: true,
+        });
+    }
+
+    _parseItems() {
+        try {
+            return JSON.parse(this.getAttribute("items") || "[]");
+        } catch (err) {
+            console.error("KeplerMenu: invalid items JSON", err);
+            return [];
+        }
+    }
+
+    _parseValue() {
+        const val = this.getAttribute("value") || "";
+        this.selectedValues = this.hasAttribute("multiple")
+            ? new Set(val.split(",").map((v) => v.trim()))
+            : new Set([val.trim()]);
+    }
+
+    _positionMenu(anchor) {
         const anchorRect = anchor.getBoundingClientRect();
         const menuRect = this.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
         const position = this.getAttribute("position") || "bottom";
         const align = this.getAttribute("align") || "start";
 
-        let top = anchorRect.bottom;
-        let left = anchorRect.left;
+        let top =
+            position === "top"
+                ? anchorRect.top - menuRect.height
+                : anchorRect.bottom;
+        let left =
+            align === "center"
+                ? anchorRect.left + (anchorRect.width - menuRect.width) / 2
+                : align === "end"
+                  ? anchorRect.right - menuRect.width
+                  : anchorRect.left;
 
-        if (position === "top") {
-            top = anchorRect.top - menuRect.height;
-        }
-        if (align === "end") {
-            left = anchorRect.right - menuRect.width;
-        } else if (align === "center") {
-            left = anchorRect.left + (anchorRect.width - menuRect.width) / 2;
-        }
-
-        if (left + menuRect.width > viewportWidth) {
-            left = viewportWidth - menuRect.width - 10;
-        }
-        if (top + menuRect.height > viewportHeight) {
-            top = viewportHeight - menuRect.height - 10;
-        }
-        if (left < 10) left = 10;
-        if (top < 10) top = 10;
+        top = Math.min(Math.max(top, 10), vh - menuRect.height - 10);
+        left = Math.min(Math.max(left, 10), vw - menuRect.width - 10);
 
         this.style.position = "fixed";
         this.style.top = `${top}px`;
@@ -355,7 +221,6 @@ class KeplerMenu extends HTMLElement {
 
         if (!this.style.width) {
             let maxWidth = 0;
-
             this.shadowRoot.querySelectorAll(".menu-item").forEach((item) => {
                 maxWidth = Math.max(maxWidth, item.offsetWidth);
             });
@@ -367,9 +232,9 @@ class KeplerMenu extends HTMLElement {
         const clone = this._cloneTemplate(slotId);
         if (!clone) return "";
 
-        Object.keys(item).forEach((key) => {
-            const placeholder = clone.querySelector(`[data-${key}]`);
-            if (placeholder) placeholder.textContent = item[key];
+        Object.entries(item).forEach(([key, val]) => {
+            const el = clone.querySelector(`[data-${key}]`);
+            if (el) el.textContent = val;
         });
 
         const tempDiv = document.createElement("div");
@@ -377,58 +242,91 @@ class KeplerMenu extends HTMLElement {
         return tempDiv.innerHTML;
     }
 
-    _cloneTemplate(slotId) {
-        const templateElement = this.querySelector(`[slot="${slotId}"]`);
-        return templateElement && templateElement.content
-            ? document.importNode(templateElement.content, true)
-            : null;
-    }
-
-    get value() {
-        if (this.hasAttribute("multiple")) {
-            return Array.from(this.selectedValues).join(",");
-        } else {
-            return this.selectedValues.size
-                ? Array.from(this.selectedValues)[0]
-                : "";
+    hideMenu() {
+        this.style.display = "none";
+        if (this.scrollHandler) {
+            window.removeEventListener("scroll", this.scrollHandler, true);
+            window.removeEventListener("resize", this.scrollHandler);
         }
     }
 
-    set value(newVal) {
-        if (this.hasAttribute("multiple")) {
-            if (typeof newVal === "string") {
-                this.selectedValues = new Set(
-                    newVal.split(",").map((s) => s.trim())
-                );
-            } else if (Array.isArray(newVal)) {
-                this.selectedValues = new Set(newVal);
-            }
-        } else {
-            if (typeof newVal === "string") {
-                this.selectedValues = new Set([newVal.trim()]);
-            } else {
-                this.selectedValues = new Set();
-            }
-        }
-        this.updateComponent();
+    render() {
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: none;
+                    position: absolute;
+                    box-sizing: border-box;
+                    background: var(--base-text--, rgba(29,29,29,1));
+                    z-index: 10;
+                    max-height: 200px;
+                    overflow-y: auto;
+                    box-shadow: var(--shadow-medium, 0 4px 8px rgba(0, 0, 0, 0.2));
+                }
+                .menu-item {
+                    padding: var(--spacing-medium, 8px);
+                    font-size: var(--font-size, 16px);
+                    font-family: Tomorrow, sans-serif;
+                    color: var(--base-surface, rgba(241,246,250,1));
+                    background: var(--base-text--, rgba(29,29,29,1));
+                    cursor: pointer;
+                    transition: background-color 0.2s ease, color 0.2s ease;
+                }
+                .menu-item:hover {
+                    background: var(--base-text-emphasize, rgba(56,56,57,1));
+                }
+                .menu-item.selected {
+                    background: var(--primary--, rgba(4,134,209,1));
+                    color: var(--primary-background--, rgba(245,250,250,1));
+                }
+            </style>
+            <div id="menuContainer" part="menuContainer"></div>
+        `;
     }
 
-    get items() {
-        try {
-            return JSON.parse(this.getAttribute("items") || "[]") || [];
-        } catch (e) {
-            console.error("Invalid JSON for items:", e);
-            return [];
-        }
+    showMenu(anchor) {
+        this._getContainer("kp-menu", true).forEach((menu) => {
+            if (menu !== this) menu.hideMenu();
+        });
+
+        this.style.display = "block";
+        if (!anchor) anchor = this._anchorElement();
+        if (!anchor) return;
+
+        this._positionMenu(anchor);
+
+        this.scrollHandler = () =>
+            requestAnimationFrame(() => this._positionMenu(anchor));
+        window.addEventListener("scroll", this.scrollHandler, true);
+        window.addEventListener("resize", this.scrollHandler);
     }
 
-    set items(value) {
-        if (Array.isArray(value)) {
-            this.setAttribute("items", JSON.stringify(value));
-            this.updateComponent(); // Ensure UI updates when items change
-        } else {
-            console.error("KeplerMenu: items must be an array.");
-        }
+    toggleMenu(anchor) {
+        this.style.display === "block"
+            ? this.hideMenu()
+            : this.showMenu(anchor);
+    }
+
+    updateComponent() {
+        const items = this._parseItems();
+        if (this._isTracking() && this.hasAttribute("value"))
+            this._parseValue();
+
+        const container = this.shadowRoot.querySelector("#menuContainer");
+        container.innerHTML = items
+            .map((item, i) => this._renderItem(item, i))
+            .join("");
+    }
+
+    _renderItem(item, index) {
+        const isSelected =
+            this._isTracking() && this.selectedValues.has(String(item.value));
+
+        const content = item.template
+            ? this._renderTemplate(item.template, item)
+            : `<label>${item.label || ""}</label>`;
+
+        return `<div class="menu-item ${isSelected ? "selected" : ""}" data-index="${index}" data-value="${item.value}" part="menu-item">${content}</div>`;
     }
 }
 

@@ -427,15 +427,6 @@ class KeplerTheme extends HTMLElement {
         }
     }
 
-    fetchCSS(url) {
-        return fetch(url).then((response) => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch CSS from ${url}`);
-            }
-            return response.text();
-        });
-    }
-
     applyVariablesToHost(cssText) {
         // Extract CSS custom properties from the CSS text using a regex.
         const regex = /--([\w-]+):\s*([^;]+);/g;
