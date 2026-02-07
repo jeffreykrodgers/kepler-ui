@@ -141,13 +141,13 @@ class KeplerButton extends HTMLElement {
     addEventListeners() {
         this.button.addEventListener("focus", () => {
             this.dispatchEvent(
-                new CustomEvent("focus", { bubbles: true, composed: true })
+                new CustomEvent("focus", { bubbles: true, composed: true }),
             );
         });
 
         this.button.addEventListener("blur", () => {
             this.dispatchEvent(
-                new CustomEvent("blur", { bubbles: true, composed: true })
+                new CustomEvent("blur", { bubbles: true, composed: true }),
             );
         });
 
@@ -157,7 +157,7 @@ class KeplerButton extends HTMLElement {
                     detail: { key: event.key, code: event.code },
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
         });
 
@@ -167,7 +167,7 @@ class KeplerButton extends HTMLElement {
                     detail: { key: event.key, code: event.code },
                     bubbles: true,
                     composed: true,
-                })
+                }),
             );
         });
 
@@ -175,8 +175,6 @@ class KeplerButton extends HTMLElement {
         this.button.addEventListener("click", (event) => {
             this.handleClick();
 
-            // If button type is "submit", trigger form submission.
-            // TODO Is this needed?
             if (this.getAttribute("type") === "submit") {
                 const form = this.closest("form");
                 if (form) {
@@ -206,7 +204,7 @@ class KeplerButton extends HTMLElement {
                 detail,
                 bubbles: true,
                 composed: true,
-            })
+            }),
         );
     }
 
@@ -397,38 +395,38 @@ class KeplerButton extends HTMLElement {
 
         this.button.style.setProperty(
             "--hover-background-color",
-            `var(${colorVars[color][4]}, rgba(215,219,222,1))`
+            `var(${colorVars[color][4]}, rgba(215,219,222,1))`,
         );
         this.button.style.setProperty(
             "--hover-text-color",
-            `var(${colorVars[color][0]}, rgba(29,29,29,1))`
+            `var(${colorVars[color][0]}, rgba(29,29,29,1))`,
         );
         this.button.style.setProperty(
             "--focus-background-color",
-            `var(${colorVars[color][5]}, rgba(188,192,195,1))`
+            `var(${colorVars[color][5]}, rgba(188,192,195,1))`,
         );
         this.button.style.setProperty(
             "--focus-text-color",
-            `var(${colorVars[color][0]}, rgba(29,29,29,1))`
+            `var(${colorVars[color][0]}, rgba(29,29,29,1))`,
         );
         this.button.style.setProperty(
             "--active-background-color",
-            `var(${colorVars[color][0]}, rgba(29,29,29,1))`
+            `var(${colorVars[color][0]}, rgba(29,29,29,1))`,
         );
         this.button.style.setProperty(
             "--active-text-color",
-            `var(${colorVars[color][3]}, rgba(241,246,250,1))`
+            `var(${colorVars[color][3]}, rgba(241,246,250,1))`,
         );
 
         const [contentPadding, buttonPadding] =
             sizeVars[size] || sizeVars.medium;
         this.button.style.setProperty(
             "--content-padding",
-            `var(${contentPadding}, 4px)`
+            `var(${contentPadding}, 4px)`,
         );
         this.button.style.setProperty(
             "--button-padding",
-            `var(${buttonPadding}, 2px)`
+            `var(${buttonPadding}, 2px)`,
         );
         this.button.style.setProperty("--gap", `var(${buttonPadding}, 16px)`);
 
@@ -439,11 +437,11 @@ class KeplerButton extends HTMLElement {
         };
         this.button.style.setProperty(
             "--button-min-height",
-            minSizeMapping[size] || "40px"
+            minSizeMapping[size] || "40px",
         );
         this.button.style.setProperty(
             "--button-min-width",
-            minSizeMapping[size] || "40px"
+            minSizeMapping[size] || "40px",
         );
     }
 
@@ -461,7 +459,7 @@ class KeplerButton extends HTMLElement {
         if (this.hasAttribute("multiple")) {
             if (typeof newVal === "string") {
                 this.selectedValues = new Set(
-                    newVal.split(",").map((s) => s.trim())
+                    newVal.split(",").map((s) => s.trim()),
                 );
             } else if (Array.isArray(newVal)) {
                 this.selectedValues = new Set(newVal);
