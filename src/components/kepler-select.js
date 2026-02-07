@@ -28,7 +28,6 @@ class KeplerSelect extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
             if (name === "value") {
-                // When the value attribute changes, update via the setter.
                 this.value = newValue;
             } else if (
                 [

@@ -6,7 +6,7 @@ class KeplerRouter extends HTMLElement {
         this.attachShadow({ mode: "open" });
         injectGlobalFonts();
         this.routes = [];
-        this.cache = new Map(); // Cache for external route responses.
+        this.cache = new Map();
         this.render = this.render.bind(this);
     }
 
@@ -18,7 +18,6 @@ class KeplerRouter extends HTMLElement {
         if (name === "routes") {
             try {
                 const rawRoutes = JSON.parse(newValue);
-                // Precompile each route's regex and parameter names.
                 this.routes = rawRoutes.map((route) => {
                     const { regex, paramNames } = this.compileRoutePattern(
                         route.route
@@ -64,7 +63,6 @@ class KeplerRouter extends HTMLElement {
             const url = new URL(anchor.href);
             if (url.origin === location.origin) {
                 e.preventDefault();
-                // Push both pathname and hash to update the URL.
                 history.pushState(null, "", url.pathname + url.hash);
                 const router = document.querySelector("kp-router");
                 if (router) {
@@ -77,12 +75,10 @@ class KeplerRouter extends HTMLElement {
     // Precompile the regex pattern and extract parameter names from a route pattern.
     compileRoutePattern(routePattern) {
         const paramNames = [];
-        // Escape regex special characters.
         const escapedPattern = routePattern.replace(
             /[-[\]{}()*+?.,\\^$|#\s]/g,
             "\\$&"
         );
-        // Replace parameters (e.g., ":id") with a regex capture group.
         const regexPattern = escapedPattern.replace(/:([^\/]+)/g, (_, key) => {
             paramNames.push(key);
             return "([^\\/]+)";
@@ -91,7 +87,6 @@ class KeplerRouter extends HTMLElement {
         return { regex, paramNames };
     }
 
-    // Find a route that matches the current path using the precompiled regex.
     findMatchedRoute(currentPath) {
         for (const route of this.routes) {
             const match = currentPath.match(route.regex);
@@ -106,7 +101,6 @@ class KeplerRouter extends HTMLElement {
         return null;
     }
 
-    // New method: Render the loader slot.
     renderLoader() {
         this.clearShadowRoot();
         const loaderSlot = document.createElement("slot");
@@ -114,14 +108,11 @@ class KeplerRouter extends HTMLElement {
         this.shadowRoot.appendChild(loaderSlot);
     }
 
-    // Fetch and render external HTML content.
     renderExternalContent(route) {
         const cacheKey = route.src;
-        // Show the loader while fetching external content.
         this.renderLoader();
 
         const processHTML = (htmlText) => {
-            // Parse the fetched HTML using DOMParser.
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlText, "text/html");
             let content;
@@ -134,7 +125,6 @@ class KeplerRouter extends HTMLElement {
 
             const fragment = document.createDocumentFragment();
 
-            // If propagateStyles is enabled, clone global style elements from document.head.
             if (route.propagateStyles) {
                 const headStyles = document.head.querySelectorAll(
                     'link[rel="stylesheet"], style'
@@ -145,15 +135,12 @@ class KeplerRouter extends HTMLElement {
             }
             fragment.appendChild(content);
 
-            // Clear the shadow root and append the new content.
             this.clearShadowRoot();
             this.shadowRoot.appendChild(fragment);
 
-            // Process any inline <script> elements.
             this.processScripts();
         };
 
-        // Use cached content if available.
         if (this.cache.has(cacheKey)) {
             processHTML(this.cache.get(cacheKey));
         } else {

@@ -4,7 +4,6 @@ class KeplerRadio extends HTMLElement {
     constructor() {
         super();
 
-        // Defaults
         if (!this.hasAttribute("label-position")) {
             this.setAttribute("label-position", "right");
         }

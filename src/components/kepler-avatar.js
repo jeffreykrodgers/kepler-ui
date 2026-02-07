@@ -28,23 +28,12 @@ class KeplerAvatar extends HTMLElement {
                 : altRaw.substring(0, 2);
 
         const shape = this.getAttribute("shape") || "circle";
-        const borderRadius = shape === "circle" ? "50%" : "0";
+        const borderRadius =
+            shape === "circle" ? "50%" : "var(--border-radius, 0)";
 
-        // Determine dimensions based on size.
         const size = this.getAttribute("size") || "medium";
-        let dimensions;
-        switch (size) {
-            case "small":
-                dimensions = "30px";
-                break;
-            case "large":
-                dimensions = "70px";
-                break;
-            case "medium":
-            default:
-                dimensions = "50px";
-                break;
-        }
+        let dimensions =
+            { small: "30px", medium: "50px", large: "70px" }[size] || "50px";
 
         if (src) {
             this.shadowRoot.innerHTML = `

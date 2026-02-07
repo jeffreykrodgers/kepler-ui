@@ -41,7 +41,6 @@ class KeplerSlider extends HTMLElement {
     connectedCallback() {
         this.syncAttributes();
 
-        // Create and append the hidden input if it doesn't exist.
         if (!this.hiddenInput) {
             this.hiddenInput = document.createElement("input");
             this.hiddenInput.type = "hidden";
@@ -274,7 +273,6 @@ class KeplerSlider extends HTMLElement {
         this.manageSlotVisibility("right-icon", ".right-icon");
     }
 
-    // List of attributes to sync to the input element.
     static get inputAttributes() {
         return [
             "min",
@@ -338,7 +336,6 @@ class KeplerSlider extends HTMLElement {
         }
     }
 
-    // Update the slider’s background to show a primary-colored trail
     updateSliderBackground() {
         const min = parseFloat(this.inputElement.getAttribute("min")) || 0;
         const max = parseFloat(this.inputElement.getAttribute("max")) || 100;

@@ -4,11 +4,9 @@ class KeplerInput extends HTMLElement {
     constructor() {
         super();
 
-        // Attach shadow DOM
         this.attachShadow({ mode: "open" });
         injectGlobalFonts();
 
-        // Render the component with invalid state styles.
         this.shadowRoot.innerHTML = `
             <style>
                 :host {

@@ -65,7 +65,7 @@ class KeplerPanel extends HTMLElement {
         this.addHeaderListeners();
         this.checkForChildren();
         this.updateSelectedState();
-        // If this panel acts as a link, check if its route matches the current URL.
+
         if (this.hasAttribute("href")) {
             this.checkRouteMatch();
             window.addEventListener("popstate", this.checkRouteMatchBound);
@@ -176,7 +176,6 @@ class KeplerPanel extends HTMLElement {
     addHeaderListeners() {
         const header = this.shadowRoot.querySelector(".header");
         header.addEventListener("click", () => {
-            // If the panel is a link, handle navigation.
             if (this.hasAttribute("href")) {
                 const href = this.getAttribute("href");
                 if (

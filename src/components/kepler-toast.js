@@ -1,10 +1,7 @@
 class KeplerToast extends HTMLElement {
     constructor() {
         super();
-        // We still use shadow DOM for container styling,
-        // but toast notifications are added as light-DOM children.
 
-        // Set Defaults
         if (!this.hasAttribute("position")) {
             this.setAttribute("position", "bottom");
         }

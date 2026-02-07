@@ -164,7 +164,7 @@ class KeplerTooltip extends HTMLElement {
         if (!anchor) return;
         const position = this.getAttribute("position") || "bottom";
         const align = this.getAttribute("align") || "start";
-        const margin = 8; // 8px margin between anchor and tooltip.
+        const margin = 8;
         const anchorRect = anchor.getBoundingClientRect();
         const tooltipRect = this.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
@@ -244,7 +244,6 @@ class KeplerTooltip extends HTMLElement {
         this.pointer.style.right = "";
 
         if (position === "top") {
-            // Tooltip above anchor: pointer along the bottom edge.
             this.pointer.style.bottom = `-5px`;
             if (align === "start") {
                 this.pointer.style.left = `10px`;
@@ -254,7 +253,6 @@ class KeplerTooltip extends HTMLElement {
                 this.pointer.style.left = `${tooltipRect.width - pointerSize - 10}px`;
             }
         } else if (position === "bottom") {
-            // Tooltip below anchor: pointer along the top edge.
             this.pointer.style.top = `-5px`;
             if (align === "start") {
                 this.pointer.style.left = `10px`;
@@ -264,7 +262,6 @@ class KeplerTooltip extends HTMLElement {
                 this.pointer.style.left = `${tooltipRect.width - pointerSize - 10}px`;
             }
         } else if (position === "left") {
-            // Tooltip to the left of anchor: pointer on the right edge.
             this.pointer.style.right = `-5px`;
             if (align === "start") {
                 this.pointer.style.top = `10px`;
@@ -274,7 +271,6 @@ class KeplerTooltip extends HTMLElement {
                 this.pointer.style.top = `${tooltipRect.height - pointerSize - 10}px`;
             }
         } else if (position === "right") {
-            // Tooltip to the right of anchor: pointer on the left edge.
             this.pointer.style.left = `-5px`;
             if (align === "start") {
                 this.pointer.style.top = `10px`;

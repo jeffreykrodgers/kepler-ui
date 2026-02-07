@@ -82,7 +82,6 @@ class KeplerProgress extends HTMLElement {
     }
 
     setupResizeObserver() {
-        // Recalculate segments when the container resizes.
         this.resizeObserver = new ResizeObserver(() => {
             this.updateSegments();
             this.updateProgress();
@@ -91,7 +90,6 @@ class KeplerProgress extends HTMLElement {
     }
 
     updateSize() {
-        // Determine size based on the "size" attribute. Default is "medium".
         const size = this.getAttribute("size") || "medium";
         let progressHeight, segmentMargin;
         switch (size) {
@@ -174,12 +172,10 @@ class KeplerProgress extends HTMLElement {
     }
 
     updateProgress() {
-        // Ensure segments are up-to-date.
         this.updateSegments();
         const segmentsCount = this.segments.length;
 
         if (this.hasAttribute("value")) {
-            // Determinate mode: fill segments based on the given value.
             const value = parseFloat(this.getAttribute("value"));
             const max = parseFloat(this.getAttribute("max")) || 100;
             const percentage = (value / max) * 100;
@@ -199,10 +195,8 @@ class KeplerProgress extends HTMLElement {
             const indeterminateSpeed =
                 this.getAttribute("indeterminate-speed") || "2s";
 
-            // Indeterminate mode.
             this.progressContainer.classList.add("indeterminate");
 
-            // Set animation duration based on the "indeterminate-speed" attribute.
             this.style.setProperty(
                 "--progress-animation-duration",
                 indeterminateSpeed

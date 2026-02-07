@@ -27,7 +27,6 @@ class KeplerCard extends HTMLElement {
         }
     }
 
-    // New "color" property
     get color() {
         return this.getAttribute("color") || "base";
     }
@@ -161,7 +160,6 @@ class KeplerCard extends HTMLElement {
     }
 
     connectedCallback() {
-        // After rendering, check the header and footer slots.
         const headerSlot = this.shadowRoot.querySelector('slot[name="header"]');
         const footerSlot = this.shadowRoot.querySelector('slot[name="footer"]');
         if (headerSlot) {

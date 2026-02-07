@@ -139,7 +139,6 @@ class KeplerButton extends HTMLElement {
     }
 
     addEventListeners() {
-        // Focus and blur events.
         this.button.addEventListener("focus", () => {
             this.dispatchEvent(
                 new CustomEvent("focus", { bubbles: true, composed: true })
@@ -152,7 +151,6 @@ class KeplerButton extends HTMLElement {
             );
         });
 
-        // Keyboard events.
         this.button.addEventListener("keydown", (event) => {
             this.dispatchEvent(
                 new CustomEvent("keydown", {
@@ -178,6 +176,7 @@ class KeplerButton extends HTMLElement {
             this.handleClick();
 
             // If button type is "submit", trigger form submission.
+            // TODO Is this needed?
             if (this.getAttribute("type") === "submit") {
                 const form = this.closest("form");
                 if (form) {

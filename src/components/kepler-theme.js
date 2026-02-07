@@ -25,7 +25,6 @@ class KeplerTheme extends HTMLElement {
     }
 
     loadTheme() {
-        // Define your default CSS (including variables and base styles)
         const defaultCSS = `
         <style>
             /* Colors */

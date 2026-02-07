@@ -4,7 +4,6 @@ class KeplerCheckbox extends HTMLElement {
     constructor() {
         super();
 
-        // Defaults
         if (!this.hasAttribute("label-position")) {
             this.setAttribute("label-position", "right");
         }
@@ -44,12 +43,10 @@ class KeplerCheckbox extends HTMLElement {
         }
         this.updateComponent();
 
-        // Create a hidden checkbox input so that it accepts default checkbox properties.
         if (!this.inputElement) {
             this.inputElement = document.createElement("input");
             this.inputElement.type = "checkbox";
 
-            // Hide the native checkbox.
             Object.assign(this.inputElement.style, {
                 position: "absolute",
                 opacity: "0",
@@ -58,7 +55,6 @@ class KeplerCheckbox extends HTMLElement {
                 height: "0",
             });
 
-            // Set initial properties.
             this.inputElement.name = this.getAttribute("name") || "";
             this.inputElement.value = this.getAttribute("value") || "on";
             this.inputElement.checked = this.hasAttribute("checked");
@@ -268,7 +264,6 @@ class KeplerCheckbox extends HTMLElement {
 
         this.setAttribute("label-position", labelPosition);
 
-        // Ensure elements exist before modifying them
         if (this.labelWrapperElement) {
             this.labelWrapperElement.style.display = label ? "flex" : "none";
         }
@@ -282,7 +277,6 @@ class KeplerCheckbox extends HTMLElement {
         this.checkboxElement.classList.toggle("disabled", disabled);
         this.labelWrapperElement?.classList.toggle("disabled", disabled);
 
-        // Update the hidden checkbox input.
         this.updateHiddenInput();
 
         if (!this.hasAttribute("data-manual-invalid")) {
@@ -303,7 +297,7 @@ class KeplerCheckbox extends HTMLElement {
     }
 
     addEventListeners() {
-        this.checkboxElement.addEventListener("click", (event) => {
+        this.checkboxElement.addEventListener("click", () => {
             if (this.hasAttribute("disabled")) return;
             const isChecked = this.hasAttribute("checked");
             if (isChecked) {
